@@ -64,6 +64,8 @@ Run the six-point evaluation after implementation:
 | Daphne | Resources | Memory/CPU reasonable? Unnecessary API calls? Resource leaks? Bundle size justified? |
 | Carmilla | Alignment | Matches user intent? Error messages clear? API ergonomic? |
 
+**IMPORTANT: Always print the full evaluation results to the user.** Output each evaluator's verdict, assessment, and issues (if any), followed by the Final Judgment table. The user must be able to see every evaluation result each time the tea party runs.
+
 **Verdict**:
 - **All PASS** → Go to step 6 (Commit).
 - **Any FAIL** → Go to step 7 (Revert).
