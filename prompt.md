@@ -64,7 +64,23 @@ Run the six-point evaluation after implementation:
 | Daphne | Resources | Memory/CPU reasonable? Unnecessary API calls? Resource leaks? Bundle size justified? |
 | Carmilla | Alignment | Matches user intent? Error messages clear? API ergonomic? |
 
-**IMPORTANT: Always print the full evaluation results to the user.** Output each evaluator's verdict, assessment, and issues (if any), followed by the Final Judgment table. The user must be able to see every evaluation result each time the tea party runs.
+**IMPORTANT: Always print the full evaluation results to the user in the following table format:**
+
+```
+| Evaluator | Domain       | Verdict | Assessment                  | Issues         |
+|-----------|--------------|---------|-----------------------------|----------------|
+| Echidna   | Completeness | PASS    | [1-3 sentence assessment]   | [issues or —]  |
+| Minerva   | Regression   | PASS    | [1-3 sentence assessment]   | [issues or —]  |
+| Sekhmet   | Efficiency   | WARN    | [1-3 sentence assessment]   | [issues or —]  |
+| Typhon    | Integrity    | PASS    | [1-3 sentence assessment]   | [issues or —]  |
+| Daphne    | Resources    | PASS    | [1-3 sentence assessment]   | [issues or —]  |
+| Carmilla  | Alignment    | PASS    | [1-3 sentence assessment]   | [issues or —]  |
+
+**Final Verdict**: PASS / FAIL
+**Reason**: [Summary]
+```
+
+This table must be printed to the user every time the tea party runs. Do not skip or summarize it.
 
 **Verdict**:
 - **All PASS** → Go to step 6 (Commit).
