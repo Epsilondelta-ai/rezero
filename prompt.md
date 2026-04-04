@@ -103,6 +103,27 @@ Run the six-point evaluation after implementation:
 
 - The next iteration will read this and try a different approach.
 
+### Retry Limit
+
+Each story has a maximum of **3 attempts**. Count consecutive failures for the same story ID in `progress.txt`.
+
+On the 3rd failure:
+1. Mark the story as `"passes": "blocked"` in `task.json`.
+2. Append a summary of all 3 attempts to `progress.txt`:
+
+```
+## [Date] - [Story ID]: BLOCKED
+**Status**: Blocked after 3 failed attempts
+**Attempt Summary**:
+1. [Approach and failure reason]
+2. [Approach and failure reason]
+3. [Approach and failure reason]
+**Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
+```
+
+3. Skip this story and proceed to the next eligible story (one with no dependency on the blocked story).
+4. If no eligible stories remain, respond with `<promise>BLOCKED</promise>` to signal that user intervention is needed.
+
 ## Principles
 
 ### Progress Tracking
