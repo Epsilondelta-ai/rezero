@@ -3,13 +3,14 @@
 # Implements user stories from task.json one at a time,
 # accumulating knowledge across iterations via progress.txt.
 #
-# Usage: ./rezero.sh [--tool amp|claude] [max_iterations]
+# Usage: ./rezero.sh [--tool amp|claude] [--max-deaths N] [max_iterations]
 
 set -e
 
 # Parse arguments
 TOOL="claude"  # Default to claude
 MAX_ITERATIONS=10
+MAX_DEATHS=3
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -19,6 +20,14 @@ while [[ $# -gt 0 ]]; do
       ;;
     --tool=*)
       TOOL="${1#*=}"
+      shift
+      ;;
+    --max-deaths)
+      MAX_DEATHS="$2"
+      shift 2
+      ;;
+    --max-deaths=*)
+      MAX_DEATHS="${1#*=}"
       shift
       ;;
     *)
@@ -89,7 +98,7 @@ echo " | |_) / _ \\   / /|  _| | |_) | | | |"
 echo " |  _ <  __/  / /_| |___|  _ <| |_| |"
 echo " |_| \\_\\___| /____|_____|_| \\_\\\\___/"
 echo ""
-echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS"
+echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS | Max deaths: $MAX_DEATHS"
 echo ""
 
 for i in $(seq 1 $MAX_ITERATIONS); do
@@ -98,11 +107,14 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Re:ZERO Iteration $i of $MAX_ITERATIONS ($TOOL)"
   echo "==============================================================="
 
+  # Inject MAX_DEATHS into prompt template
+  PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$SCRIPT_DIR/prompt.md")
+
   # Run the selected tool with the prompt
   if [[ "$TOOL" == "amp" ]]; then
-    OUTPUT=$(cat "$SCRIPT_DIR/prompt.md" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(echo "$PROMPT" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
   else
-    OUTPUT=$(claude --dangerously-skip-permissions --print < "$SCRIPT_DIR/prompt.md" 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(echo "$PROMPT" | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || true
   fi
 
   # Check for completion signal
