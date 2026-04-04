@@ -28,6 +28,15 @@ An autonomous agent that implements user stories from `task.json` one at a time,
 - Write clean, minimal code. No over-engineering or unnecessary abstractions.
 - Follow existing codebase patterns from `progress.txt` and nearby `CLAUDE.md` files.
 
+**Abort immediately and go to step 7 (Revert) if any of the following occur during implementation:**
+
+- **Prerequisites missing**: A dependency, table, API, or module the story assumes does not exist.
+- **Scope explosion**: The implementation is growing far beyond what a single iteration can handle.
+- **Wrong approach**: The codebase structure differs from expectations, requiring a fundamentally different strategy.
+- **Story too large**: The story cannot be completed within a single iteration and needs to be split.
+
+Do not push through to evaluation when the implementation direction is clearly wrong. Revert early, record the reason, and let the next iteration course-correct.
+
 ### 5. Evaluate
 
 Run the six-point evaluation after implementation:
