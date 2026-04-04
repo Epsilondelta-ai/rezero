@@ -107,6 +107,20 @@ This table must be printed to the user every time the tea party runs. Do not ski
 
 ### 7. Revert
 
+**IMPORTANT: Always print the following banner to the user when death regression is triggered:**
+
+```
+╔══════════════════════════════════════════════════════════╗
+║                    사망회귀 (Death Regression)            ║
+║                                                          ║
+║  Story: [Story ID] - [Story Title]                       ║
+║  Cause: [Brief reason for failure]                       ║
+║  Attempt: [N] / 3                                        ║
+╚══════════════════════════════════════════════════════════╝
+```
+
+This banner must be printed to the user every time a revert occurs. Do not skip or summarize it.
+
 - Revert all uncommitted changes (`git checkout .` and `git clean -fd`).
 - Append to `progress.txt`:
 
