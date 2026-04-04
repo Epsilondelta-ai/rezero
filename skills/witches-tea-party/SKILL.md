@@ -1,101 +1,96 @@
-# Witches' Tea Party — Code Evaluation Skill
+# Witches' Tea Party — Code Evaluation
 
-You are the **Witches' Tea Party**, a council of six witches who evaluate the work of Natsuki Subaru (the implementing agent). Each witch examines the code changes from her unique perspective. After all six have spoken, **Satella** renders the final verdict.
+Evaluates code changes from six perspectives after implementation. Produces a structured verdict: PASS, WARN, or FAIL per evaluator, then a final judgment.
 
-## Invocation
-
-This skill is invoked after a code change has been implemented. It receives the context of what was changed and why, then produces a structured evaluation.
-
-## Evaluation Process
+## Process
 
 ### Step 1: Gather Context
 
-Before the witches convene, gather the following:
-- The story/task description and its acceptance criteria
-- The git diff of all changes made
+- The story description and its acceptance criteria
+- The git diff of all changes
 - Results of typecheck, linter, and test suite
-- The list of files modified
+- List of files modified
 
-### Step 2: Each Witch Evaluates
+### Step 2: Run Six Evaluations
 
-Present each witch's evaluation in order, using this format for each:
+For each evaluator, output:
 
 ```
-### [Witch Name] ([Sin]) — [Domain]
+### [Name] — [Domain]
 **Verdict**: PASS | WARN | FAIL
-**Assessment**: [1-3 sentences explaining the evaluation]
+**Assessment**: [1-3 sentences]
 **Issues** (if any):
-- [Specific issue found]
+- [Specific issue]
 ```
 
-#### Echidna (Greed) — Completeness & Coverage
-Evaluate whether the implementation is thorough:
-- Are ALL acceptance criteria from the story satisfied? Check each one explicitly.
-- Are obvious edge cases handled (null values, empty inputs, boundary conditions)?
-- If the story involves new logic, are there tests covering it?
-- Is the documentation updated where necessary?
+#### Echidna — Completeness
 
-**FAIL when**: Any acceptance criterion is not met, or critical edge cases are completely unhandled.
-**WARN when**: Minor edge cases are unhandled, or test coverage could be improved.
+- Are ALL acceptance criteria satisfied? Check each explicitly.
+- Are edge cases handled (null, empty, boundary)?
+- Are there tests covering new logic?
+- Is documentation updated where needed?
 
-#### Minerva (Wrath) — Regression Safety
-Evaluate whether the change causes harm to existing functionality:
-- Does the typecheck pass? (Run: project's typecheck command)
-- Does the linter pass? (Run: project's lint command)
-- Do all existing tests pass? (Run: project's test command)
-- Do the changes modify shared interfaces, utilities, or configurations that could affect other modules?
+**FAIL**: Acceptance criterion not met, or critical edge cases unhandled.
+**WARN**: Minor edge cases unhandled, or test coverage could improve.
 
-**FAIL when**: Typecheck, linter, or any existing test fails.
-**WARN when**: Shared code is modified but all tests still pass.
+#### Minerva — Regression
 
-#### Sekhmet (Sloth) — Efficiency & Simplicity
-Evaluate whether the implementation is unnecessarily complex:
-- Could the same result be achieved with significantly less code?
-- Is there duplicated logic that exists elsewhere in the codebase?
-- Are there unnecessary abstractions, wrappers, or indirection layers?
-- Is there dead code or unused imports introduced?
+- Typecheck passes?
+- Linter passes?
+- All existing tests pass?
+- Changes to shared interfaces/utilities that could affect other modules?
 
-**FAIL when**: There is egregious over-engineering or significant duplication that will cause maintenance burden.
-**WARN when**: Minor simplification opportunities exist.
+**FAIL**: Typecheck, linter, or any test fails.
+**WARN**: Shared code modified but all tests still pass.
 
-#### Typhon (Pride) — Code Integrity & Principles
-Evaluate whether the code is honest about its own quality:
-- Does the code follow the project's established patterns and conventions?
-- Are there code smells (long functions, deep nesting, magic numbers)?
-- Are there linting rules being suppressed or ignored?
-- Does the code contradict patterns documented in `CLAUDE.md` or `progress.txt`?
+#### Sekhmet — Efficiency
 
-**FAIL when**: Code deliberately bypasses quality checks or introduces known anti-patterns.
-**WARN when**: Minor style inconsistencies or mild code smells.
+- Same result achievable with less code?
+- Duplicated logic that exists elsewhere?
+- Unnecessary abstractions or indirection?
+- Dead code or unused imports introduced?
 
-#### Daphne (Gluttony) — Resource Consumption
-Evaluate whether the implementation is resource-efficient:
-- Are there potential memory leaks (unclosed connections, growing arrays, event listener accumulation)?
-- Are there unnecessary API calls, redundant database queries, or N+1 query patterns?
-- Does the change significantly increase bundle size or build time?
-- Are large dependencies added when a smaller alternative exists?
+**FAIL**: Egregious over-engineering or significant duplication.
+**WARN**: Minor simplification opportunities.
 
-**FAIL when**: Clear resource leaks or grossly inefficient patterns that will cause production issues.
-**WARN when**: Suboptimal resource usage that won't cause immediate issues but should be improved.
+#### Typhon — Integrity
 
-#### Carmilla (Lust) — User Alignment & Experience
-Evaluate whether the implementation serves the user's true intent:
-- Does the implementation match the user's stated requirements, not just the letter of the acceptance criteria?
-- Are error messages clear, actionable, and user-friendly?
-- Is the API surface intuitive? Would a developer using this code find it natural?
-- For UI changes: is the interaction smooth and the feedback clear?
+- Follows project's established patterns and conventions?
+- Code smells (long functions, deep nesting, magic numbers)?
+- Linting rules suppressed or ignored?
+- Contradicts patterns in `CLAUDE.md` or `progress.txt`?
 
-**FAIL when**: The implementation technically meets criteria but clearly misses the user's actual intent.
-**WARN when**: UX could be improved but functional requirements are met.
+**FAIL**: Deliberately bypasses quality checks or introduces known anti-patterns.
+**WARN**: Minor style inconsistencies or mild code smells.
 
-### Step 3: Satella's Final Judgment
+#### Daphne — Resources
 
-Satella aggregates all six evaluations into a final verdict:
+- Memory leaks (unclosed connections, growing arrays, listener accumulation)?
+- Unnecessary API calls, redundant queries, N+1 patterns?
+- Significant bundle size or build time increase?
+- Large dependency added when smaller alternative exists?
+
+**FAIL**: Resource leaks or grossly inefficient patterns.
+**WARN**: Suboptimal resource usage, not immediately critical.
+
+#### Carmilla — Alignment
+
+- Matches user's stated requirements, not just letter of criteria?
+- Error messages clear and actionable?
+- API surface intuitive?
+- UI interactions smooth with clear feedback?
+
+**FAIL**: Technically meets criteria but misses user's actual intent.
+**WARN**: UX could improve but functional requirements met.
+
+### Step 3: Final Judgment
+
+Aggregate all six evaluations:
 
 ```
-### Satella (Envy) — Final Judgment
+### Final Judgment
 
-| Witch     | Verdict |
+| Evaluator | Verdict |
 |-----------|---------|
 | Echidna   | PASS/WARN/FAIL |
 | Minerva   | PASS/WARN/FAIL |
@@ -104,23 +99,19 @@ Satella aggregates all six evaluations into a final verdict:
 | Daphne    | PASS/WARN/FAIL |
 | Carmilla  | PASS/WARN/FAIL |
 
-**Final Verdict**: CHECKPOINT UPDATED / RETURN BY DEATH
-
-**Reason**: [Summary of why the verdict was reached]
+**Verdict**: PASS / FAIL
+**Reason**: [Summary]
 ```
 
-**Decision Rules**:
-- **Any FAIL** → `RETURN BY DEATH`. The agent must revert and try again.
-- **All PASS (no warnings)** → `CHECKPOINT UPDATED`. Clean pass.
-- **All PASS with WARNs** → `CHECKPOINT UPDATED`, but all warnings must be recorded in `rem.md` for future resolution.
+- **Any FAIL** → `FAIL`. Agent must revert and retry.
+- **All PASS, no warnings** → `PASS`.
+- **All PASS with WARNs** → `PASS`, but warnings recorded in `rem.md`.
 
-### Step 4: Output for Rem
+### Step 4: Record Warnings
 
-If the verdict is CHECKPOINT UPDATED but warnings exist, output a `rem.md` entry:
+If PASS with warnings, output `rem.md` entries:
 
 ```
-## [Date] - [Story ID]: Warnings from Witches' Tea Party
-- **[Witch Name]**: [Warning description and suggested resolution]
+## [Date] - [Story ID]: Evaluation Warnings
+- **[Evaluator]**: [Warning description and suggested fix]
 ```
-
-These entries ensure that technical debt is tracked and addressed in future iterations, rather than silently accumulating.
