@@ -115,7 +115,7 @@ This table must be printed to the user every time the tea party runs. Do not ski
 ║                                                          ║
 ║  Story: [Story ID] - [Story Title]                       ║
 ║  Cause: [Brief reason for failure]                       ║
-║  Attempt: [N] / 3                                        ║
+║  Attempt: [N] / {{MAX_DEATHS}}                           ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
@@ -137,19 +137,18 @@ This banner must be printed to the user every time a revert occurs. Do not skip 
 
 ### Retry Limit
 
-Each story has a maximum of **3 attempts**. Count consecutive failures for the same story ID in `progress.txt`.
+Each story has a maximum of **{{MAX_DEATHS}} attempts**. Count consecutive failures for the same story ID in `progress.txt`.
 
-On the 3rd failure:
+On the {{MAX_DEATHS}}th failure:
 1. Mark the story as `"passes": "blocked"` in `task.json`.
-2. Append a summary of all 3 attempts to `progress.txt`:
+2. Append a summary of all {{MAX_DEATHS}} attempts to `progress.txt`:
 
 ```
 ## [Date] - [Story ID]: BLOCKED
-**Status**: Blocked after 3 failed attempts
+**Status**: Blocked after {{MAX_DEATHS}} failed attempts
 **Attempt Summary**:
 1. [Approach and failure reason]
-2. [Approach and failure reason]
-3. [Approach and failure reason]
+...repeat for each attempt...
 **Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
 ```
 
