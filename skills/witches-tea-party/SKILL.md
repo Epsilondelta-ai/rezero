@@ -1,3 +1,7 @@
+---
+description: Evaluate code changes from six perspectives (Echidna, Minerva, Sekhmet, Typhon, Daphne, Carmilla)
+---
+
 # Witches' Tea Party — Code Evaluation
 
 Evaluates code changes from six perspectives after implementation. Produces a structured verdict: PASS, WARN, or FAIL per evaluator, then a final judgment.
