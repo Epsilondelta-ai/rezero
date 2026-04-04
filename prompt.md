@@ -33,9 +33,23 @@ An autonomous agent that implements user stories from `task.json` one at a time,
 - **Prerequisites missing**: A dependency, table, API, or module the story assumes does not exist.
 - **Scope explosion**: The implementation is growing far beyond what a single iteration can handle.
 - **Wrong approach**: The codebase structure differs from expectations, requiring a fundamentally different strategy.
-- **Story too large**: The story cannot be completed within a single iteration and needs to be split.
+- **Story too large**: The story cannot be completed within a single iteration and needs to be split. See [Story Splitting](#story-splitting).
 
 Do not push through to evaluation when the implementation direction is clearly wrong. Revert early, record the reason, and let the next iteration course-correct.
+
+#### Story Splitting
+
+When a story is too large for a single iteration:
+
+1. Revert all uncommitted changes.
+2. Split the original story in `task.json`:
+   - Replace the original story (set `"passes": "split"`) with smaller sub-stories.
+   - Sub-stories use the original ID as prefix: `US-003` → `US-003-1`, `US-003-2`, etc.
+   - Each sub-story must be completable in one iteration.
+   - Assign priorities so sub-stories execute in dependency order.
+3. Append to `progress.txt` why the split was needed and how it was divided.
+4. Commit only the `task.json` and `progress.txt` changes.
+5. End the iteration. The next iteration picks up the first sub-story.
 
 ### 5. Evaluate
 
@@ -103,7 +117,7 @@ Run the six-point evaluation after implementation:
 ### Scope
 - One story per iteration.
 - Do not refactor unrelated code or add features beyond the story's scope.
-- If a story is too large, note this in `progress.txt` and suggest splitting it.
+- If a story is too large, split it directly in `task.json` (see [Story Splitting](#story-splitting)).
 
 ### Completion
 - All stories `passes: true` AND no unresolved items in `rem.md` → `<promise>COMPLETE</promise>`.
