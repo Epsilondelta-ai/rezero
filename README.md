@@ -1,43 +1,45 @@
+**English** | [한국어](./docs/README.ko.md) | [简体中文](./docs/README.zh-CN.md) | [日本語](./docs/README.ja.md) | [Español](./docs/README.es.md) | [Português (BR)](./docs/README.pt-BR.md) | [Français](./docs/README.fr.md) | [Русский](./docs/README.ru.md) | [Deutsch](./docs/README.de.md)
+
 # Re:ZERO Loop
 
-![](./docs/rezero.webp)
+![](./docs/images/rezero.webp)
 
-> 리제로 루프는 **Re:제로부터 생활하는 이세계 생활** 의 **사망회귀**에서 영감을 받아 만들어진 프로젝트입니다.
+> Re:ZERO Loop is a project inspired by **Return by Death** from **Re:Zero − Starting Life in Another World**.
 
-컨텍스트 누적으로인한 오염으로 AI의 수행능력이 저하되는 것을 방지하기 위해 Ralph Loop 같은 기법들이 등장했습니다.  
-하지만, 컨텍스트를 깨끗하게 유지하더라도 누적되는 코드가 오염되어간다면 코드베이스로 인한 수행능력 저하는 피해갈 수 없습니다.
+Techniques like Ralph Loop have emerged to prevent AI performance degradation caused by context pollution from accumulated context.  
+However, even if the context is kept clean, if the accumulated code becomes polluted, performance degradation due to the codebase is unavoidable.
 
-리제로 루프는 이 것을 극복하기 위해 사망회귀를 AI에게 도입하면 어떨까 하는 생각에서 시작되었습니다.
+Re:ZERO Loop was born from the idea of introducing Return by Death to AI to overcome this problem.
 
-## 목차
+## Table of Contents
 
-- [사전 요구사항](#사전-요구사항)
-- [설치](#설치)
-  - [옵션 1: 프로젝트에 직접 복사](#옵션-1-프로젝트에-직접-복사)
-  - [옵션 2: 스킬을 글로벌로 설치](#옵션-2-스킬을-글로벌로-설치)
-  - [옵션 3: Claude Code 플러그인으로 사용](#옵션-3-claude-code-플러그인으로-사용)
-- [워크플로우](#워크플로우)
-  - [1. 태스크 정의 생성](#1-태스크-정의-생성)
-  - [2. 리제로 루프 실행](#2-리제로-루프-실행)
-- [컨셉](#컨셉)
-  - [나츠키 스바루](#나츠키-스바루)
-  - [사망회귀](#사망회귀)
-  - [마녀들의 다과회](#마녀들의-다과회)
-  - [렘](#렘)
-- [라이선스](#라이선스)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+  - [Option 1: Copy directly to your project](#option-1-copy-directly-to-your-project)
+  - [Option 2: Install skills globally](#option-2-install-skills-globally)
+  - [Option 3: Use as a Claude Code plugin](#option-3-use-as-a-claude-code-plugin)
+- [Workflow](#workflow)
+  - [1. Create a task definition](#1-create-a-task-definition)
+  - [2. Run the Re:ZERO Loop](#2-run-the-rezero-loop)
+- [Concepts](#concepts)
+  - [Natsuki Subaru](#natsuki-subaru)
+  - [Return by Death](#return-by-death)
+  - [Witches' Tea Party](#witches-tea-party)
+  - [Rem](#rem)
+- [License](#license)
 
-## 사전 요구사항
+## Prerequisites
 
-- **AI 코딩 도구** (다음 중 하나):
+- **AI coding tool** (one of the following):
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
   - [Amp CLI](https://ampcode.com)
   - [OpenAI Codex](https://openai.com/index/codex/)
-- **jq** 설치 (`brew install jq` on macOS)
-- 프로젝트용 **git 저장소**
+- **jq** installed (`brew install jq` on macOS)
+- A **git repository** for your project
 
-## 설치
+## Installation
 
-### 옵션 1: 프로젝트에 직접 복사
+### Option 1: Copy directly to your project
 
 ```bash
 mkdir -p scripts/rezero
@@ -46,9 +48,9 @@ cp /path/to/rezero/prompt.md scripts/rezero/prompt.md
 chmod +x scripts/rezero/rezero.sh
 ```
 
-### 옵션 2: 스킬을 글로벌로 설치
+### Option 2: Install skills globally
 
-**Amp 사용자:**
+**Amp users:**
 ```bash
 cp -r skills/task ~/.config/amp/skills/
 cp -r skills/rezero ~/.config/amp/skills/
@@ -56,7 +58,7 @@ cp -r skills/witches-tea-party ~/.config/amp/skills/
 cp -r skills/rem ~/.config/amp/skills/
 ```
 
-**Claude Code 사용자:**
+**Claude Code users:**
 ```bash
 cp -r skills/task ~/.claude/skills/
 cp -r skills/rezero ~/.claude/skills/
@@ -64,103 +66,102 @@ cp -r skills/witches-tea-party ~/.claude/skills/
 cp -r skills/rem ~/.claude/skills/
 ```
 
-### 옵션 3: Claude Code 플러그인으로 사용
+### Option 3: Use as a Claude Code plugin
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
 /plugin install rezero-skills@rezero-marketplace
 ```
 
-설치 후 사용 가능: `/task` 스킬, `/rezero` 스킬
+After installation, the `/task` and `/rezero` skills become available.
 
-## 워크플로우
+## Workflow
 
-### 1. 태스크 정의 생성
+### 1. Create a task definition
 
-task 스킬을 사용해 사용자 스토리를 정의합니다:
+Use the task skill to define a user story:
 
-> "task 스킬을 로드하고 [기능 설명]에 대한 태스크를 생성해줘"
+> "Load the task skill and create a task for [feature description]"
 
-결과물: `task.json` (우선순위와 수용 기준이 포함된 사용자 스토리)
+Output: `task.json` (a user story with priorities and acceptance criteria)
 
-### 2. 리제로 루프 실행
+### 2. Run the Re:ZERO Loop
 
 ```bash
-./rezero.sh [max_iterations]                        # Claude (기본값)
+./rezero.sh [max_iterations]                        # Claude (default)
 ./rezero.sh --tool amp [max_iterations]             # Amp
 ./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
-./rezero.sh --max-deaths 5 [max_iterations]         # 스토리당 최대 사망회귀 횟수 설정
+./rezero.sh --max-deaths 5 [max_iterations]         # Set max Return by Death per story
 ```
 
-기본 반복 횟수: 10회, 기본 최대 사망회귀: 3회
+Default iterations: 10, default max deaths: 3
 
-**실행 과정:**
+**Execution flow:**
 
-1. `task.json`에서 기능 브랜치를 생성합니다
-2. 가장 높은 우선순위의 미완료 스토리를 선택합니다
-3. 해당 스토리를 구현합니다
-4. 마녀들의 다과회에서 품질 평가를 수행합니다
-5. 통과 시 커밋하고 `task.json`의 상태를 업데이트합니다
-6. 실패 시 사망회귀하여 체크포인트로 돌아갑니다
-7. `progress.txt`에 교훈을 기록합니다
-8. 모든 스토리가 완료되거나 반복 횟수에 도달할 때까지 반복합니다
+1. Creates a feature branch from `task.json`
+2. Selects the highest priority incomplete story
+3. Implements the story
+4. The Witches' Tea Party performs a quality evaluation
+5. On pass: commits and updates the status in `task.json`
+6. On fail: triggers Return by Death, reverting to the checkpoint
+7. Records lessons learned in `progress.txt`
+8. Repeats until all stories are complete or max iterations reached
 
-## 컨셉
+## Concepts
 
-### 나츠키 스바루
+### Natsuki Subaru
 
-리제로의 주인공 나츠키 스바루입니다.
+Natsuki Subaru is the protagonist of Re:Zero.
 
-- 이 프로젝트에서는 작업을 진행하는 에이전트를 **나츠키 스바루** 라고 명명합니다.
-- 단순히 작업을 진행하는 것이 아니라, 다수의 사망회귀를 통해 지식을 축적합니다.
-- 목표를 달성하기 위해 매번 최적의 계획을 세우고 작업을 진행합니다.
+- In this project, the agent performing the work is named **Natsuki Subaru**.
+- Rather than simply executing tasks, it accumulates knowledge through multiple Returns by Death.
+- It devises an optimal plan each time to achieve its goal.
 
-### 사망회귀
+### Return by Death
 
-![나츠키 스바루](./docs/subaru.webp)
+![Natsuki Subaru](./docs/images/subaru.webp)
 
-작업 진행중에 이상을 감지하거나, 작업을 완료했더라도 만족스러운 결과를 얻지 못하면 나츠키 스바루는 사망회귀를 통해 체크포인트로 되돌아갑니다.
+When an anomaly is detected during work, or when the results are unsatisfactory even after completion, Natsuki Subaru uses Return by Death to revert to a checkpoint.
 
-- 작업을 진행하는 중에 이상을 감지하면 작업을 중단하고 사망회귀 능력을 통해 체크포인트로 되돌아갑니다.
-- 다음에 언급할 마녀들의 다과회에서 성공 기준을 넘지 못했다고 판단하면 강제로 사망회귀를 시킵니다.
-- 사망회귀 능력은 자신이 실패한 이유를 기억한 채로 체크포인트로 돌아간다는데 큰 의미가 있습니다.
+- If an anomaly is detected during work, it stops and uses Return by Death to revert to the checkpoint.
+- If the Witches' Tea Party determines that the success criteria have not been met, it forces a Return by Death.
+- The key significance of Return by Death is that it returns to the checkpoint while retaining memories of why it failed.
 
-### 마녀들의 다과회
+### Witches' Tea Party
 
-![witches tea party](./docs/witches-tea-party.webp)
+![Witches' Tea Party](./docs/images/witches-tea-party.webp)
 
-원작의 설정을 알고있는 팬들의 입장에선 **마녀들의 다과회**가 평가자 역할이라는 것에 의아함을 느낄 수 있습니다.  
-하지만 여섯 마녀들이 각각 다른 성격을 가진 것과, 스바루의 체크포인트를 사테라가 결정해줄지도 모른다는 추측으로 인해 꽤나 잘 맞아떨어지는 부분이라고 생각하여 평가자 역할로 넣게 되었습니다.
+Fans familiar with the original setting might find it surprising that the **Witches' Tea Party** serves as the evaluator.  
+However, the fact that the six witches each have different personalities, combined with the speculation that Satella may determine Subaru's checkpoints, made this a fitting role for the evaluation system.
 
-- 작업을 완료하고나면 '마녀들의 다과회'가 열립니다.
-- 여섯 마녀들이 각각의 관점으로 작업의 결과를 평가합니다.
-- 여섯 마녀들의 평가 기준을 사테라가 종합하여 체크포인트를 갱신할지, 사망회귀를 시킬지 결정합니다.
+- After work is completed, the "Witches' Tea Party" convenes.
+- The six witches evaluate the work from their respective perspectives.
+- Satella aggregates the six witches' evaluations to determine whether to update the checkpoint or trigger Return by Death.
 
-| 마녀            | 평가 기준                                                                                                                                                                                          |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 에키드나 (탐욕) | 이 구현이 모든 가능성을 탐구했는가? 모든 엣지 케이스가 처리되었는가? 지식이 철저한가? 실무적으로는 테스트 커버리지, API 완전성, 문서화, 경계 조건 처리를 확인한다.                                 |
-| 미네르바 (분노) | 이 버그가 진짜 고쳐진 건가, 아니면 문제를 재분배한 건가? 패치가 무관한 기능에 새로운 실패 모드를 만들지는 않았는가? 회귀 테스트를 실행하고 수정이 관련 없는 기능을 깨뜨리지 않는지 확인한다.       |
-| 세크메트 (나태) | 같은 결과를 더 적은 작업으로 달성할 수 있는가? 불필요한 복잡성이 있는가? 알고리즘 효율성, 중복 연산, 오버엔지니어링을 확인한다.                                                                    |
-| 티폰 (오만)     | 코드가 자신의 죄를 알고 있는가? 의도적으로 포함한 안티패턴이 있는가? 스스로의 원칙을 위반하는가? 코드 스멜, 린팅 위반, 인지하면서 수정하지 않은 기술 부채를 감지한다.                              |
-| 다프네 (폭식)   | 이 코드가 얼마나 배고픈가? 메모리/CPU/토큰 소비가 정당화되는가? 메모리 사용량, API 호출 횟수, 번들 크기, 토큰 소비량을 확인한다.                                                                   |
-| 카미라 (색욕)   | 이 코드가 사용자가 진정으로 원하는 것을 충족하는가? UX가 매력적인가, 아니면 매력 뒤에 위험한 결함이 숨겨져 있는가? API 인체공학, 에러 메시지, 구현이 사용자의 명시된 의도와 일치하는지를 평가한다. |
-| 사테라 (질투)   | 최종 집계자. "수용 가능한 결과"가 무엇인지 결정하며, 가중 점수를 사용해 여섯 마녀의 평가를 집계하고 생존 또는 사망의 결정을 내린다: 체크포인트 통과 또는 사망회귀 트리거.                          |
+| Witch              | Evaluation Criteria                                                                                                                                                                                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Echidna (Greed)    | Has this implementation explored all possibilities? Are all edge cases handled? Is the knowledge thorough? Practically: checks test coverage, API completeness, documentation, and boundary condition handling.     |
+| Minerva (Wrath)    | Is this bug truly fixed, or was the problem just redistributed? Does the patch create new failure modes in unrelated features? Runs regression tests and verifies the fix doesn't break unrelated functionality.   |
+| Sekhmet (Sloth)    | Could the same result be achieved with less effort? Is there unnecessary complexity? Checks algorithmic efficiency, redundant computations, and over-engineering.                                                   |
+| Typhon (Pride)     | Does the code know its own sins? Are there intentionally included anti-patterns? Does it violate its own principles? Detects code smells, linting violations, and acknowledged but unfixed technical debt.          |
+| Daphne (Gluttony)  | How hungry is this code? Is the memory/CPU/token consumption justified? Checks memory usage, API call counts, bundle size, and token consumption.                                                                  |
+| Carmilla (Lust)    | Does this code fulfill what the user truly wants? Is the UX appealing, or are dangerous flaws hidden behind charm? Evaluates API ergonomics, error messages, and alignment with the user's stated intent.          |
+| Satella (Envy)     | The final aggregator. Determines what constitutes an "acceptable result," aggregates the six witches' evaluations using weighted scores, and renders the verdict of survival or death: checkpoint pass or Return by Death trigger. |
 
-### 렘
+### Rem
 
 > **!!! SPOILER ALERT !!!**
 
-![rem](./docs/rem.webp)
+![Rem](./docs/images/rem.webp)
 
-백경 토벌전 이후 폭식의 대죄주교에 의해 이름과 기억을 먹혀 가사상태에 빠지게 됩니다.  
-사망회귀의 체크포인트가 렘이 가사상태에 빠진 이후로 고정되고 다시 돌아갈 수 없게 되는데,  
-리제로 루프를 기획하면서 렘의 존재도 이 프로젝트에 분명 중요하게 필요 할 것이라는 생각에  
-마녀들의 다과회를 통과해도 기술부채가 남을 수 있다는 생각에 도달하며 렘의 존재를 이 프로젝트에 도입하게 되었습니다.
+After the White Whale subjugation, Rem had her name and memories consumed by the Archbishop of Gluttony, falling into suspended animation.  
+The Return by Death checkpoint became fixed after Rem fell into this state, making it impossible to go back further.  
+While planning the Re:ZERO Loop, the realization that Rem's existence would be crucial to this project — that technical debt could remain even after passing the Witches' Tea Party — led to incorporating Rem into the project.
 
-- 마녀들의 다과회를 통과하였지만, 기술부채나 이후에 수정해야 할 무언가가 존재하게 된다면 체크포인트가 갱신되며 그것들이 잔존하게 됩니다.
-- 렘은 기술부채나 수정해야 할 무언가를 확인하여 따로 기록합니다.
-- 이 것의 존재가 있다면 스바루는 다음 작업을 진행하기 전에 렘을 구하기 위한 작업을 먼저 진행합니다.
+- Even after passing the Witches' Tea Party, if technical debt or items requiring future fixes remain, they persist as the checkpoint updates.
+- Rem identifies and separately records technical debt and items needing fixes.
+- If such items exist, Subaru prioritizes saving Rem before proceeding to the next task.
 
-## 라이선스
+## License
 
-이 프로젝트는 [MIT 라이선스](./LICENSE)로 배포됩니다.
+This project is distributed under the [MIT License](./LICENSE).
