@@ -1,4 +1,5 @@
 ---
+name: task
 description: Create structured task definitions for software development projects
 ---
 

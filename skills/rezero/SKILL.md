@@ -1,4 +1,5 @@
 ---
+name: rezero
 description: Convert a markdown task document into task.json for the Re:ZERO Loop
 ---
 

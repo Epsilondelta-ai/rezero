@@ -1,4 +1,5 @@
 ---
+name: witches-tea-party
 description: Evaluate code changes from six perspectives (Echidna, Minerva, Sekhmet, Typhon, Daphne, Carmilla)
 ---
 

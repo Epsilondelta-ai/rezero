@@ -1,4 +1,5 @@
 ---
+name: rezero
 description: Start the Re:ZERO autonomous agent loop for implementing user stories with death regression
 ---
 
