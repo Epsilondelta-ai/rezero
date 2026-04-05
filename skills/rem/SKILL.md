@@ -1,3 +1,8 @@
+---
+name: rem
+description: Track and manage technical debt that accumulates from evaluation warnings
+---
+
 # Rem — Technical Debt Tracker
 
 Tracks and manages technical debt that accumulates when evaluations pass with warnings. Records debts in `rem.md`, prioritizes them, and verifies resolution.

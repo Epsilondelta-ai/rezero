@@ -1,3 +1,8 @@
+---
+name: task
+description: Create structured task definitions for software development projects
+---
+
 # Task Definition Generator
 
 This skill helps you create structured task definitions for software development projects. It produces a detailed task document that can later be converted into `task.json` for the Re:ZERO Loop autonomous agent system.
