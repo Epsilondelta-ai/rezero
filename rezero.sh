@@ -3,7 +3,7 @@
 # Implements user stories from task.json one at a time,
 # accumulating knowledge across iterations via progress.txt.
 #
-# Usage: ./rezero.sh [--tool amp|claude] [--max-deaths N] [max_iterations]
+# Usage: ./rezero.sh [--tool amp|claude|codex] [--max-deaths N] [max_iterations]
 
 set -e
 
@@ -40,8 +40,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate tool choice
-if [[ "$TOOL" != "amp" && "$TOOL" != "claude" ]]; then
-  echo "Error: Invalid tool '$TOOL'. Must be 'amp' or 'claude'."
+if [[ "$TOOL" != "amp" && "$TOOL" != "claude" && "$TOOL" != "codex" ]]; then
+  echo "Error: Invalid tool '$TOOL'. Must be 'amp', 'claude', or 'codex'."
   exit 1
 fi
 
@@ -113,6 +113,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Run the selected tool with the prompt
   if [[ "$TOOL" == "amp" ]]; then
     OUTPUT=$(echo "$PROMPT" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+  elif [[ "$TOOL" == "codex" ]]; then
+    OUTPUT=$(codex --full-auto --quiet "$PROMPT" 2>&1 | tee /dev/stderr) || true
   else
     OUTPUT=$(echo "$PROMPT" | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || true
   fi
