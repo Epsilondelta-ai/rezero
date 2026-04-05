@@ -11,7 +11,89 @@
 
 ## 목차
 
+- [사전 요구사항](#사전-요구사항)
+- [설치](#설치)
+- [워크플로우](#워크플로우)
 - [컨셉](#컨셉)
+
+## 사전 요구사항
+
+- **AI 코딩 도구** (다음 중 하나):
+  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
+  - [Amp CLI](https://ampcode.com)
+  - [OpenAI Codex](https://openai.com/index/codex/)
+- **jq** 설치 (`brew install jq` on macOS)
+- 프로젝트용 **git 저장소**
+
+## 설치
+
+### 옵션 1: 프로젝트에 직접 복사
+
+```bash
+mkdir -p scripts/rezero
+cp /path/to/rezero/rezero.sh scripts/rezero/
+cp /path/to/rezero/prompt.md scripts/rezero/prompt.md
+chmod +x scripts/rezero/rezero.sh
+```
+
+### 옵션 2: 스킬을 글로벌로 설치
+
+**Amp 사용자:**
+```bash
+cp -r skills/task ~/.config/amp/skills/
+cp -r skills/rezero ~/.config/amp/skills/
+cp -r skills/witches-tea-party ~/.config/amp/skills/
+cp -r skills/rem ~/.config/amp/skills/
+```
+
+**Claude Code 사용자:**
+```bash
+cp -r skills/task ~/.claude/skills/
+cp -r skills/rezero ~/.claude/skills/
+cp -r skills/witches-tea-party ~/.claude/skills/
+cp -r skills/rem ~/.claude/skills/
+```
+
+### 옵션 3: Claude Code 플러그인으로 사용
+
+```bash
+/plugin marketplace add epsilondelta-ai/rezero
+/plugin install rezero-skills@rezero-marketplace
+```
+
+설치 후 사용 가능: `/task` 스킬, `/rezero` 스킬
+
+## 워크플로우
+
+### 1. 태스크 정의 생성
+
+task 스킬을 사용해 사용자 스토리를 정의합니다:
+
+> "task 스킬을 로드하고 [기능 설명]에 대한 태스크를 생성해줘"
+
+결과물: `task.json` (우선순위와 수용 기준이 포함된 사용자 스토리)
+
+### 2. 리제로 루프 실행
+
+```bash
+./rezero.sh [max_iterations]                        # Claude (기본값)
+./rezero.sh --tool amp [max_iterations]             # Amp
+./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
+./rezero.sh --max-deaths 5 [max_iterations]         # 스토리당 최대 사망회귀 횟수 설정
+```
+
+기본 반복 횟수: 10회, 기본 최대 사망회귀: 3회
+
+**실행 과정:**
+
+1. `task.json`에서 기능 브랜치를 생성합니다
+2. 가장 높은 우선순위의 미완료 스토리를 선택합니다
+3. 해당 스토리를 구현합니다
+4. 마녀들의 다과회에서 품질 평가를 수행합니다
+5. 통과 시 커밋하고 `task.json`의 상태를 업데이트합니다
+6. 실패 시 사망회귀하여 체크포인트로 돌아갑니다
+7. `progress.txt`에 교훈을 기록합니다
+8. 모든 스토리가 완료되거나 반복 횟수에 도달할 때까지 반복합니다
 
 ## 컨셉
 
@@ -68,3 +150,7 @@
 - 마녀들의 다과회를 통과하였지만, 기술부채나 이후에 수정해야 할 무언가가 존재하게 된다면 체크포인트가 갱신되며 그것들이 잔존하게 됩니다.
 - 렘은 기술부채나 수정해야 할 무언가를 확인하여 따로 기록합니다.
 - 이 것의 존재가 있다면 스바루는 다음 작업을 진행하기 전에 렘을 구하기 위한 작업을 먼저 진행합니다.
+
+## 라이선스
+
+이 프로젝트는 [MIT 라이선스](./LICENSE)로 배포됩니다.
