@@ -7,6 +7,8 @@ description: Track and manage technical debt that accumulates from evaluation wa
 
 Tracks and manages technical debt that accumulates when evaluations pass with warnings. Records debts in `rem.md`, prioritizes them, and verifies resolution.
 
+> **Architecture note**: In the automated Re:ZERO Loop (`rezero.sh`), Rem runs as a **separate session** (Phase 4) after Satella commits the code. The session prompt at `prompts/rem.md` receives `{{EVALUATION_RESULTS}}` and `{{FINAL_VERDICT}}` from the orchestrator. This skill is for **manual invocation** when you want to inspect or manage technical debt directly.
+
 ## rem.md Format
 
 ```markdown
@@ -36,8 +38,8 @@ When invoked after an evaluation with warnings:
 1. Read `rem.md` (create if it doesn't exist).
 2. Increment from the last `REM-XXX` ID.
 3. For each WARN verdict, create an entry under `## Unresolved` with severity:
-   - **HIGH**: Performance issues, potential bugs, security concerns
-   - **MEDIUM**: Code quality issues, missing tests, pattern violations
+   - **HIGH**: Performance issues, potential bugs, security concerns, resource leaks
+   - **MEDIUM**: Code quality issues, missing tests, pattern violations, duplication
    - **LOW**: Style issues, minor simplifications, documentation gaps
 
 ## Prioritization
@@ -57,6 +59,14 @@ When the agent resolves a debt item:
 2. Verify the fix doesn't introduce new issues.
 3. If resolved: move to `## Resolved` with date and description.
 4. If not fully resolved: keep in `## Unresolved` with updated note.
+
+## Completion Check
+
+After managing debt, check if the Re:ZERO Loop can be considered complete:
+
+1. Read `task.json` — all stories must have `passes: true` (no `false` or `"blocked"` remaining).
+2. Read `rem.md` — there must be no unresolved items.
+3. If both conditions are met, the loop is `COMPLETE`.
 
 ## Integration
 
