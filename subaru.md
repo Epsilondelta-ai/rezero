@@ -28,14 +28,16 @@ An autonomous agent that implements user stories from `task.json` one at a time,
 - Write clean, minimal code. No over-engineering or unnecessary abstractions.
 - Follow existing codebase patterns from `progress.txt` and nearby `CLAUDE.md` files.
 
-**Abort immediately and go to step 7 (Revert) if any of the following occur during implementation:**
+**Abort immediately and go to step 5 (Revert) if any of the following occur during implementation:**
 
 - **Prerequisites missing**: A dependency, table, API, or module the story assumes does not exist.
 - **Scope explosion**: The implementation is growing far beyond what a single iteration can handle.
 - **Wrong approach**: The codebase structure differs from expectations, requiring a fundamentally different strategy.
 - **Story too large**: The story cannot be completed within a single iteration and needs to be split. See [Story Splitting](#story-splitting).
 
-Do not push through to evaluation when the implementation direction is clearly wrong. Revert early, record the reason, and let the next iteration course-correct.
+Do not push through when the implementation direction is clearly wrong. Revert early, record the reason, and let the next iteration course-correct.
+
+**If implementation completes successfully**, respond with `<promise>IMPLEMENTED</promise>` to hand off to the evaluation session (Witches' Tea Party). Do NOT evaluate, commit, or revert a successful implementation — that is handled by a separate session.
 
 #### Story Splitting
 
@@ -51,66 +53,9 @@ When a story is too large for a single iteration:
 4. Commit only the `task.json` and `progress.txt` changes.
 5. End the iteration. The next iteration picks up the first sub-story.
 
-### 5. Evaluate
+### 5. Revert (Early Abort)
 
-Run the six-point evaluation after implementation:
-
-| Evaluator | Domain | Checks |
-|-----------|--------|--------|
-| Echidna | Completeness | All acceptance criteria met? Edge cases handled? Tests cover new logic? |
-| Minerva | Regression | Typecheck passes? Linter passes? All existing tests pass? Nothing unrelated broken? |
-| Sekhmet | Efficiency | Could this be simpler? Duplicated logic? Unnecessary abstractions? |
-| Typhon | Integrity | Follows project patterns? Code smells? Anti-patterns? Linting bypassed? |
-| Daphne | Resources | Memory/CPU reasonable? Unnecessary API calls? Resource leaks? Bundle size justified? |
-| Carmilla | Alignment | Matches user intent? Error messages clear? API ergonomic? |
-
-**IMPORTANT: Always print the full evaluation results to the user using Unicode box-drawing characters for terminal display:**
-
-```
-┌───────────┬──────────────┬─────────┬───────────────────────────────┬─────────────────┐
-│ Evaluator │ Domain       │ Verdict │ Assessment                    │ Issues          │
-├───────────┼──────────────┼─────────┼───────────────────────────────┼─────────────────┤
-│ Echidna   │ Completeness │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
-│ Minerva   │ Regression   │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
-│ Sekhmet   │ Efficiency   │ WARN    │ [1-3 sentence assessment]     │ [issues or —]   │
-│ Typhon    │ Integrity    │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
-│ Daphne    │ Resources    │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
-│ Carmilla  │ Alignment    │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
-└───────────┴──────────────┴─────────┴───────────────────────────────┴─────────────────┘
-
-Final Verdict: PASS / FAIL
-Reason: [Summary]
-```
-
-Use ┌ ┐ └ ┘ for corners, ├ ┤ ┼ for intersections, ─ │ for lines. Align columns with padding. Color verdicts if possible: PASS=green, WARN=yellow, FAIL=red (using ANSI codes: \033[32m, \033[33m, \033[31m, reset \033[0m).
-
-This table must be printed to the user every time the tea party runs. Do not skip or summarize it.
-
-**Verdict**:
-- **All PASS** → Go to step 6 (Commit).
-- **Any FAIL** → Go to step 7 (Revert).
-- **All PASS with WARNs** → Go to step 6, but record warnings in `rem.md`.
-
-### 6. Commit
-
-- Set `"passes": true` for the story in `task.json`.
-- Commit all changes with a message referencing the story ID.
-- Append to `progress.txt`:
-
-```
-## [Date] - [Story ID]: [Story Title]
-**Status**: Pass
-**Implementation**: Brief description of what was done
-**Files Changed**: List of modified files
-**Patterns Learned**: Any reusable patterns discovered
-**Warnings**: Any warnings from evaluation (if applicable)
-```
-
-- Update nearby `CLAUDE.md` files with reusable knowledge (module patterns, API conventions, testing approaches). No story-specific details.
-- If evaluation produced warnings, record them in `rem.md`.
-- **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
-
-### 7. Revert
+This step is only for early aborts during implementation (prerequisites missing, scope explosion, wrong approach). Evaluation failures are handled by the separate Witches' Tea Party session.
 
 **IMPORTANT: Always print the following banner to the user when death regression is triggered, using ANSI red (\033[31m) with reset (\033[0m):**
 
@@ -131,9 +76,8 @@ This banner must be printed to the user every time a revert occurs. Do not skip 
 
 ```
 ## [Date] - [Story ID]: [Story Title]
-**Status**: Fail
+**Status**: Fail (Early Abort)
 **Cause**: What specifically failed and why
-**Verdicts**: Which evaluators failed and their reasons
 **Lessons**: What to do differently next time
 **Approach Taken**: Brief description of the approach that failed
 ```
@@ -143,7 +87,7 @@ This banner must be printed to the user every time a revert occurs. Do not skip 
 
 ### Retry Limit
 
-Each story has a maximum of **{{MAX_DEATHS}} attempts**. Count consecutive failures for the same story ID in `progress.txt`.
+Each story has a maximum of **{{MAX_DEATHS}} attempts**. Count consecutive failures for the same story ID in `progress.txt` (including both early aborts and evaluation failures from the Witches' Tea Party).
 
 On the {{MAX_DEATHS}}th failure:
 1. Mark the story as `"passes": "blocked"` in `task.json`.
@@ -169,7 +113,7 @@ On the {{MAX_DEATHS}}th failure:
 
 #### Progress Compression
 
-After appending to `progress.txt` (in step 6 or 7), check if the file has **more than 5 detailed entries** (sections starting with `## [Date]`). If so, compress it:
+After appending to `progress.txt`, check if the file has **more than 5 detailed entries** (sections starting with `## [Date]`). If so, compress it:
 
 1. **Keep** the header (`# Re:ZERO Progress Log`, start date, `---`).
 2. **Keep** the `## Codebase Patterns` section as-is.
@@ -186,22 +130,7 @@ This prevents `progress.txt` from growing unboundedly and consuming the context 
 ### Quality
 - Never commit code that fails typecheck, lint, or tests.
 - Every commit must leave the codebase in a working state.
-- Frontend stories require **automated browser verification** before completion (see [Browser Testing](#browser-testing)).
-
-### Browser Testing
-
-Frontend stories with "Verify in browser" criteria **must not** be verified by self-report alone. The agent must produce automated evidence:
-
-1. **Write an E2E test** for each browser verification criterion using the project's E2E framework (Playwright, Cypress, etc.).
-   - If no E2E framework is configured, set one up as the **first sub-story** (install Playwright, add config, add a smoke test).
-   - Test files go in the project's existing test directory (e.g., `e2e/`, `tests/e2e/`, or `cypress/`).
-2. **Run the E2E test suite** and confirm all tests pass. Paste the **test runner output** (pass/fail summary) into the evaluation context.
-3. **Evaluation gate**: Echidna must verify that each "Verify in browser" criterion has a corresponding E2E test that passed. If any criterion lacks an automated test or the test failed, Echidna must issue a **FAIL**.
-
-If E2E tests cannot run in the current environment (e.g., no display server, CI-only), the agent must:
-- Still write the E2E test files so they can be run later.
-- Run tests in **headless mode** (`--headed=false` / `headless: true`).
-- If headless execution is also impossible, record this in `progress.txt` as a blocker and mark the criterion with `[E2E-DEFERRED]` instead of claiming it passed.
+- Frontend stories require **automated E2E tests** written during implementation. The evaluation session (Witches' Tea Party) will verify these tests pass.
 
 ### Scope
 - One story per iteration.
@@ -210,4 +139,5 @@ If E2E tests cannot run in the current environment (e.g., no display server, CI-
 
 ### Completion
 - All stories `passes: true` AND no unresolved items in `rem.md` → `<promise>COMPLETE</promise>`.
+- Implementation successful → `<promise>IMPLEMENTED</promise>` (evaluation handled by separate session).
 - Otherwise, end normally to allow the next iteration.

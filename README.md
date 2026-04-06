@@ -99,13 +99,14 @@ Default iterations: 10, default max deaths: 3
 **Execution flow:**
 
 1. Creates a feature branch from `task.json`
-2. Selects the highest priority incomplete story
-3. Implements the story
-4. The Witches' Tea Party performs a quality evaluation
-5. On pass: commits and updates the status in `task.json`
-6. On fail: triggers Return by Death, reverting to the checkpoint
-7. Records lessons learned in `progress.txt`
-8. Repeats until all stories are complete or max iterations reached
+2. **Implementation session (Subaru)**: Selects the highest priority incomplete story and implements it
+3. **Evaluation session (Witches' Tea Party)**: A separate session performs a quality evaluation
+4. On pass: commits and updates the status in `task.json`
+5. On fail: triggers Return by Death, reverting to the checkpoint
+6. Records lessons learned in `progress.txt`
+7. Repeats until all stories are complete or max iterations reached
+
+The implementation and evaluation run in **separate sessions** to ensure unbiased evaluation — the agent that evaluates the code is independent from the agent that wrote it.
 
 ## Concepts
 
