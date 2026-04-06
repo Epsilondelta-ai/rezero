@@ -7,6 +7,8 @@ description: Evaluate code changes from six perspectives (Echidna, Minerva, Sekh
 
 Evaluates code changes from six perspectives after implementation. Produces a structured verdict: PASS, WARN, or FAIL per evaluator, then a final judgment.
 
+> **Architecture note**: In the automated Re:ZERO Loop (`rezero.sh`), each witch runs as a **separate parallel session** using prompts in `prompts/witches/`. Satella (`prompts/witches/satella.md`) aggregates results and handles commit/revert. Rem (`prompts/rem.md`) records warnings as technical debt. This skill is for **manual single-session evaluation** when you want to run all six checks at once.
+
 ## Process
 
 ### Step 1: Gather Context
@@ -110,15 +112,16 @@ Aggregate all six evaluations:
 **Reason**: [Summary]
 ```
 
-- **Any FAIL** → `FAIL`. Agent must revert and retry.
-- **All PASS, no warnings** → `PASS`.
-- **All PASS with WARNs** → `PASS`, but warnings recorded in `rem.md`.
+- **Any FAIL** -> `FAIL`. Changes should be reverted and retried.
+- **All PASS, no warnings** -> `PASS`.
+- **All PASS with WARNs** -> `PASS`, but warnings should be recorded as technical debt (see `/rem` skill).
 
-### Step 4: Record Warnings
+### Output Format (for automated parsing)
 
-If PASS with warnings, output `rem.md` entries:
+When used by the automated loop, each witch outputs exactly these three lines at the end:
 
 ```
-## [Date] - [Story ID]: Evaluation Warnings
-- **[Evaluator]**: [Warning description and suggested fix]
+[VERDICT] PASS or WARN or FAIL
+[ASSESSMENT] Your 1-3 sentence assessment on a single line
+[ISSUES] Specific issues found, or — if none
 ```
