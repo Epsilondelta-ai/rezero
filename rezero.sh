@@ -3,7 +3,7 @@
 # Implements user stories from task.json one at a time,
 # accumulating knowledge across iterations via progress.txt.
 #
-# Usage: ./rezero.sh [--tool amp|claude|codex] [--max-deaths N] [max_iterations]
+# Usage: ./rezero.sh [--tool claude|codex] [--max-deaths N] [max_iterations]
 
 set -e
 
@@ -40,8 +40,8 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Validate tool choice
-if [[ "$TOOL" != "amp" && "$TOOL" != "claude" && "$TOOL" != "codex" ]]; then
-  echo "Error: Invalid tool '$TOOL'. Must be 'amp', 'claude', or 'codex'."
+if [[ "$TOOL" != "claude" && "$TOOL" != "codex" ]]; then
+  echo "Error: Invalid tool '$TOOL'. Must be 'claude' or 'codex'."
   exit 1
 fi
 
@@ -114,12 +114,41 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   # Run the selected tool with the prompt, capturing exit code
   EXIT_CODE=0
-  if [[ "$TOOL" == "amp" ]]; then
-    OUTPUT=$(echo "$PROMPT" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || EXIT_CODE=$?
-  elif [[ "$TOOL" == "codex" ]]; then
-    OUTPUT=$(codex --full-auto --quiet "$PROMPT" 2>&1 | tee /dev/stderr) || EXIT_CODE=$?
+  if [[ "$TOOL" == "codex" ]]; then
+    # Use JSONL to show real-time progress (tool calls + text output)
+    STREAM_FILE=$(mktemp)
+    {
+      echo "$PROMPT" | codex exec --full-auto --json - 2>/dev/null | \
+        tee "$STREAM_FILE" | \
+        jq --unbuffered -r '
+          if .type == "item.completed" then
+            if .item.type == "agent_message" then .item.text
+            else "  \u25b6 \(.item.name // .item.type)"
+            end
+          else empty end
+        ' >&2
+    } || EXIT_CODE=$?
+    OUTPUT=$(jq -rs '[.[] | select(.type == "item.completed" and .item.type == "agent_message") | .item.text] | join("\n")' "$STREAM_FILE" 2>/dev/null || echo "")
+    rm -f "$STREAM_FILE"
   else
-    OUTPUT=$(echo "$PROMPT" | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || EXIT_CODE=$?
+    # Use stream-json to show real-time progress (tool calls + text output)
+    STREAM_FILE=$(mktemp)
+    {
+      echo "$PROMPT" | claude --dangerously-skip-permissions --print --verbose \
+        --output-format stream-json 2>/dev/null | \
+        tee "$STREAM_FILE" | \
+        jq --unbuffered -r '
+          if .type == "assistant" then
+            [.message.content[]? |
+              if .type == "tool_use" then "  \u25b6 \(.name)"
+              elif .type == "text" then .text
+              else empty end
+            ] | join("\n") | select(length > 0)
+          else empty end
+        ' >&2
+    } || EXIT_CODE=$?
+    OUTPUT=$(jq -r 'select(.type == "result") | .result // empty' "$STREAM_FILE" 2>/dev/null || echo "")
+    rm -f "$STREAM_FILE"
   fi
 
   # Detect agent crash: non-zero exit code without a recognized promise signal
