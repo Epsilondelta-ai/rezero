@@ -32,7 +32,6 @@ Re:ZERO Loop entstand aus der Idee, die Rückkehr durch den Tod in die KI einzuf
 
 - **KI-Codierungswerkzeug** (eines der folgenden):
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [Amp CLI](https://ampcode.com)
   - [OpenAI Codex](https://openai.com/index/codex/)
 - **jq** installiert (`brew install jq` auf macOS)
 - Ein **Git-Repository** für Ihr Projekt
@@ -50,15 +49,6 @@ chmod +x scripts/rezero/rezero.sh
 
 ### Option 2: Skills global installieren
 
-**Amp-Benutzer:**
-```bash
-cp -r skills/task ~/.config/amp/skills/
-cp -r skills/rezero ~/.config/amp/skills/
-cp -r skills/witches-tea-party ~/.config/amp/skills/
-cp -r skills/rem ~/.config/amp/skills/
-```
-
-**Claude Code-Benutzer:**
 ```bash
 cp -r skills/task ~/.claude/skills/
 cp -r skills/rezero ~/.claude/skills/
@@ -89,7 +79,6 @@ Ausgabe: `task.json` (eine User Story mit Prioritäten und Akzeptanzkriterien)
 
 ```bash
 ./rezero.sh [max_iterations]                        # Claude (Standard)
-./rezero.sh --tool amp [max_iterations]             # Amp
 ./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
 ./rezero.sh --max-deaths 5 [max_iterations]         # Max. Rückkehr durch den Tod pro Story festlegen
 ```
