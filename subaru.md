@@ -61,7 +61,7 @@ This step is only for early aborts during implementation (prerequisites missing,
 
 ```
 \033[31m╔══════════════════════════════════════════════════════════╗
-║                    사망회귀 (Death Regression)            ║
+║                    Death Regression                       ║
 ║                                                          ║
 ║  Story: [Story ID] - [Story Title]                       ║
 ║  Cause: [Brief reason for failure]                       ║

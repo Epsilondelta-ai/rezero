@@ -168,12 +168,13 @@ handle_crash() {
   local LABEL="$1"
   local OUT_TEXT="$2"
   local EC="$3"
-  local HC=false HB=false HI=false
+  local HC=false HB=false HI=false HM=false
   echo "$OUT_TEXT" | grep -q "<promise>COMPLETE</promise>" && HC=true
   echo "$OUT_TEXT" | grep -q "<promise>BLOCKED</promise>" && HB=true
   echo "$OUT_TEXT" | grep -q "<promise>IMPLEMENTED</promise>" && HI=true
+  echo "$OUT_TEXT" | grep -q "<promise>COMMITTED</promise>" && HM=true
 
-  if [[ $EC -ne 0 ]] && ! $HC && ! $HB && ! $HI; then
+  if [[ $EC -ne 0 ]] && ! $HC && ! $HB && ! $HI && ! $HM; then
     DEATH_COUNT=$((DEATH_COUNT + 1))
     echo ""
     echo "WARNING: $LABEL crashed with exit code $EC (death $DEATH_COUNT/$MAX_DEATHS)"
@@ -294,7 +295,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   # ── Phase 2: Witches' Tea Party (6 parallel sessions) ─────────────
   echo ""
-  echo "  Phase 2: Witches' Tea Party (마녀들의 다과회)"
+  echo "  Phase 2: Witches' Tea Party"
   echo "  ─────────────────────────────────────────────"
   echo "  Launching 6 witch evaluators in parallel..."
 
@@ -389,21 +390,24 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     FAIL) printf "  Final Verdict: \033[31mFAIL\033[0m\n" ;;
   esac
 
+  # ── Helper: inject evaluation results into a prompt template ──────
+  inject_evaluation() {
+    local TMPL="$1"
+    TMPL=$(echo "$TMPL" | sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g")
+    TMPL=$(echo "$TMPL" | sed "s/{{FINAL_VERDICT}}/$FINAL_VERDICT/g")
+    local TMPF=$(mktemp)
+    echo "$EVALUATION_RESULTS" > "$TMPF"
+    TMPL=$(awk -v results="$(cat "$TMPF")" '{gsub(/\{\{EVALUATION_RESULTS\}\}/, results)}1' <<< "$TMPL")
+    rm -f "$TMPF"
+    echo "$TMPL"
+  }
+
   # ── Phase 3: Satella (Judgment & Checkpoint) ──────────────────────
   echo ""
-  echo "  Phase 3: Satella (사텔라) — Final Judgment"
-  echo "  ──────────────────────────────────────────"
+  echo "  Phase 3: Satella — Final Judgment"
+  echo "  ─────────────────────────────────"
 
-  SATELLA_PROMPT=$(cat "$WITCHES_DIR/satella.md")
-  SATELLA_PROMPT=$(echo "$SATELLA_PROMPT" | sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g")
-  # Inject evaluation results and final verdict
-  SATELLA_PROMPT=$(echo "$SATELLA_PROMPT" | sed "s/{{FINAL_VERDICT}}/$FINAL_VERDICT/g")
-  # Use a temp file for multi-line sed replacement
-  SATELLA_RESULTS_FILE=$(mktemp)
-  echo "$EVALUATION_RESULTS" > "$SATELLA_RESULTS_FILE"
-  SATELLA_PROMPT=$(awk -v results="$(cat "$SATELLA_RESULTS_FILE")" '{gsub(/\{\{EVALUATION_RESULTS\}\}/, results)}1' <<< "$SATELLA_PROMPT")
-  rm -f "$SATELLA_RESULTS_FILE"
-
+  SATELLA_PROMPT=$(inject_evaluation "$(cat "$WITCHES_DIR/satella.md")")
   run_agent "$SATELLA_PROMPT"
 
   # Handle crash
@@ -413,18 +417,11 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     continue
   fi
 
-  # Check for completion/blocked signals
-  HAS_COMPLETE=false
+  # Check for signals
+  HAS_COMMITTED=false
   HAS_BLOCKED=false
-  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
+  echo "$OUTPUT" | grep -q "<promise>COMMITTED</promise>" && HAS_COMMITTED=true
   echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>" && HAS_BLOCKED=true
-
-  if $HAS_COMPLETE; then
-    echo ""
-    echo "Re:ZERO Loop complete! All stories passed."
-    echo "Completed at iteration $i of $MAX_ITERATIONS"
-    exit 0
-  fi
 
   if $HAS_BLOCKED; then
     echo ""
@@ -432,6 +429,40 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     echo "Blocked at iteration $i of $MAX_ITERATIONS"
     echo "Check $PROGRESS_FILE for details."
     exit 2
+  fi
+
+  # If not COMMITTED, this was a FAIL → revert happened, skip Rem
+  if ! $HAS_COMMITTED; then
+    DEATH_COUNT=0
+    echo "Evaluation failed. Continuing to next iteration..."
+    sleep 2
+    continue
+  fi
+
+  # ── Phase 4: Rem (Technical Debt Management) ─────────────────────
+  echo ""
+  echo "  Phase 4: Rem — Technical Debt Management"
+  echo "  ─────────────────────────────────────────"
+
+  REM_PROMPT=$(inject_evaluation "$(cat "$WITCHES_DIR/rem.md")")
+  run_agent "$REM_PROMPT"
+
+  # Handle crash (non-fatal for Rem — debt tracking is best-effort)
+  if handle_crash "Rem" "$OUTPUT" "$EXIT_CODE"; then
+    echo "Rem session crashed, but commit succeeded. Continuing..."
+    sleep 2
+    # Don't continue — the commit already happened, proceed normally
+  fi
+
+  # Check for completion signal from Rem
+  HAS_COMPLETE=false
+  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
+
+  if $HAS_COMPLETE; then
+    echo ""
+    echo "Re:ZERO Loop complete! All stories passed."
+    echo "Completed at iteration $i of $MAX_ITERATIONS"
+    exit 0
   fi
 
   # Iteration complete

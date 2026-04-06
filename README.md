@@ -96,16 +96,16 @@ Output: `task.json` (a user story with priorities and acceptance criteria)
 
 Default iterations: 10, default max deaths: 3
 
-**Execution flow (3 phases per iteration):**
+**Execution flow (4 phases per iteration):**
 
 1. Creates a feature branch from `task.json`
 2. **Phase 1 — Implementation (Subaru)**: Selects the highest priority incomplete story and implements it
 3. **Phase 2 — Witches' Tea Party (6 parallel sessions)**: Six witches evaluate the code simultaneously, each in their own independent session
 4. **Phase 3 — Final Judgment (Satella)**: Aggregates the six verdicts, commits on pass or triggers Return by Death on fail
-5. Records lessons learned in `progress.txt`
+5. **Phase 4 — Technical Debt (Rem)**: Records evaluation warnings in `rem.md`, reviews existing debt, checks for loop completion
 6. Repeats until all stories are complete or max iterations reached
 
-Each iteration runs up to **8 sessions**: 1 implementation + 6 parallel evaluators + 1 judgment. The six witches run in parallel for fast, unbiased evaluation — each evaluator is completely independent from the implementer and from each other.
+Each iteration runs up to **9 sessions**: 1 implementation + 6 parallel evaluators + 1 judgment + 1 debt management. The six witches run in parallel for fast, unbiased evaluation — each evaluator is completely independent from the implementer and from each other.
 
 ## Concepts
 
