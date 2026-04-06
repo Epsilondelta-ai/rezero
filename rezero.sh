@@ -102,7 +102,8 @@ echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS | Max deaths: $MAX_DEATHS"
 echo ""
 
 DEATH_COUNT=0
-WITCHES_DIR="$SCRIPT_DIR/witches"
+PROMPTS_DIR="$SCRIPT_DIR/prompts"
+WITCHES_DIR="$PROMPTS_DIR/witches"
 WITCH_NAMES=("echidna" "minerva" "sekhmet" "typhon" "daphne" "carmilla")
 WITCH_LABELS=("Echidna" "Minerva" "Sekhmet" "Typhon" "Daphne" "Carmilla")
 WITCH_DOMAINS=("Completeness" "Regression" "Efficiency" "Integrity" "Resources" "Alignment")
@@ -253,7 +254,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Phase 1: Implementation"
   echo "  ───────────────────────"
 
-  IMPL_PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$SCRIPT_DIR/subaru.md")
+  IMPL_PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$PROMPTS_DIR/subaru.md")
   run_agent "$IMPL_PROMPT"
 
   # Handle crash
@@ -444,7 +445,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Phase 4: Rem — Technical Debt Management"
   echo "  ─────────────────────────────────────────"
 
-  REM_PROMPT=$(inject_evaluation "$(cat "$SCRIPT_DIR/rem-session.md")")
+  REM_PROMPT=$(inject_evaluation "$(cat "$PROMPTS_DIR/rem.md")")
   run_agent "$REM_PROMPT"
 
   # Handle crash (non-fatal for Rem — debt tracking is best-effort)
