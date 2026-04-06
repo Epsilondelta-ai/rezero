@@ -1,6 +1,6 @@
 {
   "name": "rezero",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Re:ZERO Loop - Autonomous AI agent loop with death regression mechanism inspired by Re:Zero",
   "author": {
     "name": "Epsilondelta-ai",
