@@ -110,7 +110,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "==============================================================="
 
   # Inject MAX_DEATHS into prompt template
-  PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$SCRIPT_DIR/prompt.md")
+  PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$SCRIPT_DIR/subaru.md")
 
   # Run the selected tool with the prompt, capturing exit code
   EXIT_CODE=0
