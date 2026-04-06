@@ -101,6 +101,8 @@ echo ""
 echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS | Max deaths: $MAX_DEATHS"
 echo ""
 
+DEATH_COUNT=0
+
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
   echo "==============================================================="
@@ -110,17 +112,45 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Inject MAX_DEATHS into prompt template
   PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$SCRIPT_DIR/prompt.md")
 
-  # Run the selected tool with the prompt
+  # Run the selected tool with the prompt, capturing exit code
+  EXIT_CODE=0
   if [[ "$TOOL" == "amp" ]]; then
-    OUTPUT=$(echo "$PROMPT" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(echo "$PROMPT" | amp --dangerously-allow-all 2>&1 | tee /dev/stderr) || EXIT_CODE=$?
   elif [[ "$TOOL" == "codex" ]]; then
-    OUTPUT=$(codex --full-auto --quiet "$PROMPT" 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(codex --full-auto --quiet "$PROMPT" 2>&1 | tee /dev/stderr) || EXIT_CODE=$?
   else
-    OUTPUT=$(echo "$PROMPT" | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || true
+    OUTPUT=$(echo "$PROMPT" | claude --dangerously-skip-permissions --print 2>&1 | tee /dev/stderr) || EXIT_CODE=$?
+  fi
+
+  # Detect agent crash: non-zero exit code without a recognized promise signal
+  HAS_COMPLETE=false
+  HAS_BLOCKED=false
+  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
+  echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>" && HAS_BLOCKED=true
+
+  if [[ $EXIT_CODE -ne 0 ]] && ! $HAS_COMPLETE && ! $HAS_BLOCKED; then
+    DEATH_COUNT=$((DEATH_COUNT + 1))
+    echo ""
+    echo "WARNING: Agent crashed with exit code $EXIT_CODE (death $DEATH_COUNT/$MAX_DEATHS)"
+    echo "---" >> "$PROGRESS_FILE"
+    echo "CRASH at iteration $i: Agent exited with code $EXIT_CODE (death $DEATH_COUNT/$MAX_DEATHS)" >> "$PROGRESS_FILE"
+    echo "Time: $(date)" >> "$PROGRESS_FILE"
+
+    if [[ $DEATH_COUNT -ge $MAX_DEATHS ]]; then
+      echo ""
+      echo "Re:ZERO Loop aborted: Agent crashed $DEATH_COUNT times (max deaths: $MAX_DEATHS)."
+      echo "Check $PROGRESS_FILE for details."
+      echo "ABORTED: Reached max deaths ($MAX_DEATHS) at iteration $i" >> "$PROGRESS_FILE"
+      exit 3
+    fi
+
+    echo "Retrying after crash..."
+    sleep 2
+    continue
   fi
 
   # Check for completion signal
-  if echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>"; then
+  if $HAS_COMPLETE; then
     echo ""
     echo "Re:ZERO Loop complete! All stories passed."
     echo "Completed at iteration $i of $MAX_ITERATIONS"
@@ -128,7 +158,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   fi
 
   # Check for blocked signal
-  if echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>"; then
+  if $HAS_BLOCKED; then
     echo ""
     echo "Re:ZERO Loop blocked. User intervention needed."
     echo "Blocked at iteration $i of $MAX_ITERATIONS"
@@ -136,6 +166,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 2
   fi
 
+  # Agent exited successfully but without a promise signal — normal iteration
+  DEATH_COUNT=0  # Reset on successful iteration
   echo "Iteration $i complete. Continuing..."
   sleep 2
 done
