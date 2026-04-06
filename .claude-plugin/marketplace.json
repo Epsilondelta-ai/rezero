@@ -1,0 +1,15 @@
+{
+  "name": "rezero-marketplace",
+  "description": "Re:ZERO Loop plugin marketplace",
+  "owner": {
+    "name": "Epsilondelta-ai",
+    "url": "https://github.com/epsilondelta-ai"
+  },
+  "plugins": [
+    {
+      "name": "rezero",
+      "source": ".",
+      "description": "Re:ZERO Loop - Autonomous AI agent loop with death regression mechanism inspired by Re:Zero"
+    }
+  ]
+}
