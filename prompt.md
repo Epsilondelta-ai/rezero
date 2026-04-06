@@ -158,8 +158,10 @@ On the {{MAX_DEATHS}}th failure:
 ## Principles
 
 ### Progress Tracking
-- **Never replace** `progress.txt` — always append.
-- Maintain a **"Codebase Patterns"** section at the top of `progress.txt` for reusable approaches.
+- **Always append** to `progress.txt` — do not manually edit or delete existing entries.
+- The loop automatically compresses older entries into one-line summaries between iterations, keeping the most recent entries in full detail. This prevents `progress.txt` from consuming excessive context.
+- A **"Previous Iterations"** section contains compressed one-line summaries of older entries. Use these for high-level context; detailed learnings are preserved in full for recent iterations.
+- Maintain a **"Codebase Patterns"** section at the top of `progress.txt` for reusable approaches. This section is preserved across compressions.
 
 ### Quality
 - Never commit code that fails typecheck, lint, or tests.

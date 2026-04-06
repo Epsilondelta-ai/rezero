@@ -102,12 +102,18 @@ echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS | Max deaths: $MAX_DEATHS"
 echo ""
 
 DEATH_COUNT=0
+COMPRESS_KEEP=5  # Number of recent entries to keep in full detail
 
 for i in $(seq 1 $MAX_ITERATIONS); do
   echo ""
   echo "==============================================================="
   echo "  Re:ZERO Iteration $i of $MAX_ITERATIONS ($TOOL)"
   echo "==============================================================="
+
+  # Compress progress.txt to prevent context window bloat
+  if [ -f "$PROGRESS_FILE" ]; then
+    python3 "$SCRIPT_DIR/compress_progress.py" "$PROGRESS_FILE" --keep "$COMPRESS_KEEP" 2>&1 | sed 's/^/  [compress] /'
+  fi
 
   # Inject MAX_DEATHS into prompt template
   PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$SCRIPT_DIR/prompt.md")
