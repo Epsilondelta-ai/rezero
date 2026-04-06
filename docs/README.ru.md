@@ -43,7 +43,7 @@ Re:ZERO Loop родился из идеи внедрить Посмертное 
 ```bash
 mkdir -p scripts/rezero
 cp /path/to/rezero/rezero.sh scripts/rezero/
-cp /path/to/rezero/subaru.md scripts/rezero/subaru.md
+cp -r /path/to/rezero/prompts scripts/rezero/prompts
 chmod +x scripts/rezero/rezero.sh
 ```
 
