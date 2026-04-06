@@ -44,7 +44,7 @@ Re:ZERO Loop entstand aus der Idee, die Rückkehr durch den Tod in die KI einzuf
 ```bash
 mkdir -p scripts/rezero
 cp /path/to/rezero/rezero.sh scripts/rezero/
-cp /path/to/rezero/prompt.md scripts/rezero/prompt.md
+cp /path/to/rezero/subaru.md scripts/rezero/subaru.md
 chmod +x scripts/rezero/rezero.sh
 ```
 

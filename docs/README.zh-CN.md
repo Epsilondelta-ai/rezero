@@ -44,7 +44,7 @@ Re:ZERO Loop 正是基于这样的想法而诞生的：如果将死亡回归引�
 ```bash
 mkdir -p scripts/rezero
 cp /path/to/rezero/rezero.sh scripts/rezero/
-cp /path/to/rezero/prompt.md scripts/rezero/prompt.md
+cp /path/to/rezero/subaru.md scripts/rezero/subaru.md
 chmod +x scripts/rezero/rezero.sh
 ```
 

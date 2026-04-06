@@ -44,7 +44,7 @@ Re:ZERO Loopは、この問題を克服するために、死に戻りをAIに導
 ```bash
 mkdir -p scripts/rezero
 cp /path/to/rezero/rezero.sh scripts/rezero/
-cp /path/to/rezero/prompt.md scripts/rezero/prompt.md
+cp /path/to/rezero/subaru.md scripts/rezero/subaru.md
 chmod +x scripts/rezero/rezero.sh
 ```
 
