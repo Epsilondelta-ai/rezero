@@ -182,7 +182,22 @@ This prevents `progress.txt` from growing unboundedly and consuming the context 
 ### Quality
 - Never commit code that fails typecheck, lint, or tests.
 - Every commit must leave the codebase in a working state.
-- Frontend stories require browser verification before completion.
+- Frontend stories require **automated browser verification** before completion (see [Browser Testing](#browser-testing)).
+
+### Browser Testing
+
+Frontend stories with "Verify in browser" criteria **must not** be verified by self-report alone. The agent must produce automated evidence:
+
+1. **Write an E2E test** for each browser verification criterion using the project's E2E framework (Playwright, Cypress, etc.).
+   - If no E2E framework is configured, set one up as the **first sub-story** (install Playwright, add config, add a smoke test).
+   - Test files go in the project's existing test directory (e.g., `e2e/`, `tests/e2e/`, or `cypress/`).
+2. **Run the E2E test suite** and confirm all tests pass. Paste the **test runner output** (pass/fail summary) into the evaluation context.
+3. **Evaluation gate**: Echidna must verify that each "Verify in browser" criterion has a corresponding E2E test that passed. If any criterion lacks an automated test or the test failed, Echidna must issue a **FAIL**.
+
+If E2E tests cannot run in the current environment (e.g., no display server, CI-only), the agent must:
+- Still write the E2E test files so they can be run later.
+- Run tests in **headless mode** (`--headed=false` / `headless: true`).
+- If headless execution is also impossible, record this in `progress.txt` as a blocker and mark the criterion with `[E2E-DEFERRED]` instead of claiming it passed.
 
 ### Scope
 - One story per iteration.

@@ -33,9 +33,10 @@ For each evaluator, output:
 - Are ALL acceptance criteria satisfied? Check each explicitly.
 - Are edge cases handled (null, empty, boundary)?
 - Are there tests covering new logic?
+- **For UI stories**: Does every "E2E test:" criterion have a corresponding automated test file that was executed and passed? Check the test runner output for evidence. Self-reported "I verified in the browser" is **not acceptable** — require actual test output.
 - Is documentation updated where needed?
 
-**FAIL**: Acceptance criterion not met, or critical edge cases unhandled.
+**FAIL**: Acceptance criterion not met, critical edge cases unhandled, or **UI criterion lacks a passing E2E test**.
 **WARN**: Minor edge cases unhandled, or test coverage could improve.
 
 #### Minerva — Regression
@@ -84,8 +85,9 @@ For each evaluator, output:
 - Error messages clear and actionable?
 - API surface intuitive?
 - UI interactions smooth with clear feedback?
+- **For UI stories**: E2E tests cover realistic user flows, not just DOM existence checks. Tests should simulate actual user interaction (click, type, navigate) and assert visible outcomes.
 
-**FAIL**: Technically meets criteria but misses user's actual intent.
+**FAIL**: Technically meets criteria but misses user's actual intent, or **E2E tests are superficial stubs that don't exercise real user flows**.
 **WARN**: UX could improve but functional requirements met.
 
 ### Step 3: Final Judgment

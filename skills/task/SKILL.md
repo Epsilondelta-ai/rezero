@@ -54,7 +54,9 @@ Format:
 - GOOD: "Create a PriorityBadge component that displays colored labels" — one UI component
 - BAD: "Implement the full priority system with database, API, and UI" — too large, will exhaust context
 
-**UI stories** must include: `- [ ] Verify in browser that [specific visual/interaction requirement]`
+**UI stories** must include:
+- `- [ ] E2E test: [specific visual/interaction requirement]` — an automated Playwright/Cypress test that verifies the criterion in a headless browser.
+- Do NOT use bare "Verify in browser" criteria that rely on manual or self-reported inspection. Every browser verification must map to a runnable E2E test.
 
 #### 4. Functional Requirements
 Numbered requirements (FR-1, FR-2, etc.) specifying exact behavior. Be explicit — write as if a junior developer or AI agent will implement this with no additional context.

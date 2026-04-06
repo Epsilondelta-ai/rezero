@@ -42,7 +42,7 @@ A markdown task document from `tasks/task-[feature-name].md`.
 - Assign sequential IDs: `US-001`, `US-002`, etc.
 - Pull acceptance criteria directly from the story's checklist items.
 - Every story MUST include `"Typecheck passes"` as a criterion.
-- UI-facing stories MUST include a browser verification criterion.
+- UI-facing stories MUST include an **automated browser verification** criterion (E2E test), not a manual "Verify in browser" self-report. Use the format: `"E2E test: [what to verify]"`.
 
 ### Priority & Dependency Ordering
 Assign priorities based on implementation dependency order:
@@ -131,7 +131,7 @@ Given a task document for "Add task priority system":
       "criteria": [
         "Priority badge visible on each task card",
         "Colors match specification (red/yellow/gray)",
-        "Verify in browser that badges render correctly",
+        "E2E test: priority badges render with correct colors on task cards",
         "Typecheck passes"
       ],
       "priority": 3,
