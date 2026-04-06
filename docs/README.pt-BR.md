@@ -32,7 +32,6 @@ O Re:ZERO Loop nasceu da ideia de introduzir o Retorno pela Morte na IA para sup
 
 - **Ferramenta de codificação com IA** (uma das seguintes):
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [Amp CLI](https://ampcode.com)
   - [OpenAI Codex](https://openai.com/index/codex/)
 - **jq** instalado (`brew install jq` no macOS)
 - Um **repositório git** para seu projeto
@@ -50,15 +49,6 @@ chmod +x scripts/rezero/rezero.sh
 
 ### Opção 2: Instalar skills globalmente
 
-**Usuários do Amp:**
-```bash
-cp -r skills/task ~/.config/amp/skills/
-cp -r skills/rezero ~/.config/amp/skills/
-cp -r skills/witches-tea-party ~/.config/amp/skills/
-cp -r skills/rem ~/.config/amp/skills/
-```
-
-**Usuários do Claude Code:**
 ```bash
 cp -r skills/task ~/.claude/skills/
 cp -r skills/rezero ~/.claude/skills/
@@ -89,7 +79,6 @@ Saída: `task.json` (uma história de usuário com prioridades e critérios de a
 
 ```bash
 ./rezero.sh [max_iterations]                        # Claude (padrão)
-./rezero.sh --tool amp [max_iterations]             # Amp
 ./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
 ./rezero.sh --max-deaths 5 [max_iterations]         # Definir máximo de Retorno pela Morte por história
 ```

@@ -32,7 +32,6 @@
 
 - **AI 코딩 도구** (다음 중 하나):
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [Amp CLI](https://ampcode.com)
   - [OpenAI Codex](https://openai.com/index/codex/)
 - **jq** 설치 (`brew install jq` on macOS)
 - 프로젝트용 **git 저장소**
@@ -50,15 +49,6 @@ chmod +x scripts/rezero/rezero.sh
 
 ### 옵션 2: 스킬을 글로벌로 설치
 
-**Amp 사용자:**
-```bash
-cp -r skills/task ~/.config/amp/skills/
-cp -r skills/rezero ~/.config/amp/skills/
-cp -r skills/witches-tea-party ~/.config/amp/skills/
-cp -r skills/rem ~/.config/amp/skills/
-```
-
-**Claude Code 사용자:**
 ```bash
 cp -r skills/task ~/.claude/skills/
 cp -r skills/rezero ~/.claude/skills/
@@ -89,7 +79,6 @@ task 스킬을 사용해 사용자 스토리를 정의합니다:
 
 ```bash
 ./rezero.sh [max_iterations]                        # Claude (기본값)
-./rezero.sh --tool amp [max_iterations]             # Amp
 ./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
 ./rezero.sh --max-deaths 5 [max_iterations]         # 스토리당 최대 사망회귀 횟수 설정
 ```

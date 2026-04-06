@@ -32,7 +32,6 @@ Re:ZERO Loopは、この問題を克服するために、死に戻りをAIに導
 
 - **AIコーディングツール**（以下のいずれか）：
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [Amp CLI](https://ampcode.com)
   - [OpenAI Codex](https://openai.com/index/codex/)
 - **jq** のインストール（macOSの場合：`brew install jq`）
 - プロジェクト用の **gitリポジトリ**
@@ -50,15 +49,6 @@ chmod +x scripts/rezero/rezero.sh
 
 ### オプション2：スキルをグローバルにインストール
 
-**Ampユーザー：**
-```bash
-cp -r skills/task ~/.config/amp/skills/
-cp -r skills/rezero ~/.config/amp/skills/
-cp -r skills/witches-tea-party ~/.config/amp/skills/
-cp -r skills/rem ~/.config/amp/skills/
-```
-
-**Claude Codeユーザー：**
 ```bash
 cp -r skills/task ~/.claude/skills/
 cp -r skills/rezero ~/.claude/skills/
@@ -89,7 +79,6 @@ taskスキルを使用してユーザーストーリーを定義します：
 
 ```bash
 ./rezero.sh [max_iterations]                        # Claude（デフォルト）
-./rezero.sh --tool amp [max_iterations]             # Amp
 ./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
 ./rezero.sh --max-deaths 5 [max_iterations]         # ストーリーごとの最大死に戻り回数を設定
 ```

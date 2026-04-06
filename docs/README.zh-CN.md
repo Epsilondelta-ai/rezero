@@ -32,7 +32,6 @@ Re:ZERO Loop 正是基于这样的想法而诞生的：如果将死亡回归引�
 
 - **AI编程工具**（以下任选其一）：
   - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [Amp CLI](https://ampcode.com)
   - [OpenAI Codex](https://openai.com/index/codex/)
 - 已安装 **jq**（macOS上：`brew install jq`）
 - 项目用 **git 仓库**
@@ -50,15 +49,6 @@ chmod +x scripts/rezero/rezero.sh
 
 ### 选项二：全局安装技能
 
-**Amp 用户：**
-```bash
-cp -r skills/task ~/.config/amp/skills/
-cp -r skills/rezero ~/.config/amp/skills/
-cp -r skills/witches-tea-party ~/.config/amp/skills/
-cp -r skills/rem ~/.config/amp/skills/
-```
-
-**Claude Code 用户：**
 ```bash
 cp -r skills/task ~/.claude/skills/
 cp -r skills/rezero ~/.claude/skills/
@@ -89,7 +79,6 @@ cp -r skills/rem ~/.claude/skills/
 
 ```bash
 ./rezero.sh [max_iterations]                        # Claude（默认）
-./rezero.sh --tool amp [max_iterations]             # Amp
 ./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
 ./rezero.sh --max-deaths 5 [max_iterations]         # 设置每个故事的最大死亡回归次数
 ```
