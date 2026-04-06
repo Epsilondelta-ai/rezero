@@ -64,21 +64,25 @@ Run the six-point evaluation after implementation:
 | Daphne | Resources | Memory/CPU reasonable? Unnecessary API calls? Resource leaks? Bundle size justified? |
 | Carmilla | Alignment | Matches user intent? Error messages clear? API ergonomic? |
 
-**IMPORTANT: Always print the full evaluation results to the user in the following table format:**
+**IMPORTANT: Always print the full evaluation results to the user using Unicode box-drawing characters for terminal display:**
 
 ```
-| Evaluator | Domain       | Verdict | Assessment                  | Issues         |
-|-----------|--------------|---------|-----------------------------|----------------|
-| Echidna   | Completeness | PASS    | [1-3 sentence assessment]   | [issues or —]  |
-| Minerva   | Regression   | PASS    | [1-3 sentence assessment]   | [issues or —]  |
-| Sekhmet   | Efficiency   | WARN    | [1-3 sentence assessment]   | [issues or —]  |
-| Typhon    | Integrity    | PASS    | [1-3 sentence assessment]   | [issues or —]  |
-| Daphne    | Resources    | PASS    | [1-3 sentence assessment]   | [issues or —]  |
-| Carmilla  | Alignment    | PASS    | [1-3 sentence assessment]   | [issues or —]  |
+┌───────────┬──────────────┬─────────┬───────────────────────────────┬─────────────────┐
+│ Evaluator │ Domain       │ Verdict │ Assessment                    │ Issues          │
+├───────────┼──────────────┼─────────┼───────────────────────────────┼─────────────────┤
+│ Echidna   │ Completeness │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
+│ Minerva   │ Regression   │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
+│ Sekhmet   │ Efficiency   │ WARN    │ [1-3 sentence assessment]     │ [issues or —]   │
+│ Typhon    │ Integrity    │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
+│ Daphne    │ Resources    │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
+│ Carmilla  │ Alignment    │ PASS    │ [1-3 sentence assessment]     │ [issues or —]   │
+└───────────┴──────────────┴─────────┴───────────────────────────────┴─────────────────┘
 
-**Final Verdict**: PASS / FAIL
-**Reason**: [Summary]
+Final Verdict: PASS / FAIL
+Reason: [Summary]
 ```
+
+Use ┌ ┐ └ ┘ for corners, ├ ┤ ┼ for intersections, ─ │ for lines. Align columns with padding. Color verdicts if possible: PASS=green, WARN=yellow, FAIL=red (using ANSI codes: \033[32m, \033[33m, \033[31m, reset \033[0m).
 
 This table must be printed to the user every time the tea party runs. Do not skip or summarize it.
 
@@ -108,16 +112,16 @@ This table must be printed to the user every time the tea party runs. Do not ski
 
 ### 7. Revert
 
-**IMPORTANT: Always print the following banner to the user when death regression is triggered:**
+**IMPORTANT: Always print the following banner to the user when death regression is triggered, using ANSI red (\033[31m) with reset (\033[0m):**
 
 ```
-╔══════════════════════════════════════════════════════════╗
+\033[31m╔══════════════════════════════════════════════════════════╗
 ║                    사망회귀 (Death Regression)            ║
 ║                                                          ║
 ║  Story: [Story ID] - [Story Title]                       ║
 ║  Cause: [Brief reason for failure]                       ║
 ║  Attempt: [N] / {{MAX_DEATHS}}                           ║
-╚══════════════════════════════════════════════════════════╝
+╚══════════════════════════════════════════════════════════╝\033[0m
 ```
 
 This banner must be printed to the user every time a revert occurs. Do not skip or summarize it.
