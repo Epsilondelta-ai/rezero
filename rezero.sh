@@ -102,24 +102,24 @@ echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS | Max deaths: $MAX_DEATHS"
 echo ""
 
 DEATH_COUNT=0
+PROMPTS_DIR="$SCRIPT_DIR/prompts"
+WITCHES_DIR="$PROMPTS_DIR/witches"
+WITCH_NAMES=("echidna" "minerva" "sekhmet" "typhon" "daphne" "carmilla")
+WITCH_LABELS=("Echidna" "Minerva" "Sekhmet" "Typhon" "Daphne" "Carmilla")
+WITCH_DOMAINS=("Completeness" "Regression" "Efficiency" "Integrity" "Resources" "Alignment")
 
-for i in $(seq 1 $MAX_ITERATIONS); do
-  echo ""
-  echo "==============================================================="
-  echo "  Re:ZERO Iteration $i of $MAX_ITERATIONS ($TOOL)"
-  echo "==============================================================="
-
-  # Inject MAX_DEATHS into prompt template
-  PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$SCRIPT_DIR/subaru.md")
-
-  # Run the selected tool with the prompt, capturing exit code
-  EXIT_CODE=0
+# ── Helper: run agent, write output to file ─────────────────────────
+# Usage: run_agent_to_file <prompt> <output_file>
+# Exit code is written to <output_file>.exit
+run_agent_to_file() {
+  local PROMPT="$1"
+  local OUT_FILE="$2"
+  local MY_EXIT=0
   if [[ "$TOOL" == "codex" ]]; then
-    # Use JSONL to show real-time progress (tool calls + text output)
-    STREAM_FILE=$(mktemp)
+    local SFILE=$(mktemp)
     {
       echo "$PROMPT" | codex exec --full-auto --json - 2>/dev/null | \
-        tee "$STREAM_FILE" | \
+        tee "$SFILE" | \
         jq --unbuffered -r '
           if .type == "item.completed" then
             if .item.type == "agent_message" then .item.text
@@ -127,16 +127,15 @@ for i in $(seq 1 $MAX_ITERATIONS); do
             end
           else empty end
         ' >&2
-    } || EXIT_CODE=$?
-    OUTPUT=$(jq -rs '[.[] | select(.type == "item.completed" and .item.type == "agent_message") | .item.text] | join("\n")' "$STREAM_FILE" 2>/dev/null || echo "")
-    rm -f "$STREAM_FILE"
+    } || MY_EXIT=$?
+    jq -rs '[.[] | select(.type == "item.completed" and .item.type == "agent_message") | .item.text] | join("\n")' "$SFILE" 2>/dev/null > "$OUT_FILE" || echo "" > "$OUT_FILE"
+    rm -f "$SFILE"
   else
-    # Use stream-json to show real-time progress (tool calls + text output)
-    STREAM_FILE=$(mktemp)
+    local SFILE=$(mktemp)
     {
       echo "$PROMPT" | claude --dangerously-skip-permissions --print --verbose \
         --output-format stream-json 2>/dev/null | \
-        tee "$STREAM_FILE" | \
+        tee "$SFILE" | \
         jq --unbuffered -r '
           if .type == "assistant" then
             [.message.content[]? |
@@ -146,23 +145,42 @@ for i in $(seq 1 $MAX_ITERATIONS); do
             ] | join("\n") | select(length > 0)
           else empty end
         ' >&2
-    } || EXIT_CODE=$?
-    OUTPUT=$(jq -r 'select(.type == "result") | .result // empty' "$STREAM_FILE" 2>/dev/null || echo "")
-    rm -f "$STREAM_FILE"
+    } || MY_EXIT=$?
+    jq -r 'select(.type == "result") | .result // empty' "$SFILE" 2>/dev/null > "$OUT_FILE" || echo "" > "$OUT_FILE"
+    rm -f "$SFILE"
   fi
+  echo "$MY_EXIT" > "${OUT_FILE}.exit"
+}
 
-  # Detect agent crash: non-zero exit code without a recognized promise signal
-  HAS_COMPLETE=false
-  HAS_BLOCKED=false
-  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
-  echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>" && HAS_BLOCKED=true
+# ── Helper: run agent, set $OUTPUT and $EXIT_CODE ───────────────────
+run_agent() {
+  local PROMPT="$1"
+  local TMP=$(mktemp)
+  run_agent_to_file "$PROMPT" "$TMP"
+  OUTPUT=$(cat "$TMP")
+  EXIT_CODE=$(cat "${TMP}.exit")
+  rm -f "$TMP" "${TMP}.exit"
+}
 
-  if [[ $EXIT_CODE -ne 0 ]] && ! $HAS_COMPLETE && ! $HAS_BLOCKED; then
+# ── Helper: check for crash ─────────────────────────────────────────
+# Usage: handle_crash <label> <output_text> <exit_code>
+# Returns 0 if crash detected and handled, 1 otherwise
+handle_crash() {
+  local LABEL="$1"
+  local OUT_TEXT="$2"
+  local EC="$3"
+  local HC=false HB=false HI=false HM=false
+  echo "$OUT_TEXT" | grep -q "<promise>COMPLETE</promise>" && HC=true
+  echo "$OUT_TEXT" | grep -q "<promise>BLOCKED</promise>" && HB=true
+  echo "$OUT_TEXT" | grep -q "<promise>IMPLEMENTED</promise>" && HI=true
+  echo "$OUT_TEXT" | grep -q "<promise>COMMITTED</promise>" && HM=true
+
+  if [[ $EC -ne 0 ]] && ! $HC && ! $HB && ! $HI && ! $HM; then
     DEATH_COUNT=$((DEATH_COUNT + 1))
     echo ""
-    echo "WARNING: Agent crashed with exit code $EXIT_CODE (death $DEATH_COUNT/$MAX_DEATHS)"
+    echo "WARNING: $LABEL crashed with exit code $EC (death $DEATH_COUNT/$MAX_DEATHS)"
     echo "---" >> "$PROGRESS_FILE"
-    echo "CRASH at iteration $i: Agent exited with code $EXIT_CODE (death $DEATH_COUNT/$MAX_DEATHS)" >> "$PROGRESS_FILE"
+    echo "CRASH at iteration $i ($LABEL): Agent exited with code $EC (death $DEATH_COUNT/$MAX_DEATHS)" >> "$PROGRESS_FILE"
     echo "Time: $(date)" >> "$PROGRESS_FILE"
 
     if [[ $DEATH_COUNT -ge $MAX_DEATHS ]]; then
@@ -172,13 +190,88 @@ for i in $(seq 1 $MAX_ITERATIONS); do
       echo "ABORTED: Reached max deaths ($MAX_DEATHS) at iteration $i" >> "$PROGRESS_FILE"
       exit 3
     fi
+    return 0
+  fi
+  return 1
+}
 
+# ── Helper: parse witch output ──────────────────────────────────────
+# Usage: parse_witch_field <output_text> <field>  (field: VERDICT, ASSESSMENT, ISSUES)
+parse_witch_field() {
+  local OUT_TEXT="$1"
+  local FIELD="$2"
+  echo "$OUT_TEXT" | grep "^\[${FIELD}\]" | tail -1 | sed "s/^\[${FIELD}\] //"
+}
+
+# ── Helper: print evaluation table ──────────────────────────────────
+print_evaluation_table() {
+  local VERDICTS=("$@")
+  # VERDICTS array: [verdict0, assessment0, issues0, verdict1, assessment1, issues1, ...]
+
+  echo ""
+  printf "┌───────────┬──────────────┬─────────┬────────────────────────────────────────────────────┬──────────────────────────────────────┐\n"
+  printf "│ Evaluator │ Domain       │ Verdict │ Assessment                                         │ Issues                               │\n"
+  printf "├───────────┼──────────────┼─────────┼────────────────────────────────────────────────────┼──────────────────────────────────────┤\n"
+
+  for idx in 0 1 2 3 4 5; do
+    local V_IDX=$((idx * 3))
+    local A_IDX=$((idx * 3 + 1))
+    local I_IDX=$((idx * 3 + 2))
+    local VERDICT="${VERDICTS[$V_IDX]}"
+    local ASSESSMENT="${VERDICTS[$A_IDX]}"
+    local ISSUES="${VERDICTS[$I_IDX]}"
+    local LABEL="${WITCH_LABELS[$idx]}"
+    local DOMAIN="${WITCH_DOMAINS[$idx]}"
+
+    # Color the verdict
+    local COLOR=""
+    local RESET="\033[0m"
+    case "$VERDICT" in
+      PASS) COLOR="\033[32m" ;;
+      WARN) COLOR="\033[33m" ;;
+      FAIL) COLOR="\033[31m" ;;
+    esac
+
+    # Truncate long text for table display
+    local ASSESS_TRUNC="${ASSESSMENT:0:50}"
+    local ISSUES_TRUNC="${ISSUES:0:36}"
+
+    printf "│ %-9s │ %-12s │ ${COLOR}%-7s${RESET} │ %-50s │ %-36s │\n" \
+      "$LABEL" "$DOMAIN" "$VERDICT" "$ASSESS_TRUNC" "$ISSUES_TRUNC"
+  done
+
+  printf "└───────────┴──────────────┴─────────┴────────────────────────────────────────────────────┴──────────────────────────────────────┘\n"
+}
+
+for i in $(seq 1 $MAX_ITERATIONS); do
+  echo ""
+  echo "==============================================================="
+  echo "  Re:ZERO Iteration $i of $MAX_ITERATIONS ($TOOL)"
+  echo "==============================================================="
+
+  # ── Phase 1: Implementation (Subaru) ──────────────────────────────
+  echo ""
+  echo "  Phase 1: Implementation"
+  echo "  ───────────────────────"
+
+  IMPL_PROMPT=$(sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g" "$PROMPTS_DIR/subaru.md")
+  run_agent "$IMPL_PROMPT"
+
+  # Handle crash
+  if handle_crash "Implementation" "$OUTPUT" "$EXIT_CODE"; then
     echo "Retrying after crash..."
     sleep 2
     continue
   fi
 
-  # Check for completion signal
+  # Check for signals
+  HAS_COMPLETE=false
+  HAS_BLOCKED=false
+  HAS_IMPLEMENTED=false
+  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
+  echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>" && HAS_BLOCKED=true
+  echo "$OUTPUT" | grep -q "<promise>IMPLEMENTED</promise>" && HAS_IMPLEMENTED=true
+
   if $HAS_COMPLETE; then
     echo ""
     echo "Re:ZERO Loop complete! All stories passed."
@@ -186,7 +279,6 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 0
   fi
 
-  # Check for blocked signal
   if $HAS_BLOCKED; then
     echo ""
     echo "Re:ZERO Loop blocked. User intervention needed."
@@ -195,8 +287,187 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 2
   fi
 
-  # Agent exited successfully but without a promise signal — normal iteration
-  DEATH_COUNT=0  # Reset on successful iteration
+  if ! $HAS_IMPLEMENTED; then
+    DEATH_COUNT=0
+    echo "Implementation aborted early. Continuing to next iteration..."
+    sleep 2
+    continue
+  fi
+
+  # ── Phase 2: Witches' Tea Party (6 parallel sessions) ─────────────
+  echo ""
+  echo "  Phase 2: Witches' Tea Party"
+  echo "  ─────────────────────────────────────────────"
+  echo "  Launching 6 witch evaluators in parallel..."
+
+  WITCH_TMP=$(mktemp -d)
+  WITCH_PIDS=()
+
+  for idx in 0 1 2 3 4 5; do
+    WITCH_NAME="${WITCH_NAMES[$idx]}"
+    WITCH_PROMPT=$(cat "$WITCHES_DIR/${WITCH_NAME}.md")
+    echo "    ▸ ${WITCH_LABELS[$idx]} (${WITCH_DOMAINS[$idx]})"
+    run_agent_to_file "$WITCH_PROMPT" "$WITCH_TMP/$WITCH_NAME" &
+    WITCH_PIDS+=($!)
+  done
+
+  # Wait for all witches to complete
+  echo ""
+  echo "  Waiting for all evaluators to finish..."
+  WITCH_CRASH=false
+  for pid in "${WITCH_PIDS[@]}"; do
+    wait "$pid" 2>/dev/null || true
+  done
+
+  # ── Collect and parse results ─────────────────────────────────────
+  ALL_VERDICTS=()
+  FINAL_VERDICT="PASS"
+  HAS_WARN=false
+  EVALUATION_RESULTS=""
+
+  for idx in 0 1 2 3 4 5; do
+    WITCH_NAME="${WITCH_NAMES[$idx]}"
+    WITCH_OUTPUT=""
+    WITCH_EC=0
+
+    if [ -f "$WITCH_TMP/$WITCH_NAME" ]; then
+      WITCH_OUTPUT=$(cat "$WITCH_TMP/$WITCH_NAME")
+    fi
+    if [ -f "$WITCH_TMP/${WITCH_NAME}.exit" ]; then
+      WITCH_EC=$(cat "$WITCH_TMP/${WITCH_NAME}.exit")
+    fi
+
+    # Check for crash
+    if [[ $WITCH_EC -ne 0 ]] && [ -z "$WITCH_OUTPUT" ]; then
+      echo "  WARNING: ${WITCH_LABELS[$idx]} crashed (exit code $WITCH_EC)"
+      ALL_VERDICTS+=("FAIL" "${WITCH_LABELS[$idx]} session crashed with exit code $WITCH_EC" "Session crash")
+      FINAL_VERDICT="FAIL"
+      EVALUATION_RESULTS+="### ${WITCH_LABELS[$idx]} — ${WITCH_DOMAINS[$idx]}"$'\n'
+      EVALUATION_RESULTS+="**Verdict**: FAIL (session crashed)"$'\n\n'
+      continue
+    fi
+
+    # Parse verdict
+    VERDICT=$(parse_witch_field "$WITCH_OUTPUT" "VERDICT")
+    ASSESSMENT=$(parse_witch_field "$WITCH_OUTPUT" "ASSESSMENT")
+    ISSUES=$(parse_witch_field "$WITCH_OUTPUT" "ISSUES")
+
+    # Default to FAIL if verdict not parseable
+    if [[ "$VERDICT" != "PASS" && "$VERDICT" != "WARN" && "$VERDICT" != "FAIL" ]]; then
+      VERDICT="FAIL"
+      ASSESSMENT="${ASSESSMENT:-Could not parse evaluation output}"
+      ISSUES="${ISSUES:-Unparseable output}"
+    fi
+
+    ALL_VERDICTS+=("$VERDICT" "$ASSESSMENT" "$ISSUES")
+
+    if [[ "$VERDICT" == "FAIL" ]]; then
+      FINAL_VERDICT="FAIL"
+    elif [[ "$VERDICT" == "WARN" && "$FINAL_VERDICT" != "FAIL" ]]; then
+      HAS_WARN=true
+    fi
+
+    EVALUATION_RESULTS+="### ${WITCH_LABELS[$idx]} — ${WITCH_DOMAINS[$idx]}"$'\n'
+    EVALUATION_RESULTS+="**Verdict**: $VERDICT"$'\n'
+    EVALUATION_RESULTS+="**Assessment**: $ASSESSMENT"$'\n'
+    EVALUATION_RESULTS+="**Issues**: $ISSUES"$'\n\n'
+  done
+
+  rm -rf "$WITCH_TMP"
+
+  # Determine final verdict
+  if [[ "$FINAL_VERDICT" != "FAIL" && "$HAS_WARN" == "true" ]]; then
+    FINAL_VERDICT="WARN"
+  fi
+
+  # Print the combined evaluation table
+  print_evaluation_table "${ALL_VERDICTS[@]}"
+
+  # Print final verdict with color
+  echo ""
+  case "$FINAL_VERDICT" in
+    PASS) printf "  Final Verdict: \033[32mPASS\033[0m\n" ;;
+    WARN) printf "  Final Verdict: \033[33mPASS (with warnings)\033[0m\n" ;;
+    FAIL) printf "  Final Verdict: \033[31mFAIL\033[0m\n" ;;
+  esac
+
+  # ── Helper: inject evaluation results into a prompt template ──────
+  inject_evaluation() {
+    local TMPL="$1"
+    TMPL=$(echo "$TMPL" | sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g")
+    TMPL=$(echo "$TMPL" | sed "s/{{FINAL_VERDICT}}/$FINAL_VERDICT/g")
+    local TMPF=$(mktemp)
+    echo "$EVALUATION_RESULTS" > "$TMPF"
+    TMPL=$(awk -v results="$(cat "$TMPF")" '{gsub(/\{\{EVALUATION_RESULTS\}\}/, results)}1' <<< "$TMPL")
+    rm -f "$TMPF"
+    echo "$TMPL"
+  }
+
+  # ── Phase 3: Satella (Judgment & Checkpoint) ──────────────────────
+  echo ""
+  echo "  Phase 3: Satella — Final Judgment"
+  echo "  ─────────────────────────────────"
+
+  SATELLA_PROMPT=$(inject_evaluation "$(cat "$WITCHES_DIR/satella.md")")
+  run_agent "$SATELLA_PROMPT"
+
+  # Handle crash
+  if handle_crash "Satella" "$OUTPUT" "$EXIT_CODE"; then
+    echo "Retrying after crash..."
+    sleep 2
+    continue
+  fi
+
+  # Check for signals
+  HAS_COMMITTED=false
+  HAS_BLOCKED=false
+  echo "$OUTPUT" | grep -q "<promise>COMMITTED</promise>" && HAS_COMMITTED=true
+  echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>" && HAS_BLOCKED=true
+
+  if $HAS_BLOCKED; then
+    echo ""
+    echo "Re:ZERO Loop blocked. User intervention needed."
+    echo "Blocked at iteration $i of $MAX_ITERATIONS"
+    echo "Check $PROGRESS_FILE for details."
+    exit 2
+  fi
+
+  # If not COMMITTED, this was a FAIL → revert happened, skip Rem
+  if ! $HAS_COMMITTED; then
+    DEATH_COUNT=0
+    echo "Evaluation failed. Continuing to next iteration..."
+    sleep 2
+    continue
+  fi
+
+  # ── Phase 4: Rem (Technical Debt Management) ─────────────────────
+  echo ""
+  echo "  Phase 4: Rem — Technical Debt Management"
+  echo "  ─────────────────────────────────────────"
+
+  REM_PROMPT=$(inject_evaluation "$(cat "$PROMPTS_DIR/rem.md")")
+  run_agent "$REM_PROMPT"
+
+  # Handle crash (non-fatal for Rem — debt tracking is best-effort)
+  if handle_crash "Rem" "$OUTPUT" "$EXIT_CODE"; then
+    echo "Rem session crashed, but commit succeeded. Continuing..."
+    sleep 2
+    # Don't continue — the commit already happened, proceed normally
+  fi
+
+  # Check for completion signal from Rem
+  HAS_COMPLETE=false
+  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
+
+  if $HAS_COMPLETE; then
+    echo ""
+    echo "Re:ZERO Loop complete! All stories passed."
+    echo "Completed at iteration $i of $MAX_ITERATIONS"
+    exit 0
+  fi
+
+  # Iteration complete
+  DEATH_COUNT=0
   echo "Iteration $i complete. Continuing..."
   sleep 2
 done
