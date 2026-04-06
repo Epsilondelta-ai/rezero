@@ -444,7 +444,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "  Phase 4: Rem — Technical Debt Management"
   echo "  ─────────────────────────────────────────"
 
-  REM_PROMPT=$(inject_evaluation "$(cat "$WITCHES_DIR/rem.md")")
+  REM_PROMPT=$(inject_evaluation "$(cat "$SCRIPT_DIR/rem-session.md")")
   run_agent "$REM_PROMPT"
 
   # Handle crash (non-fatal for Rem — debt tracking is best-effort)
