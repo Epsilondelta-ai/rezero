@@ -60,7 +60,7 @@ cp -r skills/rem ~/.claude/skills/
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
-/plugin install rezero-skills@rezero-marketplace
+/plugin install rezero@rezero-marketplace
 ```
 
 설치 후 사용 가능: `/task` 스킬, `/rezero` 스킬
