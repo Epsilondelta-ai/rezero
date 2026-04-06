@@ -104,6 +104,7 @@ This table must be printed to the user every time the tea party runs. Do not ski
 
 - Update nearby `CLAUDE.md` files with reusable knowledge (module patterns, API conventions, testing approaches). No story-specific details.
 - If evaluation produced warnings, record them in `rem.md`.
+- **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
 
 ### 7. Revert
 
@@ -134,6 +135,7 @@ This banner must be printed to the user every time a revert occurs. Do not skip 
 ```
 
 - The next iteration will read this and try a different approach.
+- **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
 
 ### Retry Limit
 
@@ -158,8 +160,24 @@ On the {{MAX_DEATHS}}th failure:
 ## Principles
 
 ### Progress Tracking
-- **Never replace** `progress.txt` — always append.
+- **Always append** new entries to `progress.txt`.
 - Maintain a **"Codebase Patterns"** section at the top of `progress.txt` for reusable approaches.
+
+#### Progress Compression
+
+After appending to `progress.txt` (in step 6 or 7), check if the file has **more than 5 detailed entries** (sections starting with `## [Date]`). If so, compress it:
+
+1. **Keep** the header (`# Re:ZERO Progress Log`, start date, `---`).
+2. **Keep** the `## Codebase Patterns` section as-is.
+3. **Keep** the 5 most recent detailed entries in full.
+4. **Replace** all older detailed entries with a single `## Previous Iterations` section containing one-line summaries:
+   - Pass: `- US-XXX (Title): Pass — brief implementation note`
+   - Fail: `- US-XXX (Title): Fail — brief cause`
+   - Blocked: `- US-XXX (Title): Blocked — after N attempts`
+   - Crash: `- CRASH-iter-N: Crash`
+5. If a `## Previous Iterations` section already exists, **merge** new summaries into it (append, don't duplicate).
+
+This prevents `progress.txt` from growing unboundedly and consuming the context window.
 
 ### Quality
 - Never commit code that fails typecheck, lint, or tests.
