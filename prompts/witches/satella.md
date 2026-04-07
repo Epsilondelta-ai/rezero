@@ -9,6 +9,7 @@ The six witches have already evaluated the code. Their results are:
 {{EVALUATION_RESULTS}}
 
 ## Final Verdict: {{FINAL_VERDICT}}
+## Difficulty: {{DIFFICULTY}}
 
 ## Your Task
 
