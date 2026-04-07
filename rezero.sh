@@ -491,8 +491,11 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 0
   fi
 
-  # Iteration complete
+  # Iteration complete — checkpoint succeeded, reset death return log
   DEATH_COUNT=0
+  echo "# Death Return Log" > "$DEATH_LOG_FILE"
+  echo "Started: $(date)" >> "$DEATH_LOG_FILE"
+  echo "---" >> "$DEATH_LOG_FILE"
   echo "Iteration $i complete. Continuing..."
   sleep 2
 done
