@@ -55,7 +55,7 @@ LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
 
 # Archive previous run if branch changed
 if [ -f "$TASK_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
+  CURRENT_BRANCH=$(jq -r '.branch // .branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
   LAST_BRANCH=$(cat "$LAST_BRANCH_FILE" 2>/dev/null || echo "")
 
   if [ -n "$CURRENT_BRANCH" ] && [ -n "$LAST_BRANCH" ] && [ "$CURRENT_BRANCH" != "$LAST_BRANCH" ]; then
@@ -85,7 +85,7 @@ fi
 
 # Track current branch
 if [ -f "$TASK_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
+  CURRENT_BRANCH=$(jq -r '.branch // .branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
   if [ -n "$CURRENT_BRANCH" ]; then
     echo "$CURRENT_BRANCH" > "$LAST_BRANCH_FILE"
   fi
@@ -492,11 +492,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     continue
   fi
 
-  # Iteration complete — checkpoint succeeded, reset death return log
+  # Iteration complete — checkpoint succeeded
   DEATH_COUNT=0
-  echo "# Death Return Log" > "$DEATH_LOG_FILE"
-  echo "Started: $(date)" >> "$DEATH_LOG_FILE"
-  echo "---" >> "$DEATH_LOG_FILE"
   echo "Iteration $i complete. Continuing..."
   sleep 2
 done
