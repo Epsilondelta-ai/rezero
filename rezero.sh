@@ -195,11 +195,13 @@ handle_crash() {
     echo "WARNING: $LABEL crashed with exit code $EC (death $DEATH_COUNT/$MAX_DEATHS)"
     echo "---" >> "$PROGRESS_FILE"
     echo "CRASH at iteration $i ($LABEL): Agent exited with code $EC (death $DEATH_COUNT/$MAX_DEATHS)" >> "$PROGRESS_FILE"
+    echo "Story: ${CURRENT_STORY_ID:-unknown} — ${CURRENT_STORY_TITLE:-unknown}" >> "$PROGRESS_FILE"
     echo "Time: $(date)" >> "$PROGRESS_FILE"
 
     echo "" >> "$DEATH_LOG_FILE"
     echo "## $(date) - CRASH at iteration $i" >> "$DEATH_LOG_FILE"
     echo "**Type**: Agent Crash" >> "$DEATH_LOG_FILE"
+    echo "**Story**: ${CURRENT_STORY_ID:-unknown} — ${CURRENT_STORY_TITLE:-unknown}" >> "$DEATH_LOG_FILE"
     echo "**Phase**: $LABEL" >> "$DEATH_LOG_FILE"
     echo "**Exit Code**: $EC" >> "$DEATH_LOG_FILE"
     echo "**Death Count**: $DEATH_COUNT / $MAX_DEATHS" >> "$DEATH_LOG_FILE"
@@ -269,6 +271,10 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "==============================================================="
   echo "  Re:ZERO Iteration $i of $MAX_ITERATIONS ($TOOL)"
   echo "==============================================================="
+
+  # Extract current story ID and title from task.json for crash logging
+  CURRENT_STORY_ID=$(jq -r '[.stories[] | select(.passes == false)] | sort_by(.priority) | .[0].id // "unknown"' "$TASK_FILE" 2>/dev/null || echo "unknown")
+  CURRENT_STORY_TITLE=$(jq -r '[.stories[] | select(.passes == false)] | sort_by(.priority) | .[0].title // "unknown"' "$TASK_FILE" 2>/dev/null || echo "unknown")
 
   # ── Phase 1: Implementation (Subaru) ──────────────────────────────
   echo ""
