@@ -25,7 +25,9 @@ The six witches have already evaluated the code. Their results are:
 **Implementation**: Brief description of what was done
 **Files Changed**: List of modified files
 **Patterns Learned**: Any reusable patterns discovered
-**Warnings**: Any warnings from evaluation (if applicable)
+**Warnings**:
+- [Witch Name]: [Assessment summary]
+...for each WARN verdict, or "None" if no warnings...
 ```
 
 5. Update nearby `CLAUDE.md` files with reusable knowledge (module patterns, API conventions, testing approaches). No story-specific details.
