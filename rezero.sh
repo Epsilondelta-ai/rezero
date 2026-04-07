@@ -396,10 +396,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     local TMPL="$1"
     TMPL=$(echo "$TMPL" | sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g")
     TMPL=$(echo "$TMPL" | sed "s/{{FINAL_VERDICT}}/$FINAL_VERDICT/g")
-    local TMPF=$(mktemp)
-    echo "$EVALUATION_RESULTS" > "$TMPF"
-    TMPL=$(awk -v results="$(cat "$TMPF")" '{gsub(/\{\{EVALUATION_RESULTS\}\}/, results)}1' <<< "$TMPL")
-    rm -f "$TMPF"
+    local EVAL_RESULTS="$EVALUATION_RESULTS"
+    TMPL="${TMPL//\{\{EVALUATION_RESULTS\}\}/$EVAL_RESULTS}"
     echo "$TMPL"
   }
 
