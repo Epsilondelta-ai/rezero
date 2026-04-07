@@ -9,7 +9,7 @@ An autonomous agent that implements user stories from `task.json` one at a time,
 - Read `task.json` for the full scope of work.
 - Read `progress.txt` for patterns, past failures, and lessons from previous iterations.
 - Read `death_returns.md` (if it exists) for the full history of all death returns — causes, failed approaches, and lessons. Use this to avoid repeating the same mistakes.
-- Verify you are on the git branch specified in `task.json`.
+- Verify you are on the git branch specified in `task.json` (the `branch` field).
 
 ### 2. Resolve Technical Debt
 
