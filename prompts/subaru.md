@@ -82,6 +82,17 @@ This banner must be printed to the user every time a revert occurs. Do not skip 
 **Approach Taken**: Brief description of the approach that failed
 ```
 
+- Also append the same failure to `death_returns.md` (the dedicated death return log):
+
+```
+## [Date] - [Story ID]: [Story Title]
+**Type**: Early Abort
+**Attempt**: [N] / {{MAX_DEATHS}}
+**Cause**: What specifically failed and why
+**Approach Taken**: Brief description of the approach that failed
+**Lessons**: What to do differently next time
+```
+
 - The next iteration will read this and try a different approach.
 - **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
 
@@ -102,8 +113,20 @@ On the {{MAX_DEATHS}}th failure:
 **Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
 ```
 
-3. Skip this story and proceed to the next eligible story (one with no dependency on the blocked story).
-4. If no eligible stories remain, respond with `<promise>BLOCKED</promise>` to signal that user intervention is needed.
+3. Also append the blocked summary to `death_returns.md`:
+
+```
+## [Date] - [Story ID]: BLOCKED
+**Type**: Blocked
+**Total Attempts**: {{MAX_DEATHS}}
+**Attempt Summary**:
+1. [Approach and failure reason]
+...repeat for each attempt...
+**Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
+```
+
+4. Skip this story and proceed to the next eligible story (one with no dependency on the blocked story).
+5. If no eligible stories remain, respond with `<promise>BLOCKED</promise>` to signal that user intervention is needed.
 
 ## Principles
 

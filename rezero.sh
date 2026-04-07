@@ -50,6 +50,7 @@ TASK_FILE="$SCRIPT_DIR/task.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 REM_FILE="$SCRIPT_DIR/rem.md"
 ARCHIVE_DIR="$SCRIPT_DIR/archive"
+DEATH_LOG_FILE="$SCRIPT_DIR/death_returns.md"
 LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
 
 # Archive previous run if branch changed
@@ -67,12 +68,18 @@ if [ -f "$TASK_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
     [ -f "$TASK_FILE" ] && cp "$TASK_FILE" "$ARCHIVE_FOLDER/"
     [ -f "$PROGRESS_FILE" ] && cp "$PROGRESS_FILE" "$ARCHIVE_FOLDER/"
     [ -f "$REM_FILE" ] && cp "$REM_FILE" "$ARCHIVE_FOLDER/"
+    [ -f "$DEATH_LOG_FILE" ] && cp "$DEATH_LOG_FILE" "$ARCHIVE_FOLDER/"
     echo "  Archived to: $ARCHIVE_FOLDER"
 
     # Reset progress file for new run
     echo "# Re:ZERO Progress Log" > "$PROGRESS_FILE"
     echo "Started: $(date)" >> "$PROGRESS_FILE"
     echo "---" >> "$PROGRESS_FILE"
+
+    # Reset death return log for new run
+    echo "# Death Return Log" > "$DEATH_LOG_FILE"
+    echo "Started: $(date)" >> "$DEATH_LOG_FILE"
+    echo "---" >> "$DEATH_LOG_FILE"
   fi
 fi
 
@@ -89,6 +96,13 @@ if [ ! -f "$PROGRESS_FILE" ]; then
   echo "# Re:ZERO Progress Log" > "$PROGRESS_FILE"
   echo "Started: $(date)" >> "$PROGRESS_FILE"
   echo "---" >> "$PROGRESS_FILE"
+fi
+
+# Initialize death return log if it doesn't exist
+if [ ! -f "$DEATH_LOG_FILE" ]; then
+  echo "# Death Return Log" > "$DEATH_LOG_FILE"
+  echo "Started: $(date)" >> "$DEATH_LOG_FILE"
+  echo "---" >> "$DEATH_LOG_FILE"
 fi
 
 echo ""
@@ -182,6 +196,13 @@ handle_crash() {
     echo "---" >> "$PROGRESS_FILE"
     echo "CRASH at iteration $i ($LABEL): Agent exited with code $EC (death $DEATH_COUNT/$MAX_DEATHS)" >> "$PROGRESS_FILE"
     echo "Time: $(date)" >> "$PROGRESS_FILE"
+
+    echo "" >> "$DEATH_LOG_FILE"
+    echo "## $(date) - CRASH at iteration $i" >> "$DEATH_LOG_FILE"
+    echo "**Type**: Agent Crash" >> "$DEATH_LOG_FILE"
+    echo "**Phase**: $LABEL" >> "$DEATH_LOG_FILE"
+    echo "**Exit Code**: $EC" >> "$DEATH_LOG_FILE"
+    echo "**Death Count**: $DEATH_COUNT / $MAX_DEATHS" >> "$DEATH_LOG_FILE"
 
     if [[ $DEATH_COUNT -ge $MAX_DEATHS ]]; then
       echo ""

@@ -60,7 +60,21 @@ This banner must be printed. Do not skip or summarize it.
 **Approach Taken**: Brief description of the approach that failed
 ```
 
-3. **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
+3. Also append to `death_returns.md` (the dedicated death return log):
+
+```
+## [Date] - [Story ID]: [Story Title]
+**Type**: Evaluation Failure
+**Attempt**: [N] / {{MAX_DEATHS}}
+**Verdicts**:
+- [Witch Name]: [PASS/WARN/FAIL] — [Assessment summary]
+...for each witch...
+**Cause**: What specifically failed and why
+**Approach Taken**: Brief description of the approach that failed
+**Lessons**: What to do differently next time
+```
+
+4. **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
 
 ### Retry Limit
 
@@ -79,7 +93,19 @@ On the {{MAX_DEATHS}}th failure:
 **Recommendation**: [What likely needs to change]
 ```
 
-3. If no eligible stories remain, respond with `<promise>BLOCKED</promise>`.
+3. Also append the blocked summary to `death_returns.md`:
+
+```
+## [Date] - [Story ID]: BLOCKED
+**Type**: Blocked
+**Total Attempts**: {{MAX_DEATHS}}
+**Attempt Summary**:
+1. [Approach and failure reason]
+...repeat for each attempt...
+**Recommendation**: [What likely needs to change]
+```
+
+4. If no eligible stories remain, respond with `<promise>BLOCKED</promise>`.
 
 ## Progress Compression
 
