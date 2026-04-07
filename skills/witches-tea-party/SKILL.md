@@ -112,11 +112,10 @@ Aggregate all six evaluations:
 **Reason**: [Summary]
 ```
 
-Aggregation rules depend on **difficulty** (default: `normal`):
+Aggregation rules depend on **difficulty** (default: `easy`):
 
 - **Easy**: 3+ FAILs needed for overall `FAIL`. 1-2 FAILs are downgraded to `WARN`. Witches evaluate with more leniency.
-- **Normal**: Any single `FAIL` -> overall `FAIL`. All PASS -> `PASS`. WARNs -> `PASS` with warnings recorded as technical debt.
-- **Hard**: Any `FAIL` -> overall `FAIL`. Additionally, 2+ `WARN`s -> overall `FAIL`. Witches evaluate with maximum strictness.
+- **Hard**: Any single `FAIL` -> overall `FAIL`. Witches evaluate with full rigor.
 
 ### Output Format (for automated parsing)
 

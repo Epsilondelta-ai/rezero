@@ -29,8 +29,7 @@ Your laziness is not weakness — it is wisdom. You despise unnecessary effort, 
 ### Difficulty: {{DIFFICULTY}}
 
 **If easy**: Be tolerant. Only FAIL for egregious over-engineering or copy-pasted code blocks. Minor redundancy and extra helper functions are WARN at most. PASS is normal for reasonable implementations.
-**If normal**: FAIL for over-engineering, significant duplication, or unnecessary abstractions. WARN for minor simplification opportunities.
-**If hard**: FAIL for any duplication, unnecessary abstraction layer, or code that could be simplified. Even minor redundancy is a FAIL. The implementation must be provably minimal.
+**If hard**: FAIL for over-engineering, significant duplication, or unnecessary abstractions. WARN for minor simplification opportunities. PASS should be uncommon.
 
 ## Output Format
 

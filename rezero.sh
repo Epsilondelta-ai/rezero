@@ -3,7 +3,7 @@
 # Implements user stories from task.json one at a time,
 # accumulating knowledge across iterations via progress.txt.
 #
-# Usage: ./rezero.sh [--tool claude|codex] [--max-deaths N] [--difficulty easy|normal|hard] [max_iterations]
+# Usage: ./rezero.sh [--tool claude|codex] [--max-deaths N] [--difficulty easy|hard] [max_iterations]
 
 set -e
 
@@ -11,7 +11,7 @@ set -e
 TOOL="claude"  # Default to claude
 MAX_ITERATIONS=10
 MAX_DEATHS=3
-DIFFICULTY="normal"  # easy, normal, hard
+DIFFICULTY="easy"  # easy (default), hard
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -55,8 +55,8 @@ if [[ "$TOOL" != "claude" && "$TOOL" != "codex" ]]; then
 fi
 
 # Validate difficulty
-if [[ "$DIFFICULTY" != "easy" && "$DIFFICULTY" != "normal" && "$DIFFICULTY" != "hard" ]]; then
-  echo "Error: Invalid difficulty '$DIFFICULTY'. Must be 'easy', 'normal', or 'hard'."
+if [[ "$DIFFICULTY" != "easy" && "$DIFFICULTY" != "hard" ]]; then
+  echo "Error: Invalid difficulty '$DIFFICULTY'. Must be 'easy' or 'hard'."
   exit 1
 fi
 
@@ -420,9 +420,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   rm -rf "$WITCH_TMP"
 
   # Determine final verdict based on difficulty
-  # - easy:   3+ FAILs needed for FAIL. 1-2 FAILs downgraded to WARN.
-  # - normal: Any FAIL = overall FAIL. (default, original behavior)
-  # - hard:   Any FAIL = FAIL. Additionally, 2+ WARNs = FAIL.
+  # - easy:   3+ FAILs needed for FAIL. 1-2 FAILs downgraded to WARN. (default)
+  # - hard:   Any FAIL = overall FAIL.
   FINAL_VERDICT="PASS"
   case "$DIFFICULTY" in
     easy)
@@ -432,17 +431,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
         FINAL_VERDICT="WARN"
       fi
       ;;
-    normal)
-      if [[ $FAIL_COUNT -ge 1 ]]; then
-        FINAL_VERDICT="FAIL"
-      elif [[ $WARN_COUNT -ge 1 ]]; then
-        FINAL_VERDICT="WARN"
-      fi
-      ;;
     hard)
       if [[ $FAIL_COUNT -ge 1 ]]; then
-        FINAL_VERDICT="FAIL"
-      elif [[ $WARN_COUNT -ge 2 ]]; then
         FINAL_VERDICT="FAIL"
       elif [[ $WARN_COUNT -ge 1 ]]; then
         FINAL_VERDICT="WARN"

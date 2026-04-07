@@ -31,8 +31,7 @@ Your wrath is reserved for those who break things. Every code change is a potent
 ### Difficulty: {{DIFFICULTY}}
 
 **If easy**: Focus on hard failures only. FAIL only if tests actually fail or typecheck has real errors. Lint warnings alone are WARN, not FAIL. Shared interface changes with passing tests are acceptable.
-**If normal**: FAIL for any typecheck error, lint error, or test failure. No exceptions. WARN for shared code modifications with passing tests.
-**If hard**: FAIL for any typecheck error, lint warning, or test failure. Also FAIL if shared interfaces are modified without corresponding test coverage, even if existing tests pass. Untested code paths in changed files are FAIL.
+**If hard**: FAIL for any typecheck error, lint error, or test failure. No exceptions, no excuses. WARN for shared code modifications with passing tests.
 
 ## Important
 
