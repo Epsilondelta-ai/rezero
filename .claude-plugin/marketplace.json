@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "rezero",
-      "source": ".",
+      "source": "./",
       "description": "Re:ZERO Loop - Autonomous AI agent loop with death regression mechanism inspired by Re:Zero"
     }
   ]
