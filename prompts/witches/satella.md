@@ -16,8 +16,7 @@ The six witches have already evaluated the code. Their results are:
 
 1. Read `task.json` to find the current story (highest priority with `passes: false`).
 2. Set `"passes": true` for the story in `task.json`.
-3. Commit all changes with a message referencing the story ID.
-4. Append to `progress.txt`:
+3. Append to `progress.txt`:
 
 ```
 ## [Date] - [Story ID]: [Story Title]
@@ -30,10 +29,10 @@ The six witches have already evaluated the code. Their results are:
 ...for each WARN verdict, or "None" if no warnings...
 ```
 
-5. Update nearby `CLAUDE.md` files with reusable knowledge (module patterns, API conventions, testing approaches). No story-specific details.
-6. **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
-7. Commit all changes including `rem.md` (if modified by Rem) with a message referencing the story ID.
-8. **Check completion**: Read `task.json` — if all stories have `passes: true` (no `false` or `"blocked"`) AND `rem.md` has no unresolved items, respond with `<promise>COMPLETE</promise>`. Otherwise, respond with `<promise>COMMITTED</promise>`.
+4. Update nearby `CLAUDE.md` files with reusable knowledge (module patterns, API conventions, testing approaches). No story-specific details.
+5. **Compress `progress.txt`** if needed (see [Progress Compression](#progress-compression)).
+6. Commit all changes including `rem.md` (if modified by Rem) with a message referencing the story ID.
+7. **Check completion**: Read `task.json` — if all stories have `passes: true` (no `false` or `"blocked"`) AND `rem.md` has no unresolved items, respond with `<promise>COMPLETE</promise>`. Otherwise, respond with `<promise>COMMITTED</promise>`.
 
 ### If FAIL (any witch issued FAIL):
 
@@ -51,7 +50,11 @@ The six witches have already evaluated the code. Their results are:
 
 This banner must be printed. Do not skip or summarize it.
 
-1. Revert all uncommitted changes (`git checkout .` and `git clean -fd`).
+1. Revert implementation changes, preserving log files:
+   ```bash
+   git checkout -- . ':!progress.txt' ':!death_returns.md' ':!rem.md'
+   git clean -fd -e progress.txt -e death_returns.md -e rem.md
+   ```
 2. Append to `progress.txt`:
 
 ```

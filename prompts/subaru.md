@@ -44,7 +44,11 @@ Do not push through when the implementation direction is clearly wrong. Revert e
 
 When a story is too large for a single iteration:
 
-1. Revert all uncommitted changes.
+1. Revert implementation changes (preserving log files):
+   ```bash
+   git checkout -- . ':!progress.txt' ':!death_returns.md' ':!rem.md'
+   git clean -fd -e progress.txt -e death_returns.md -e rem.md
+   ```
 2. Split the original story in `task.json`:
    - Replace the original story (set `"passes": "split"`) with smaller sub-stories.
    - Sub-stories use the original ID as prefix: `US-003` → `US-003-1`, `US-003-2`, etc.
@@ -72,7 +76,11 @@ This step is only for early aborts during implementation (prerequisites missing,
 
 This banner must be printed to the user every time a revert occurs. Do not skip or summarize it.
 
-- Revert all uncommitted changes (`git checkout .` and `git clean -fd`).
+- Revert implementation changes, preserving log files:
+  ```bash
+  git checkout -- . ':!progress.txt' ':!death_returns.md' ':!rem.md'
+  git clean -fd -e progress.txt -e death_returns.md -e rem.md
+  ```
 - Append to `progress.txt`:
 
 ```
