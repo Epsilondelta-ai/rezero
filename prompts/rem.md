@@ -38,20 +38,14 @@ If any witch issued a **WARN** verdict, record each warning in `rem.md`:
 
 ### 2. Review Existing Debt
 
-Check if the latest code changes incidentally resolved any existing items in `rem.md`:
+Check if the current uncommitted changes incidentally resolved any existing items in `rem.md`:
 
-1. Read the git diff of the latest commit.
+1. Read the uncommitted changes (`git diff` and `git diff --cached`).
 2. For each unresolved item, check if the changes address it.
 3. If resolved: move to `## Resolved` section with date and resolution description.
 4. If partially resolved: update the entry with a note on remaining work.
 
-### 3. Check Completion
-
-After managing debt:
-
-1. Read `task.json` — check if all stories have `passes: true` (no `false` or `"blocked"` remaining).
-2. Read `rem.md` — check if there are **no unresolved items** (or `rem.md` doesn't exist).
-3. If both conditions are met, respond with `<promise>COMPLETE</promise>`.
+**Note:** Do NOT commit your changes. Satella will commit everything (including `rem.md`) in the next phase.
 
 ## rem.md Format
 

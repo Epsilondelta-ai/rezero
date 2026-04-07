@@ -428,9 +428,27 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     echo "$TMPL"
   }
 
-  # ── Phase 3: Satella (Judgment & Checkpoint) ──────────────────────
+  # ── Phase 3: Rem (Technical Debt Recording) ──────────────────────
+  # Rem runs BEFORE Satella so debt entries are included in the commit.
+  # Only runs on PASS/WARN — on FAIL, Satella reverts everything.
+  if [[ "$FINAL_VERDICT" != "FAIL" ]]; then
+    echo ""
+    echo "  Phase 3: Rem — Technical Debt Recording"
+    echo "  ─────────────────────────────────────────"
+
+    REM_PROMPT=$(inject_evaluation "$(cat "$PROMPTS_DIR/rem.md")")
+    run_agent "$REM_PROMPT"
+
+    # Handle crash (non-fatal — debt tracking is best-effort)
+    if handle_crash "Rem" "$OUTPUT" "$EXIT_CODE"; then
+      echo "Rem session crashed. Continuing to Satella..."
+      sleep 2
+    fi
+  fi
+
+  # ── Phase 4: Satella (Judgment & Checkpoint) ──────────────────────
   echo ""
-  echo "  Phase 3: Satella — Final Judgment"
+  echo "  Phase 4: Satella — Final Judgment"
   echo "  ─────────────────────────────────"
 
   SATELLA_PROMPT=$(inject_evaluation "$(cat "$WITCHES_DIR/satella.md")")
@@ -446,8 +464,10 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Check for signals
   HAS_COMMITTED=false
   HAS_BLOCKED=false
+  HAS_COMPLETE=false
   echo "$OUTPUT" | grep -q "<promise>COMMITTED</promise>" && HAS_COMMITTED=true
   echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>" && HAS_BLOCKED=true
+  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
 
   if $HAS_BLOCKED; then
     echo ""
@@ -457,38 +477,19 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 2
   fi
 
-  # If not COMMITTED, this was a FAIL → revert happened, skip Rem
-  if ! $HAS_COMMITTED; then
-    DEATH_COUNT=0
-    echo "Evaluation failed. Continuing to next iteration..."
-    sleep 2
-    continue
-  fi
-
-  # ── Phase 4: Rem (Technical Debt Management) ─────────────────────
-  echo ""
-  echo "  Phase 4: Rem — Technical Debt Management"
-  echo "  ─────────────────────────────────────────"
-
-  REM_PROMPT=$(inject_evaluation "$(cat "$PROMPTS_DIR/rem.md")")
-  run_agent "$REM_PROMPT"
-
-  # Handle crash (non-fatal for Rem — debt tracking is best-effort)
-  if handle_crash "Rem" "$OUTPUT" "$EXIT_CODE"; then
-    echo "Rem session crashed, but commit succeeded. Continuing..."
-    sleep 2
-    # Don't continue — the commit already happened, proceed normally
-  fi
-
-  # Check for completion signal from Rem
-  HAS_COMPLETE=false
-  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
-
   if $HAS_COMPLETE; then
     echo ""
     echo "Re:ZERO Loop complete! All stories passed."
     echo "Completed at iteration $i of $MAX_ITERATIONS"
     exit 0
+  fi
+
+  # If not COMMITTED, this was a FAIL → revert happened
+  if ! $HAS_COMMITTED; then
+    DEATH_COUNT=0
+    echo "Evaluation failed. Continuing to next iteration..."
+    sleep 2
+    continue
   fi
 
   # Iteration complete — checkpoint succeeded, reset death return log
