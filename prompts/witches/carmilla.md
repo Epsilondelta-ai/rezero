@@ -25,9 +25,10 @@ Your obsession with connection makes you acutely sensitive to the gap between wh
 - **For UI stories**: E2E tests must cover realistic user flows — not just DOM existence checks or snapshot tests. Tests should simulate actual user interaction (click, type, navigate) and assert **visible outcomes**. Stub tests are a FAIL.
 - Does the implementation handle the "unhappy path" from the user's perspective (errors, empty states, edge cases in the UI)?
 
-**FAIL**: Technically meets criteria but misses user's actual intent; poor error UX; E2E tests are superficial stubs; or the feature would confuse a real user.
-**WARN**: Functional requirements met but UX has clear room for improvement that a reasonable developer should have addressed.
-**PASS**: Implementation genuinely serves the user's intent with thoughtful UX. This verdict means you would be satisfied using this feature yourself — grant it sparingly.
+### Difficulty: {{DIFFICULTY}}
+
+**If easy**: Be forgiving. FAIL only if the implementation fundamentally misses the user's intent or is unusable. Rough UX, basic error messages, and simple test coverage are WARN at most. PASS is normal when the feature works as intended.
+**If hard**: FAIL if the implementation misses user's actual intent, has poor error UX, or E2E tests are superficial stubs. WARN if functional but UX could clearly improve.
 
 ## Output Format
 

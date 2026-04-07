@@ -112,9 +112,10 @@ Aggregate all six evaluations:
 **Reason**: [Summary]
 ```
 
-- **Any FAIL** -> `FAIL`. Changes should be reverted and retried.
-- **All PASS, no warnings** -> `PASS`.
-- **All PASS with WARNs** -> `PASS`, but warnings should be recorded as technical debt (see `/rem` skill).
+Aggregation rules depend on **difficulty** (default: `easy`):
+
+- **Easy**: 3+ FAILs needed for overall `FAIL`. 1-2 FAILs are downgraded to `WARN`. Witches evaluate with more leniency.
+- **Hard**: Any single `FAIL` -> overall `FAIL`. Witches evaluate with full rigor.
 
 ### Output Format (for automated parsing)
 

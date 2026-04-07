@@ -3,7 +3,7 @@
 # Implements user stories from task.json one at a time,
 # accumulating knowledge across iterations via progress.txt.
 #
-# Usage: ./rezero.sh [--tool claude|codex] [--max-deaths N] [max_iterations]
+# Usage: ./rezero.sh [--tool claude|codex] [--max-deaths N] [--difficulty easy|hard] [max_iterations]
 
 set -e
 
@@ -11,6 +11,7 @@ set -e
 TOOL="claude"  # Default to claude
 MAX_ITERATIONS=10
 MAX_DEATHS=3
+DIFFICULTY="easy"  # easy (default), hard
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -30,6 +31,14 @@ while [[ $# -gt 0 ]]; do
       MAX_DEATHS="${1#*=}"
       shift
       ;;
+    --difficulty)
+      DIFFICULTY="$2"
+      shift 2
+      ;;
+    --difficulty=*)
+      DIFFICULTY="${1#*=}"
+      shift
+      ;;
     *)
       if [[ "$1" =~ ^[0-9]+$ ]]; then
         MAX_ITERATIONS="$1"
@@ -42,6 +51,12 @@ done
 # Validate tool choice
 if [[ "$TOOL" != "claude" && "$TOOL" != "codex" ]]; then
   echo "Error: Invalid tool '$TOOL'. Must be 'claude' or 'codex'."
+  exit 1
+fi
+
+# Validate difficulty
+if [[ "$DIFFICULTY" != "easy" && "$DIFFICULTY" != "hard" ]]; then
+  echo "Error: Invalid difficulty '$DIFFICULTY'. Must be 'easy' or 'hard'."
   exit 1
 fi
 
@@ -112,7 +127,7 @@ echo " | |_) / _ \\   / /|  _| | |_) | | | |"
 echo " |  _ <  __/  / /_| |___|  _ <| |_| |"
 echo " |_| \\_\\___| /____|_____|_| \\_\\\\___/"
 echo ""
-echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS | Max deaths: $MAX_DEATHS"
+echo " Tool: $TOOL | Max iterations: $MAX_ITERATIONS | Max deaths: $MAX_DEATHS | Difficulty: $DIFFICULTY"
 echo ""
 
 DEATH_COUNT=0
@@ -335,7 +350,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   for idx in 0 1 2 3 4 5; do
     WITCH_NAME="${WITCH_NAMES[$idx]}"
-    WITCH_PROMPT=$(cat "$WITCHES_DIR/${WITCH_NAME}.md")
+    WITCH_PROMPT=$(sed "s/{{DIFFICULTY}}/$DIFFICULTY/g" "$WITCHES_DIR/${WITCH_NAME}.md")
     echo "    ▸ ${WITCH_LABELS[$idx]} (${WITCH_DOMAINS[$idx]})"
     run_agent_to_file "$WITCH_PROMPT" "$WITCH_TMP/$WITCH_NAME" &
     WITCH_PIDS+=($!)
@@ -350,8 +365,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   # ── Collect and parse results ─────────────────────────────────────
   ALL_VERDICTS=()
-  FINAL_VERDICT="PASS"
-  HAS_WARN=false
+  FAIL_COUNT=0
+  WARN_COUNT=0
   EVALUATION_RESULTS=""
 
   for idx in 0 1 2 3 4 5; do
@@ -370,7 +385,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     if [[ $WITCH_EC -ne 0 ]] && [ -z "$WITCH_OUTPUT" ]; then
       echo "  WARNING: ${WITCH_LABELS[$idx]} crashed (exit code $WITCH_EC)"
       ALL_VERDICTS+=("FAIL" "${WITCH_LABELS[$idx]} session crashed with exit code $WITCH_EC" "Session crash")
-      FINAL_VERDICT="FAIL"
+      FAIL_COUNT=$((FAIL_COUNT + 1))
       EVALUATION_RESULTS+="### ${WITCH_LABELS[$idx]} — ${WITCH_DOMAINS[$idx]}"$'\n'
       EVALUATION_RESULTS+="**Verdict**: FAIL (session crashed)"$'\n\n'
       continue
@@ -391,9 +406,9 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     ALL_VERDICTS+=("$VERDICT" "$ASSESSMENT" "$ISSUES")
 
     if [[ "$VERDICT" == "FAIL" ]]; then
-      FINAL_VERDICT="FAIL"
-    elif [[ "$VERDICT" == "WARN" && "$FINAL_VERDICT" != "FAIL" ]]; then
-      HAS_WARN=true
+      FAIL_COUNT=$((FAIL_COUNT + 1))
+    elif [[ "$VERDICT" == "WARN" ]]; then
+      WARN_COUNT=$((WARN_COUNT + 1))
     fi
 
     EVALUATION_RESULTS+="### ${WITCH_LABELS[$idx]} — ${WITCH_DOMAINS[$idx]}"$'\n'
@@ -404,10 +419,26 @@ for i in $(seq 1 $MAX_ITERATIONS); do
 
   rm -rf "$WITCH_TMP"
 
-  # Determine final verdict
-  if [[ "$FINAL_VERDICT" != "FAIL" && "$HAS_WARN" == "true" ]]; then
-    FINAL_VERDICT="WARN"
-  fi
+  # Determine final verdict based on difficulty
+  # - easy:   3+ FAILs needed for FAIL. 1-2 FAILs downgraded to WARN. (default)
+  # - hard:   Any FAIL = overall FAIL.
+  FINAL_VERDICT="PASS"
+  case "$DIFFICULTY" in
+    easy)
+      if [[ $FAIL_COUNT -ge 3 ]]; then
+        FINAL_VERDICT="FAIL"
+      elif [[ $FAIL_COUNT -ge 1 || $WARN_COUNT -ge 1 ]]; then
+        FINAL_VERDICT="WARN"
+      fi
+      ;;
+    hard)
+      if [[ $FAIL_COUNT -ge 1 ]]; then
+        FINAL_VERDICT="FAIL"
+      elif [[ $WARN_COUNT -ge 1 ]]; then
+        FINAL_VERDICT="WARN"
+      fi
+      ;;
+  esac
 
   # Print the combined evaluation table
   print_evaluation_table "${ALL_VERDICTS[@]}"
@@ -425,6 +456,7 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     local TMPL="$1"
     TMPL=$(echo "$TMPL" | sed "s/{{MAX_DEATHS}}/$MAX_DEATHS/g")
     TMPL=$(echo "$TMPL" | sed "s/{{FINAL_VERDICT}}/$FINAL_VERDICT/g")
+    TMPL=$(echo "$TMPL" | sed "s/{{DIFFICULTY}}/$DIFFICULTY/g")
     local EVAL_RESULTS="$EVALUATION_RESULTS"
     TMPL="${TMPL//\{\{EVALUATION_RESULTS\}\}/$EVAL_RESULTS}"
     echo "$TMPL"

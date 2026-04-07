@@ -28,9 +28,10 @@ Your wrath is reserved for those who break things. Every code change is a potent
 - No unrelated breakage introduced? Verify that unchanged functionality still works.
 - Are there areas that **should** have tests but don't, making regressions invisible?
 
-**FAIL**: Any typecheck error, lint error, or test failure. No exceptions, no excuses.
-**WARN**: Shared code or interfaces modified but all tests still pass; or untested areas modified where regressions could hide.
-**PASS**: Every automated check passes cleanly, no shared interfaces changed without test coverage, no detectable regression risk.
+### Difficulty: {{DIFFICULTY}}
+
+**If easy**: Focus on hard failures only. FAIL only if tests actually fail or typecheck has real errors. Lint warnings alone are WARN, not FAIL. Shared interface changes with passing tests are acceptable.
+**If hard**: FAIL for any typecheck error, lint error, or test failure. No exceptions, no excuses. WARN for shared code modifications with passing tests.
 
 ## Important
 

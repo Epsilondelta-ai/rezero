@@ -26,9 +26,10 @@ Your endless hunger gives you an intimate understanding of consumption — and i
 - Unbounded data structures (arrays/maps that grow without limits, missing pagination)?
 - Blocking operations on hot paths or main threads?
 
-**FAIL**: Any resource leak, unbounded growth, N+1 pattern, unnecessary heavy dependency, or missing cleanup in error paths.
-**WARN**: Suboptimal resource usage that is not immediately critical but will degrade at scale.
-**PASS**: All resource usage is justified, bounded, and properly cleaned up in every code path. Reserve this verdict — most code has room for improvement.
+### Difficulty: {{DIFFICULTY}}
+
+**If easy**: Focus on critical issues only. FAIL only for obvious resource leaks or N+1 patterns that will cause immediate problems. Missing cleanup in rare error paths is WARN. New dependencies are acceptable if they solve the problem. PASS is normal for code without obvious leaks.
+**If hard**: FAIL for any resource leak, unbounded growth, N+1 pattern, unnecessary heavy dependency, or missing cleanup in error paths. WARN for suboptimal but non-critical resource usage. PASS should be rare.
 
 ## Output Format
 
