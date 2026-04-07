@@ -7,7 +7,7 @@ description: Track and manage technical debt that accumulates from evaluation wa
 
 Tracks and manages technical debt that accumulates when evaluations pass with warnings. Records debts in `rem.md`, prioritizes them, and verifies resolution.
 
-> **Architecture note**: In the automated Re:ZERO Loop (`rezero.sh`), Rem runs as a **separate session** (Phase 4) after Satella commits the code. The session prompt at `prompts/rem.md` receives `{{EVALUATION_RESULTS}}` and `{{FINAL_VERDICT}}` from the orchestrator. This skill is for **manual invocation** when you want to inspect or manage technical debt directly.
+> **Architecture note**: In the automated Re:ZERO Loop (`rezero.sh`), Rem runs as a **separate session** (Phase 3) before Satella commits the code. The session prompt at `prompts/rem.md` receives `{{EVALUATION_RESULTS}}` and `{{FINAL_VERDICT}}` from the orchestrator. This skill is for **manual invocation** when you want to inspect or manage technical debt directly.
 
 ## rem.md Format
 

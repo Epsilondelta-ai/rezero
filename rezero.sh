@@ -55,7 +55,7 @@ LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
 
 # Archive previous run if branch changed
 if [ -f "$TASK_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
+  CURRENT_BRANCH=$(jq -r '.branch // .branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
   LAST_BRANCH=$(cat "$LAST_BRANCH_FILE" 2>/dev/null || echo "")
 
   if [ -n "$CURRENT_BRANCH" ] && [ -n "$LAST_BRANCH" ] && [ "$CURRENT_BRANCH" != "$LAST_BRANCH" ]; then
@@ -85,7 +85,7 @@ fi
 
 # Track current branch
 if [ -f "$TASK_FILE" ]; then
-  CURRENT_BRANCH=$(jq -r '.branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
+  CURRENT_BRANCH=$(jq -r '.branch // .branchName // empty' "$TASK_FILE" 2>/dev/null || echo "")
   if [ -n "$CURRENT_BRANCH" ]; then
     echo "$CURRENT_BRANCH" > "$LAST_BRANCH_FILE"
   fi
@@ -193,10 +193,13 @@ handle_crash() {
     DEATH_COUNT=$((DEATH_COUNT + 1))
     echo ""
     echo "WARNING: $LABEL crashed with exit code $EC (death $DEATH_COUNT/$MAX_DEATHS)"
-    echo "---" >> "$PROGRESS_FILE"
-    echo "CRASH at iteration $i ($LABEL): Agent exited with code $EC (death $DEATH_COUNT/$MAX_DEATHS)" >> "$PROGRESS_FILE"
-    echo "Story: ${CURRENT_STORY_ID:-unknown} — ${CURRENT_STORY_TITLE:-unknown}" >> "$PROGRESS_FILE"
-    echo "Time: $(date)" >> "$PROGRESS_FILE"
+    echo "" >> "$PROGRESS_FILE"
+    echo "## $(date) - CRASH-iter-$i: $LABEL Crash" >> "$PROGRESS_FILE"
+    echo "**Status**: Crash" >> "$PROGRESS_FILE"
+    echo "**Story**: ${CURRENT_STORY_ID:-unknown} — ${CURRENT_STORY_TITLE:-unknown}" >> "$PROGRESS_FILE"
+    echo "**Phase**: $LABEL" >> "$PROGRESS_FILE"
+    echo "**Exit Code**: $EC" >> "$PROGRESS_FILE"
+    echo "**Death Count**: $DEATH_COUNT / $MAX_DEATHS" >> "$PROGRESS_FILE"
 
     echo "" >> "$DEATH_LOG_FILE"
     echo "## $(date) - CRASH at iteration $i" >> "$DEATH_LOG_FILE"
@@ -341,7 +344,6 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Wait for all witches to complete
   echo ""
   echo "  Waiting for all evaluators to finish..."
-  WITCH_CRASH=false
   for pid in "${WITCH_PIDS[@]}"; do
     wait "$pid" 2>/dev/null || true
   done
@@ -492,11 +494,8 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     continue
   fi
 
-  # Iteration complete — checkpoint succeeded, reset death return log
+  # Iteration complete — checkpoint succeeded
   DEATH_COUNT=0
-  echo "# Death Return Log" > "$DEATH_LOG_FILE"
-  echo "Started: $(date)" >> "$DEATH_LOG_FILE"
-  echo "---" >> "$DEATH_LOG_FILE"
   echo "Iteration $i complete. Continuing..."
   sleep 2
 done

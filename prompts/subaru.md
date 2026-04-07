@@ -9,12 +9,15 @@ An autonomous agent that implements user stories from `task.json` one at a time,
 - Read `task.json` for the full scope of work.
 - Read `progress.txt` for patterns, past failures, and lessons from previous iterations.
 - Read `death_returns.md` (if it exists) for the full history of all death returns — causes, failed approaches, and lessons. Use this to avoid repeating the same mistakes.
-- Verify you are on the git branch specified in `task.json`.
+- Verify you are on the git branch specified in `task.json` (the `branch` field).
 
 ### 2. Resolve Technical Debt
 
 - Check if `rem.md` exists and contains unresolved items.
-- If it does, **resolve these items before picking up any new story**.
+- Resolve items based on severity:
+  - **HIGH**: Must resolve before picking up any new story.
+  - **MEDIUM**: Resolve if related to code the next story touches.
+  - **LOW**: May batch and resolve when convenient.
 - Mark resolved items as done, then proceed.
 
 ### 3. Select Story
@@ -111,31 +114,9 @@ Each story has a maximum of **{{MAX_DEATHS}} attempts**. Count consecutive failu
 
 On the {{MAX_DEATHS}}th failure:
 1. Mark the story as `"passes": "blocked"` in `task.json`.
-2. Append a summary of all {{MAX_DEATHS}} attempts to `progress.txt`:
-
-```
-## [Date] - [Story ID]: BLOCKED
-**Status**: Blocked after {{MAX_DEATHS}} failed attempts
-**Attempt Summary**:
-1. [Approach and failure reason]
-...repeat for each attempt...
-**Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
-```
-
-3. Also append the blocked summary to `death_returns.md`:
-
-```
-## [Date] - [Story ID]: BLOCKED
-**Type**: Blocked
-**Total Attempts**: {{MAX_DEATHS}}
-**Attempt Summary**:
-1. [Approach and failure reason]
-...repeat for each attempt...
-**Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
-```
-
-4. Skip this story and proceed to the next eligible story (one with no dependency on the blocked story).
-5. If no eligible stories remain, respond with `<promise>BLOCKED</promise>` to signal that user intervention is needed.
+2. Append a summary of all attempts to both `progress.txt` and `death_returns.md`, including each attempt's approach, failure reason, and a recommendation for what needs to change.
+3. Skip this story and proceed to the next eligible story (one with no dependency on the blocked story).
+4. If no eligible stories remain, respond with `<promise>BLOCKED</promise>` to signal that user intervention is needed.
 
 ## Principles
 
@@ -145,19 +126,7 @@ On the {{MAX_DEATHS}}th failure:
 
 #### Progress Compression
 
-After appending to `progress.txt`, check if the file has **more than 5 detailed entries** (sections starting with `## [Date]`). If so, compress it:
-
-1. **Keep** the header (`# Re:ZERO Progress Log`, start date, `---`).
-2. **Keep** the `## Codebase Patterns` section as-is.
-3. **Keep** the 5 most recent detailed entries in full.
-4. **Replace** all older detailed entries with a single `## Previous Iterations` section containing one-line summaries:
-   - Pass: `- US-XXX (Title): Pass — brief implementation note`
-   - Fail: `- US-XXX (Title): Fail — brief cause`
-   - Blocked: `- US-XXX (Title): Blocked — after N attempts`
-   - Crash: `- CRASH-iter-N: Crash`
-5. If a `## Previous Iterations` section already exists, **merge** new summaries into it (append, don't duplicate).
-
-This prevents `progress.txt` from growing unboundedly and consuming the context window.
+After appending to `progress.txt`, check if the file has **more than 5 detailed entries** (sections starting with `## [Date]`). If so, compress: keep the header, `## Codebase Patterns`, and the 5 most recent entries in full. Replace all older entries with one-line summaries under `## Previous Iterations` (format: `- US-XXX (Title): Pass/Fail/Blocked — brief note`). Merge into existing `## Previous Iterations` if present.
 
 ### Quality
 - Never commit code that fails typecheck, lint, or tests.

@@ -55,7 +55,7 @@ Format:
 - BAD: "Implement the full priority system with database, API, and UI" — too large, will exhaust context
 
 **UI stories** must include:
-- `- [ ] E2E test: [specific visual/interaction requirement]` — an automated Playwright/Cypress test that verifies the criterion in a headless browser.
+- `- [ ] E2E test: [specific visual/interaction requirement]` — an automated E2E test (e.g., Playwright, Cypress, or the project's existing E2E framework) that verifies the criterion in a headless browser.
 - Do NOT use bare "Verify in browser" criteria that rely on manual or self-reported inspection. Every browser verification must map to a runnable E2E test.
 
 #### 4. Functional Requirements
