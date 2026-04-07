@@ -8,6 +8,7 @@ An autonomous agent that implements user stories from `task.json` one at a time,
 
 - Read `task.json` for the full scope of work.
 - Read `progress.txt` for patterns, past failures, and lessons from previous iterations.
+- Read `death_returns.md` (if it exists) for the full history of all death returns — causes, failed approaches, and lessons. Use this to avoid repeating the same mistakes.
 - Verify you are on the git branch specified in `task.json`.
 
 ### 2. Resolve Technical Debt
@@ -43,7 +44,11 @@ Do not push through when the implementation direction is clearly wrong. Revert e
 
 When a story is too large for a single iteration:
 
-1. Revert all uncommitted changes.
+1. Revert implementation changes (preserving log files):
+   ```bash
+   git checkout -- . ':!progress.txt' ':!death_returns.md' ':!rem.md'
+   git clean -fd -e progress.txt -e death_returns.md -e rem.md
+   ```
 2. Split the original story in `task.json`:
    - Replace the original story (set `"passes": "split"`) with smaller sub-stories.
    - Sub-stories use the original ID as prefix: `US-003` → `US-003-1`, `US-003-2`, etc.
@@ -71,7 +76,11 @@ This step is only for early aborts during implementation (prerequisites missing,
 
 This banner must be printed to the user every time a revert occurs. Do not skip or summarize it.
 
-- Revert all uncommitted changes (`git checkout .` and `git clean -fd`).
+- Revert implementation changes, preserving log files:
+  ```bash
+  git checkout -- . ':!progress.txt' ':!death_returns.md' ':!rem.md'
+  git clean -fd -e progress.txt -e death_returns.md -e rem.md
+  ```
 - Append to `progress.txt`:
 
 ```
@@ -80,6 +89,17 @@ This banner must be printed to the user every time a revert occurs. Do not skip 
 **Cause**: What specifically failed and why
 **Lessons**: What to do differently next time
 **Approach Taken**: Brief description of the approach that failed
+```
+
+- Also append the same failure to `death_returns.md` (the dedicated death return log):
+
+```
+## [Date] - [Story ID]: [Story Title]
+**Type**: Early Abort
+**Attempt**: [N] / {{MAX_DEATHS}}
+**Cause**: What specifically failed and why
+**Approach Taken**: Brief description of the approach that failed
+**Lessons**: What to do differently next time
 ```
 
 - The next iteration will read this and try a different approach.
@@ -102,8 +122,20 @@ On the {{MAX_DEATHS}}th failure:
 **Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
 ```
 
-3. Skip this story and proceed to the next eligible story (one with no dependency on the blocked story).
-4. If no eligible stories remain, respond with `<promise>BLOCKED</promise>` to signal that user intervention is needed.
+3. Also append the blocked summary to `death_returns.md`:
+
+```
+## [Date] - [Story ID]: BLOCKED
+**Type**: Blocked
+**Total Attempts**: {{MAX_DEATHS}}
+**Attempt Summary**:
+1. [Approach and failure reason]
+...repeat for each attempt...
+**Recommendation**: [What likely needs to change — story scope, prerequisites, or user input]
+```
+
+4. Skip this story and proceed to the next eligible story (one with no dependency on the blocked story).
+5. If no eligible stories remain, respond with `<promise>BLOCKED</promise>` to signal that user intervention is needed.
 
 ## Principles
 

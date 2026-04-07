@@ -50,6 +50,7 @@ TASK_FILE="$SCRIPT_DIR/task.json"
 PROGRESS_FILE="$SCRIPT_DIR/progress.txt"
 REM_FILE="$SCRIPT_DIR/rem.md"
 ARCHIVE_DIR="$SCRIPT_DIR/archive"
+DEATH_LOG_FILE="$SCRIPT_DIR/death_returns.md"
 LAST_BRANCH_FILE="$SCRIPT_DIR/.last-branch"
 
 # Archive previous run if branch changed
@@ -67,12 +68,18 @@ if [ -f "$TASK_FILE" ] && [ -f "$LAST_BRANCH_FILE" ]; then
     [ -f "$TASK_FILE" ] && cp "$TASK_FILE" "$ARCHIVE_FOLDER/"
     [ -f "$PROGRESS_FILE" ] && cp "$PROGRESS_FILE" "$ARCHIVE_FOLDER/"
     [ -f "$REM_FILE" ] && cp "$REM_FILE" "$ARCHIVE_FOLDER/"
+    [ -f "$DEATH_LOG_FILE" ] && cp "$DEATH_LOG_FILE" "$ARCHIVE_FOLDER/"
     echo "  Archived to: $ARCHIVE_FOLDER"
 
     # Reset progress file for new run
     echo "# Re:ZERO Progress Log" > "$PROGRESS_FILE"
     echo "Started: $(date)" >> "$PROGRESS_FILE"
     echo "---" >> "$PROGRESS_FILE"
+
+    # Reset death return log for new run
+    echo "# Death Return Log" > "$DEATH_LOG_FILE"
+    echo "Started: $(date)" >> "$DEATH_LOG_FILE"
+    echo "---" >> "$DEATH_LOG_FILE"
   fi
 fi
 
@@ -89,6 +96,13 @@ if [ ! -f "$PROGRESS_FILE" ]; then
   echo "# Re:ZERO Progress Log" > "$PROGRESS_FILE"
   echo "Started: $(date)" >> "$PROGRESS_FILE"
   echo "---" >> "$PROGRESS_FILE"
+fi
+
+# Initialize death return log if it doesn't exist
+if [ ! -f "$DEATH_LOG_FILE" ]; then
+  echo "# Death Return Log" > "$DEATH_LOG_FILE"
+  echo "Started: $(date)" >> "$DEATH_LOG_FILE"
+  echo "---" >> "$DEATH_LOG_FILE"
 fi
 
 echo ""
@@ -181,7 +195,16 @@ handle_crash() {
     echo "WARNING: $LABEL crashed with exit code $EC (death $DEATH_COUNT/$MAX_DEATHS)"
     echo "---" >> "$PROGRESS_FILE"
     echo "CRASH at iteration $i ($LABEL): Agent exited with code $EC (death $DEATH_COUNT/$MAX_DEATHS)" >> "$PROGRESS_FILE"
+    echo "Story: ${CURRENT_STORY_ID:-unknown} — ${CURRENT_STORY_TITLE:-unknown}" >> "$PROGRESS_FILE"
     echo "Time: $(date)" >> "$PROGRESS_FILE"
+
+    echo "" >> "$DEATH_LOG_FILE"
+    echo "## $(date) - CRASH at iteration $i" >> "$DEATH_LOG_FILE"
+    echo "**Type**: Agent Crash" >> "$DEATH_LOG_FILE"
+    echo "**Story**: ${CURRENT_STORY_ID:-unknown} — ${CURRENT_STORY_TITLE:-unknown}" >> "$DEATH_LOG_FILE"
+    echo "**Phase**: $LABEL" >> "$DEATH_LOG_FILE"
+    echo "**Exit Code**: $EC" >> "$DEATH_LOG_FILE"
+    echo "**Death Count**: $DEATH_COUNT / $MAX_DEATHS" >> "$DEATH_LOG_FILE"
 
     if [[ $DEATH_COUNT -ge $MAX_DEATHS ]]; then
       echo ""
@@ -248,6 +271,10 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   echo "==============================================================="
   echo "  Re:ZERO Iteration $i of $MAX_ITERATIONS ($TOOL)"
   echo "==============================================================="
+
+  # Extract current story ID and title from task.json for crash logging
+  CURRENT_STORY_ID=$(jq -r '[.stories[] | select(.passes == false)] | sort_by(.priority) | .[0].id // "unknown"' "$TASK_FILE" 2>/dev/null || echo "unknown")
+  CURRENT_STORY_TITLE=$(jq -r '[.stories[] | select(.passes == false)] | sort_by(.priority) | .[0].title // "unknown"' "$TASK_FILE" 2>/dev/null || echo "unknown")
 
   # ── Phase 1: Implementation (Subaru) ──────────────────────────────
   echo ""
@@ -401,9 +428,27 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     echo "$TMPL"
   }
 
-  # ── Phase 3: Satella (Judgment & Checkpoint) ──────────────────────
+  # ── Phase 3: Rem (Technical Debt Recording) ──────────────────────
+  # Rem runs BEFORE Satella so debt entries are included in the commit.
+  # Only runs on PASS/WARN — on FAIL, Satella reverts everything.
+  if [[ "$FINAL_VERDICT" != "FAIL" ]]; then
+    echo ""
+    echo "  Phase 3: Rem — Technical Debt Recording"
+    echo "  ─────────────────────────────────────────"
+
+    REM_PROMPT=$(inject_evaluation "$(cat "$PROMPTS_DIR/rem.md")")
+    run_agent "$REM_PROMPT"
+
+    # Handle crash (non-fatal — debt tracking is best-effort)
+    if handle_crash "Rem" "$OUTPUT" "$EXIT_CODE"; then
+      echo "Rem session crashed. Continuing to Satella..."
+      sleep 2
+    fi
+  fi
+
+  # ── Phase 4: Satella (Judgment & Checkpoint) ──────────────────────
   echo ""
-  echo "  Phase 3: Satella — Final Judgment"
+  echo "  Phase 4: Satella — Final Judgment"
   echo "  ─────────────────────────────────"
 
   SATELLA_PROMPT=$(inject_evaluation "$(cat "$WITCHES_DIR/satella.md")")
@@ -419,8 +464,10 @@ for i in $(seq 1 $MAX_ITERATIONS); do
   # Check for signals
   HAS_COMMITTED=false
   HAS_BLOCKED=false
+  HAS_COMPLETE=false
   echo "$OUTPUT" | grep -q "<promise>COMMITTED</promise>" && HAS_COMMITTED=true
   echo "$OUTPUT" | grep -q "<promise>BLOCKED</promise>" && HAS_BLOCKED=true
+  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
 
   if $HAS_BLOCKED; then
     echo ""
@@ -430,33 +477,6 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 2
   fi
 
-  # If not COMMITTED, this was a FAIL → revert happened, skip Rem
-  if ! $HAS_COMMITTED; then
-    DEATH_COUNT=0
-    echo "Evaluation failed. Continuing to next iteration..."
-    sleep 2
-    continue
-  fi
-
-  # ── Phase 4: Rem (Technical Debt Management) ─────────────────────
-  echo ""
-  echo "  Phase 4: Rem — Technical Debt Management"
-  echo "  ─────────────────────────────────────────"
-
-  REM_PROMPT=$(inject_evaluation "$(cat "$PROMPTS_DIR/rem.md")")
-  run_agent "$REM_PROMPT"
-
-  # Handle crash (non-fatal for Rem — debt tracking is best-effort)
-  if handle_crash "Rem" "$OUTPUT" "$EXIT_CODE"; then
-    echo "Rem session crashed, but commit succeeded. Continuing..."
-    sleep 2
-    # Don't continue — the commit already happened, proceed normally
-  fi
-
-  # Check for completion signal from Rem
-  HAS_COMPLETE=false
-  echo "$OUTPUT" | grep -q "<promise>COMPLETE</promise>" && HAS_COMPLETE=true
-
   if $HAS_COMPLETE; then
     echo ""
     echo "Re:ZERO Loop complete! All stories passed."
@@ -464,8 +484,19 @@ for i in $(seq 1 $MAX_ITERATIONS); do
     exit 0
   fi
 
-  # Iteration complete
+  # If not COMMITTED, this was a FAIL → revert happened
+  if ! $HAS_COMMITTED; then
+    DEATH_COUNT=0
+    echo "Evaluation failed. Continuing to next iteration..."
+    sleep 2
+    continue
+  fi
+
+  # Iteration complete — checkpoint succeeded, reset death return log
   DEATH_COUNT=0
+  echo "# Death Return Log" > "$DEATH_LOG_FILE"
+  echo "Started: $(date)" >> "$DEATH_LOG_FILE"
+  echo "---" >> "$DEATH_LOG_FILE"
   echo "Iteration $i complete. Continuing..."
   sleep 2
 done
