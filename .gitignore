@@ -38,3 +38,6 @@ temp/
 .pi/sessions/
 .pi/tasks/
 .pi/web-status.json
+
+# Re:ZERO Loop persistent memory
+.rezero/memory/
