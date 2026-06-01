@@ -8,8 +8,8 @@ Goal → finish request; pass Seven Witches; keep death memory; never fail same 
 - Start from current `HEAD`; attempt changes are disposable.
 - Memory lives in `.rezero/memory/`.
 - Read request/repo → inspect files → implement → verify → Seven Witches evaluate.
-- Verdicts: `pass` accepted; `warning` accepted + record; `fail` rejected.
-- `pass|warning` only → record warnings → commit → stop.
+- Verdicts: `pass` accepted; `warning` accepted + Rem memory; `fail` rejected.
+- `pass|warning` only → After Pass → stop.
 - Any `fail` → Return by Death → retry with changed route.
 
 ## Return by Death
@@ -36,6 +36,14 @@ git clean -fd
 ```
 
 Never reset before memory. Never retry without new info.
+
+## After Pass
+
+- If warnings passed, append them to `.rezero/memory/rem.md`.
+- Commit accepted route.
+- Delete `.rezero/memory/subaru-deaths.md` after commit.
+- Rem warning fixes are normal attempts: verify → Seven Witches evaluate → commit only if no `fail`.
+- If all Rem warnings are resolved and accepted, delete `.rezero/memory/rem.md` after commit.
 
 ## Rules
 
