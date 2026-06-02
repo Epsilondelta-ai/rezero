@@ -35,6 +35,7 @@ Before reset, append to `.rezero/memory/subaru-deaths.md`:
 
 - Sequential task = implement → verify → witches → commit or reset.
 - Parallel group = parallel implement → merge → verify combined result → one witches evaluation → one commit or reset.
+- Parallel implementer names may be Beatrice, Emilia, Ram, Garfiel, Julius, etc.; names only, no character behavior.
 - Do not parallelize tasks that touch the same files, migrations, shared state, or dependency graph.
 - Never reset before death memory.
 - Never retry without new info.
