@@ -61,6 +61,9 @@ Show exactly one table in chat:
 ## Rules
 
 - Verdict values only: `pass`, `warning`, `fail`.
+- Judge evidence, not effort.
+- No relevant evidence → `warning` minimum; `fail` if that focus is critical to the task.
+- Use `fail` only for route-invalidating issues, not preferences.
 - One `fail` kills the route.
 - Warnings pass but must be sent to Rem.
 - Keep evidence concise and reproducible.
