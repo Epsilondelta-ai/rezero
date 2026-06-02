@@ -4,153 +4,93 @@
 
 ![](./images/rezero.webp)
 
-> Re:ZERO Loop es un proyecto inspirado en el **Regreso de la muerte** de **Re:Zero − Empezar de cero en un mundo diferente**.
+> Re:ZERO Loop es un flujo de agentes inspirado en **Return by Death** de **Re:Zero − Starting Life in Another World**.
 
-Para evitar la degradación del rendimiento de la IA causada por la contaminación de contexto acumulado, han surgido técnicas como Ralph Loop.  
-Sin embargo, incluso si el contexto se mantiene limpio, si el código acumulado se contamina, la degradación del rendimiento causada por la base de código es inevitable.
-
-Re:ZERO Loop nació de la idea de introducir el Regreso de la muerte en la IA para superar este problema.
-
-## Tabla de contenidos
-
-- [Requisitos previos](#requisitos-previos)
-- [Instalación](#instalación)
-  - [Opción 1: Copiar directamente al proyecto](#opción-1-copiar-directamente-al-proyecto)
-  - [Opción 2: Instalar skills globalmente](#opción-2-instalar-skills-globalmente)
-  - [Opción 3: Usar como plugin de Claude Code](#opción-3-usar-como-plugin-de-claude-code)
-- [Flujo de trabajo](#flujo-de-trabajo)
-  - [1. Crear una definición de tarea](#1-crear-una-definición-de-tarea)
-  - [2. Ejecutar el Re:ZERO Loop](#2-ejecutar-el-rezero-loop)
-- [Conceptos](#conceptos)
-  - [Natsuki Subaru](#natsuki-subaru)
-  - [Regreso de la muerte](#regreso-de-la-muerte)
-  - [Fiesta del té de las brujas](#fiesta-del-té-de-las-brujas)
-  - [Rem](#rem)
-- [Licencia](#licencia)
-
-## Requisitos previos
-
-- **Herramienta de codificación con IA** (una de las siguientes):
-  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [OpenAI Codex](https://openai.com/index/codex/)
-- **jq** instalado (`brew install jq` en macOS)
-- Un **repositorio git** para tu proyecto
+Subaru implementa, siete brujas revisan de forma independiente, la memoria del fallo se conserva y se reintenta desde `HEAD`.
 
 ## Instalación
 
-### Opción 1: Copiar directamente al proyecto
+### Pi
 
 ```bash
-mkdir -p scripts/rezero
-cp /path/to/rezero/rezero.sh scripts/rezero/
-cp -r /path/to/rezero/prompts scripts/rezero/prompts
-chmod +x scripts/rezero/rezero.sh
+pi install git:github.com/epsilondelta-ai/rezero
 ```
 
-### Opción 2: Instalar skills globalmente
-
-```bash
-cp -r skills/task ~/.claude/skills/
-cp -r skills/rezero ~/.claude/skills/
-cp -r skills/witches-tea-party ~/.claude/skills/
-cp -r skills/rem ~/.claude/skills/
-```
-
-### Opción 3: Usar como plugin de Claude Code
+### Claude Code
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
 /plugin install rezero@rezero-marketplace
 ```
 
-Después de la instalación, los skills `/task` y `/rezero` estarán disponibles.
+### Codex
+
+```bash
+codex plugin marketplace add epsilondelta-ai/rezero
+```
+
+## Uso
+
+```text
+/rezero <task>
+```
 
 ## Flujo de trabajo
 
-### 1. Crear una definición de tarea
+1. **Orchestrate** — Si la petición es grande, `rezero-plan` la divide en tareas pequeñas con criterios de finalización. Las tareas independientes pueden ejecutarse en paralelo con subagents/team agents.
+2. **Implement** — Subaru implementa una tarea secuencial o un grupo paralelo desde el `HEAD` actual; los grupos paralelos se fusionan y se verifican como un solo resultado.
+3. **Evaluate** — `rezero-witches` llama a las siete brujas en paralelo. Usan fresh context y no heredan el contexto de Subaru.
+4. **Return by Death** — Cualquier `fail` registra memoria mínima de fallo, ejecuta reset/clean y reintenta.
+5. **Pass** — Solo `pass`/`warning` pasa; los warnings van a Rem memory y luego se confirma el commit.
+6. **Rem** — Los warnings de Rem también se implementan, verifican, evalúan por brujas y se commitean sin fail.
 
-Usa el skill task para definir una historia de usuario:
+## Skills
 
-> "Carga el skill task y crea una tarea para [descripción de la funcionalidad]"
-
-Resultado: `task.json` (una historia de usuario con prioridades y criterios de aceptación)
-
-### 2. Ejecutar el Re:ZERO Loop
-
-```bash
-./rezero.sh [max_iterations]                        # Claude (por defecto)
-./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
-./rezero.sh --max-deaths 5 [max_iterations]         # Establecer máximo de Regreso de la muerte por historia
-```
-
-Iteraciones por defecto: 10, máximo de muertes por defecto: 3
-
-**Flujo de ejecución:**
-
-1. Crea una rama de funcionalidad a partir de `task.json`
-2. Selecciona la historia incompleta de mayor prioridad
-3. Implementa la historia
-4. La Fiesta del té de las brujas realiza una evaluación de calidad
-5. Si aprueba: hace commit y actualiza el estado en `task.json`
-6. Si falla: activa el Regreso de la muerte, volviendo al checkpoint
-7. Registra las lecciones aprendidas en `progress.txt`
-8. Repite hasta que todas las historias estén completas o se alcance el máximo de iteraciones
+- `rezero-orchestrator` — `/rezero` entrypoint.
+- `rezero-plan` — large request splitting.
+- `rezero-loop` — Subaru single-task loop.
+- `rezero-witches` — fresh-context seven-witch review.
+- `rezero-rem` — warning memory management.
 
 ## Conceptos
 
 ### Natsuki Subaru
 
-Natsuki Subaru es el protagonista de Re:Zero.
+Subaru is the implementer. Starts from current `HEAD`, implements, verifies, and keeps only the memory needed to avoid repeating a failure.
 
-- En este proyecto, el agente que realiza el trabajo se denomina **Natsuki Subaru**.
-- No se limita a ejecutar tareas, sino que acumula conocimiento a través de múltiples Regresos de la muerte.
-- Elabora un plan óptimo en cada intento para alcanzar su objetivo.
-
-### Regreso de la muerte
+### Return by Death
 
 ![Natsuki Subaru](./images/subaru.webp)
 
-Cuando se detecta una anomalía durante el trabajo, o cuando los resultados no son satisfactorios incluso después de completarlo, Natsuki Subaru utiliza el Regreso de la muerte para volver a un checkpoint.
+```bash
+git reset --hard HEAD
+git clean -fd
+```
 
-- Si se detecta una anomalía durante el trabajo, se detiene y utiliza el Regreso de la muerte para volver al checkpoint.
-- Si la Fiesta del té de las brujas determina que no se han cumplido los criterios de éxito, fuerza un Regreso de la muerte.
-- La gran importancia del Regreso de la muerte radica en que vuelve al checkpoint conservando los recuerdos de por qué falló.
+El código muere. La lección sobrevive.
 
-### Fiesta del té de las brujas
+### Seven Witches
 
-![Fiesta del té de las brujas](./images/witches-tea-party.webp)
+![Witches' Tea Party](./images/witches-tea-party.webp)
 
-Los fans familiarizados con la ambientación original podrían encontrar sorprendente que la **Fiesta del té de las brujas** sirva como evaluador.  
-Sin embargo, el hecho de que las seis brujas tengan personalidades diferentes, combinado con la especulación de que Satella podría determinar los checkpoints de Subaru, hizo que este fuera un rol muy adecuado para el sistema de evaluación.
+| Witch | Focus | Example tools |
+| --- | --- | --- |
+| Echidna | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
+| Typhon | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
+| Minerva | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
+| Daphne | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Carmilla | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
+| Sekhmet | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
+| Satella | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
 
-- Después de completar el trabajo, se convoca la "Fiesta del té de las brujas".
-- Las seis brujas evalúan el trabajo desde sus respectivas perspectivas.
-- Satella agrega las evaluaciones de las seis brujas para determinar si actualizar el checkpoint o activar el Regreso de la muerte.
-
-| Bruja                 | Criterio de evaluación                                                                                                                                                                                                   |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Echidna (Avaricia)    | ¿Ha explorado esta implementación todas las posibilidades? ¿Se han manejado todos los casos extremos? ¿Es el conocimiento exhaustivo? En la práctica: verifica cobertura de pruebas, completitud de API, documentación y manejo de condiciones límite. |
-| Minerva (Ira)         | ¿Se ha corregido realmente este bug, o solo se ha redistribuido el problema? ¿El parche crea nuevos modos de fallo en funcionalidades no relacionadas? Ejecuta pruebas de regresión y verifica que la corrección no rompa funcionalidades no relacionadas. |
-| Sekhmet (Pereza)      | ¿Se podría lograr el mismo resultado con menos esfuerzo? ¿Hay complejidad innecesaria? Verifica eficiencia algorítmica, cálculos redundantes y sobreingeniería.                                                         |
-| Typhon (Soberbia)     | ¿Conoce el código sus propios pecados? ¿Hay antipatrones incluidos intencionalmente? ¿Viola sus propios principios? Detecta code smells, violaciones de linting y deuda técnica reconocida pero no corregida.            |
-| Daphne (Gula)         | ¿Cuánta hambre tiene este código? ¿Está justificado el consumo de memoria/CPU/tokens? Verifica uso de memoria, número de llamadas a API, tamaño del bundle y consumo de tokens.                                         |
-| Carmilla (Lujuria)    | ¿Cumple este código con lo que el usuario realmente desea? ¿Es atractiva la UX, o hay defectos peligrosos ocultos tras el encanto? Evalúa la ergonomía de la API, mensajes de error y alineación con la intención declarada del usuario. |
-| Satella (Envidia)     | El agregador final. Determina qué constituye un "resultado aceptable", agrega las evaluaciones de las seis brujas usando puntuaciones ponderadas y emite el veredicto de supervivencia o muerte: paso del checkpoint o activación del Regreso de la muerte. |
+Verdict: `pass`, `warning`, `fail`.
 
 ### Rem
 
-> **!!! ALERTA DE SPOILER !!!**
-
 ![Rem](./images/rem.webp)
 
-Después de la subjugación de la Ballena Blanca, Rem tuvo su nombre y recuerdos consumidos por el Arzobispo del Pecado de Gula, cayendo en animación suspendida.  
-El checkpoint del Regreso de la muerte quedó fijado después de que Rem cayera en este estado, haciendo imposible retroceder más.  
-Al planificar el Re:ZERO Loop, la comprensión de que la existencia de Rem sería crucial para este proyecto — que la deuda técnica podría permanecer incluso después de pasar la Fiesta del té de las brujas — llevó a incorporar a Rem en el proyecto.
-
-- Incluso después de pasar la Fiesta del té de las brujas, si queda deuda técnica o elementos que requieren correcciones futuras, estos persisten al actualizar el checkpoint.
-- Rem identifica y registra por separado la deuda técnica y los elementos que necesitan corrección.
-- Si existen tales elementos, Subaru prioriza salvar a Rem antes de proceder a la siguiente tarea.
+Rem es la memoria de warnings.
 
 ## Licencia
 
-Este proyecto se distribuye bajo la [Licencia MIT](../LICENSE).
+Distributed under the [MIT License](../LICENSE).

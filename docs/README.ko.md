@@ -4,154 +4,119 @@
 
 ![](./images/rezero.webp)
 
-> 리제로 루프는 **Re:제로부터 생활하는 이세계 생활** 의 **사망회귀**에서 영감을 받아 만들어진 프로젝트입니다.
+> Re:ZERO Loop는 **Re:Zero − Starting Life in Another World**의 **사망회귀**에서 영감을 받은 에이전트 워크플로우입니다.
 
-컨텍스트 누적으로인한 오염으로 AI의 수행능력이 저하되는 것을 방지하기 위해 Ralph Loop 같은 기법들이 등장했습니다.  
-하지만, 컨텍스트를 깨끗하게 유지하더라도 누적되는 코드가 오염되어간다면 코드베이스로 인한 수행능력 저하는 피해갈 수 없습니다.
-
-리제로 루프는 이 것을 극복하기 위해 사망회귀를 AI에게 도입하면 어떨까 하는 생각에서 시작되었습니다.
+Subaru가 작업을 구현하고, 일곱 마녀가 독립적으로 검토하며, 실패 기억을 보존한 채 `HEAD`에서 재시도합니다.
 
 ## 목차
 
-- [사전 요구사항](#사전-요구사항)
 - [설치](#설치)
-  - [옵션 1: 프로젝트에 직접 복사](#옵션-1-프로젝트에-직접-복사)
-  - [옵션 2: 스킬을 글로벌로 설치](#옵션-2-스킬을-글로벌로-설치)
-  - [옵션 3: Claude Code 플러그인으로 사용](#옵션-3-claude-code-플러그인으로-사용)
+  - [Pi](#pi)
+  - [Claude Code](#claude-code)
+  - [Codex](#codex)
+- [사용법](#사용법)
 - [워크플로우](#워크플로우)
-  - [1. 태스크 정의 생성](#1-태스크-정의-생성)
-  - [2. 리제로 루프 실행](#2-리제로-루프-실행)
+- [스킬](#스킬)
 - [컨셉](#컨셉)
   - [나츠키 스바루](#나츠키-스바루)
   - [사망회귀](#사망회귀)
-  - [마녀들의 다과회](#마녀들의-다과회)
+  - [일곱 마녀](#일곱-마녀)
   - [렘](#렘)
 - [라이선스](#라이선스)
 
-## 사전 요구사항
-
-- **AI 코딩 도구** (다음 중 하나):
-  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [OpenAI Codex](https://openai.com/index/codex/)
-- **jq** 설치 (`brew install jq` on macOS)
-- 프로젝트용 **git 저장소**
-
 ## 설치
 
-### 옵션 1: 프로젝트에 직접 복사
+### Pi
 
 ```bash
-mkdir -p scripts/rezero
-cp /path/to/rezero/rezero.sh scripts/rezero/
-cp -r /path/to/rezero/prompts scripts/rezero/prompts
-chmod +x scripts/rezero/rezero.sh
+pi install git:github.com/epsilondelta-ai/rezero
 ```
 
-### 옵션 2: 스킬을 글로벌로 설치
+로컬 개발:
 
 ```bash
-cp -r skills/task ~/.claude/skills/
-cp -r skills/rezero ~/.claude/skills/
-cp -r skills/witches-tea-party ~/.claude/skills/
-cp -r skills/rem ~/.claude/skills/
+pi install /path/to/rezero
 ```
 
-### 옵션 3: Claude Code 플러그인으로 사용
+### Claude Code
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
 /plugin install rezero@rezero-marketplace
 ```
 
-설치 후 사용 가능: `/task` 스킬, `/rezero` 스킬
+### Codex
+
+```bash
+codex plugin marketplace add epsilondelta-ai/rezero
+```
+
+이후 `/plugins`에서 `rezero`를 설치하고 새 세션을 시작합니다.
+
+## 사용법
+
+Pi, Claude Code, Codex에서:
+
+```text
+/rezero <task>
+```
 
 ## 워크플로우
 
-### 1. 태스크 정의 생성
+1. **오케스트레이션** — `/rezero`가 `rezero-orchestrator`를 로드합니다. 큰 요청은 `rezero-plan`이 done 기준이 있는 작은 태스크로 나눕니다. 독립 태스크는 subagent/team agent로 병렬 실행할 수 있습니다.
+2. **구현** — Subaru가 현재 `HEAD`에서 순차 태스크 하나 또는 병렬 태스크 그룹 하나를 수행합니다. 병렬 그룹은 먼저 병합한 뒤 하나의 결과로 검증합니다.
+3. **평가** — `rezero-witches`가 일곱 마녀를 병렬 호출합니다. 마녀는 확증편향을 피하기 위해 Subaru 컨텍스트를 이어받지 않습니다. 결과는 `witch | verdict | reason | evidence` 테이블로 표시됩니다.
+4. **사망회귀** — `fail` 하나라도 있으면 `.rezero/memory/subaru-deaths.md`에 최소 실패 기억을 기록하고 `git reset --hard HEAD && git clean -fd` 후 재시도합니다.
+5. **통과** — `pass`/`warning`만 있으면 warning은 `.rezero/memory/rem.md`에 저장하고 accepted route를 커밋합니다. 커밋 후 death memory는 삭제합니다.
+6. **렘** — Rem warning도 일반 Re:ZERO attempt처럼 구현 → 검증 → 마녀 평가 → fail 없을 때 커밋합니다. 모두 해결되면 `rem.md`를 삭제합니다.
 
-task 스킬을 사용해 사용자 스토리를 정의합니다:
+## 스킬
 
-> "task 스킬을 로드하고 [기능 설명]에 대한 태스크를 생성해줘"
-
-결과물: `task.json` (우선순위와 수용 기준이 포함된 사용자 스토리)
-
-### 2. 리제로 루프 실행
-
-```bash
-./rezero.sh [max_iterations]                        # Claude (기본값)
-./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
-./rezero.sh --max-deaths 5 [max_iterations]         # 스토리당 최대 사망회귀 횟수 설정
-```
-
-기본 반복 횟수: 10회, 기본 최대 사망회귀: 3회
-
-**실행 과정 (반복당 4단계):**
-
-1. `task.json`에서 기능 브랜치를 생성합니다
-2. **Phase 1 — 구현 (스바루)**: 가장 높은 우선순위의 미완료 스토리를 선택하고 구현합니다
-3. **Phase 2 — 마녀들의 다과회 (6개 병렬 세션)**: 6명의 마녀가 각각 독립된 세션에서 동시에 코드를 평가합니다
-4. **Phase 3 — 최종 심판 (사텔라)**: 6개의 평가 결과를 집계하여, 통과 시 커밋하고 실패 시 사망회귀합니다
-5. **Phase 4 — 기술부채 관리 (렘)**: 평가 경고를 `rem.md`에 기록하고, 기존 부채를 검토하며, 루프 완료 여부를 확인합니다
-6. 모든 스토리가 완료되거나 반복 횟수에 도달할 때까지 반복합니다
-
-각 반복마다 최대 **9개 세션**이 실행됩니다: 구현 1개 + 병렬 평가 6개 + 심판 1개 + 부채 관리 1개. 6명의 마녀는 병렬로 실행되어 빠르고 편향 없는 평가를 보장합니다 — 각 평가자는 구현자 및 다른 평가자와 완전히 독립적입니다.
+- `rezero-orchestrator` — `/rezero` 엔트리포인트.
+- `rezero-plan` — 큰 요청을 작은 ordered tasks로 분해.
+- `rezero-loop` — Subaru의 단일 태스크 구현 루프.
+- `rezero-witches` — fresh-context 일곱 마녀 평가와 verdict table.
+- `rezero-rem` — warning memory 저장/해결/삭제.
 
 ## 컨셉
 
 ### 나츠키 스바루
 
-리제로의 주인공 나츠키 스바루입니다.
-
-- 이 프로젝트에서는 작업을 진행하는 에이전트를 **나츠키 스바루** 라고 명명합니다.
-- 단순히 작업을 진행하는 것이 아니라, 다수의 사망회귀를 통해 지식을 축적합니다.
-- 목표를 달성하기 위해 매번 최적의 계획을 세우고 작업을 진행합니다.
+Subaru는 구현자입니다. 현재 `HEAD`에서 시작해 구현/검증하고, 실패하면 같은 실패를 반복하지 않을 기억만 남깁니다.
 
 ### 사망회귀
 
-![나츠키 스바루](./images/subaru.webp)
+![Natsuki Subaru](./images/subaru.webp)
 
-작업 진행중에 이상을 감지하거나, 작업을 완료했더라도 만족스러운 결과를 얻지 못하면 나츠키 스바루는 사망회귀를 통해 체크포인트로 되돌아갑니다.
+```bash
+git reset --hard HEAD
+git clean -fd
+```
 
-- 작업을 진행하는 중에 이상을 감지하면 작업을 중단하고 사망회귀 능력을 통해 체크포인트로 되돌아갑니다.
-- 다음에 언급할 마녀들의 다과회에서 성공 기준을 넘지 못했다고 판단하면 강제로 사망회귀를 시킵니다.
-- 사망회귀 능력은 자신이 실패한 이유를 기억한 채로 체크포인트로 돌아간다는데 큰 의미가 있습니다.
+코드는 죽고, 교훈은 살아남습니다.
 
-### 마녀들의 다과회
+### 일곱 마녀
 
-![마녀들의 다과회](./images/witches-tea-party.webp)
+![Witches' Tea Party](./images/witches-tea-party.webp)
 
-원작의 설정을 알고있는 팬들의 입장에선 **마녀들의 다과회**가 평가자 역할이라는 것에 의아함을 느낄 수 있습니다.  
-하지만 여섯 마녀들이 각각 다른 성격을 가진 것과, 스바루의 체크포인트를 사테라가 결정해줄지도 모른다는 추측으로 인해 꽤나 잘 맞아떨어지는 부분이라고 생각하여 평가자 역할로 넣게 되었습니다.
+| 마녀 | 초점 | 예시 도구 |
+| --- | --- | --- |
+| Echidna | 완전성, 엣지케이스, 커버리지 | SonarQube, coverage, Stryker |
+| Typhon | 계약, 명세, 공개 인터페이스 | typecheck, linter, Spectral, Pact |
+| Minerva | 사용자 피해, 회귀, 런타임 실패 | tests, Playwright, Lighthouse CI, k6 |
+| Daphne | 의존성/자원 소비 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Carmilla | UI/문서/이름/증명의 기만 | screenshots, axe, lychee |
+| Sekhmet | 유지보수성, dead code, 중복 | SonarQube, Knip, jscpd |
+| Satella | 통합, 보안, 정책, 일관성 | CodeQL, Gitleaks, Trivy, CI |
 
-- 작업을 완료하고나면 '마녀들의 다과회'가 열립니다.
-- 여섯 마녀들이 각각의 관점으로 작업의 결과를 평가합니다.
-- 여섯 마녀들의 평가 기준을 사테라가 종합하여 체크포인트를 갱신할지, 사망회귀를 시킬지 결정합니다.
-
-| 마녀            | 평가 기준                                                                                                                                                                                          |
-| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 에키드나 (탐욕) | 이 구현이 모든 가능성을 탐구했는가? 모든 엣지 케이스가 처리되었는가? 지식이 철저한가? 실무적으로는 테스트 커버리지, API 완전성, 문서화, 경계 조건 처리를 확인한다.                                 |
-| 미네르바 (분노) | 이 버그가 진짜 고쳐진 건가, 아니면 문제를 재분배한 건가? 패치가 무관한 기능에 새로운 실패 모드를 만들지는 않았는가? 회귀 테스트를 실행하고 수정이 관련 없는 기능을 깨뜨리지 않는지 확인한다.       |
-| 세크메트 (나태) | 같은 결과를 더 적은 작업으로 달성할 수 있는가? 불필요한 복잡성이 있는가? 알고리즘 효율성, 중복 연산, 오버엔지니어링을 확인한다.                                                                    |
-| 티폰 (오만)     | 코드가 자신의 죄를 알고 있는가? 의도적으로 포함한 안티패턴이 있는가? 스스로의 원칙을 위반하는가? 코드 스멜, 린팅 위반, 인지하면서 수정하지 않은 기술 부채를 감지한다.                              |
-| 다프네 (폭식)   | 이 코드가 얼마나 배고픈가? 메모리/CPU/토큰 소비가 정당화되는가? 메모리 사용량, API 호출 횟수, 번들 크기, 토큰 소비량을 확인한다.                                                                   |
-| 카미라 (색욕)   | 이 코드가 사용자가 진정으로 원하는 것을 충족하는가? UX가 매력적인가, 아니면 매력 뒤에 위험한 결함이 숨겨져 있는가? API 인체공학, 에러 메시지, 구현이 사용자의 명시된 의도와 일치하는지를 평가한다. |
-| 사테라 (질투)   | 최종 집계자. "수용 가능한 결과"가 무엇인지 결정하며, 가중 점수를 사용해 여섯 마녀의 평가를 집계하고 생존 또는 사망의 결정을 내린다: 체크포인트 통과 또는 사망회귀 트리거.                          |
+Verdict: `pass`, `warning`, `fail`.
 
 ### 렘
 
-> **!!! SPOILER ALERT !!!**
+![Rem](./images/rem.webp)
 
-![렘](./images/rem.webp)
-
-백경 토벌전 이후 폭식의 대죄주교에 의해 이름과 기억을 먹혀 가사상태에 빠지게 됩니다.  
-사망회귀의 체크포인트가 렘이 가사상태에 빠진 이후로 고정되고 다시 돌아갈 수 없게 되는데,  
-리제로 루프를 기획하면서 렘의 존재도 이 프로젝트에 분명 중요하게 필요 할 것이라는 생각에  
-마녀들의 다과회를 통과해도 기술부채가 남을 수 있다는 생각에 도달하며 렘의 존재를 이 프로젝트에 도입하게 되었습니다.
-
-- 마녀들의 다과회를 통과하였지만, 기술부채나 이후에 수정해야 할 무언가가 존재하게 된다면 체크포인트가 갱신되며 그것들이 잔존하게 됩니다.
-- 렘은 기술부채나 수정해야 할 무언가를 확인하여 따로 기록합니다.
-- 이 것의 존재가 있다면 스바루는 다음 작업을 진행하기 전에 렘을 구하기 위한 작업을 먼저 진행합니다.
+Rem은 warning memory입니다. 통과한 warning은 `.rezero/memory/rem.md`에 남고, 해결/재평가/커밋될 때까지 유지됩니다.
 
 ## 라이선스
 
-이 프로젝트는 [MIT 라이선스](../LICENSE)로 배포됩니다.
+이 프로젝트는 [MIT License](../LICENSE)에 따라 배포됩니다.

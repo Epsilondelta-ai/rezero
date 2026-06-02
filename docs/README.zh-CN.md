@@ -4,153 +4,93 @@
 
 ![](./images/rezero.webp)
 
-> Re:ZERO Loop 是一个从 **Re:从零开始的异世界生活** 中的 **死亡回归** 获得灵感而诞生的项目。
+> Re:ZERO Loop 是受 **Re:Zero − Starting Life in Another World** 的 **死亡回归** 启发的智能体工作流。
 
-为了防止因上下文累积污染导致AI性能下降，Ralph Loop等技术应运而生。  
-但即使保持上下文整洁，如果累积的代码逐渐被污染，由代码库导致的性能下降仍然不可避免。
-
-Re:ZERO Loop 正是基于这样的想法而诞生的：如果将死亡回归引入AI，能否克服这一问题？
-
-## 目录
-
-- [前提条件](#前提条件)
-- [安装](#安装)
-  - [选项一：直接复制到项目](#选项一直接复制到项目)
-  - [选项二：全局安装技能](#选项二全局安装技能)
-  - [选项三：作为 Claude Code 插件使用](#选项三作为-claude-code-插件使用)
-- [工作流程](#工作流程)
-  - [1. 创建任务定义](#1-创建任务定义)
-  - [2. 运行 Re:ZERO Loop](#2-运行-rezero-loop)
-- [概念](#概念)
-  - [菜月昴](#菜月昴)
-  - [死亡回归](#死亡回归)
-  - [魔女的茶会](#魔女的茶会)
-  - [蕾姆](#蕾姆)
-- [许可证](#许可证)
-
-## 前提条件
-
-- **AI编程工具**（以下任选其一）：
-  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [OpenAI Codex](https://openai.com/index/codex/)
-- 已安装 **jq**（macOS上：`brew install jq`）
-- 项目用 **git 仓库**
+Subaru 负责实现，七位魔女独立评审，失败记忆会被保留，并从 `HEAD` 重试。
 
 ## 安装
 
-### 选项一：直接复制到项目
+### Pi
 
 ```bash
-mkdir -p scripts/rezero
-cp /path/to/rezero/rezero.sh scripts/rezero/
-cp -r /path/to/rezero/prompts scripts/rezero/prompts
-chmod +x scripts/rezero/rezero.sh
+pi install git:github.com/epsilondelta-ai/rezero
 ```
 
-### 选项二：全局安装技能
-
-```bash
-cp -r skills/task ~/.claude/skills/
-cp -r skills/rezero ~/.claude/skills/
-cp -r skills/witches-tea-party ~/.claude/skills/
-cp -r skills/rem ~/.claude/skills/
-```
-
-### 选项三：作为 Claude Code 插件使用
+### Claude Code
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
 /plugin install rezero@rezero-marketplace
 ```
 
-安装后可使用：`/task` 技能、`/rezero` 技能
+### Codex
+
+```bash
+codex plugin marketplace add epsilondelta-ai/rezero
+```
+
+## 用法
+
+```text
+/rezero <task>
+```
 
 ## 工作流程
 
-### 1. 创建任务定义
+1. **Orchestrate** — 如果任务很大，`rezero-plan` 会拆成带完成标准的小任务。独立任务可以用 subagent/team agent 并行。
+2. **Implement** — Subaru 从当前 `HEAD` 实现单个任务或并行任务组；并行组先合并，再作为一个结果验证。
+3. **Evaluate** — `rezero-witches` 并行调用七位魔女。魔女使用 fresh context，不继承 Subaru 的上下文。
+4. **Return by Death** — 任何 `fail` 都会记录最小失败记忆，然后执行 reset/clean 并重试。
+5. **Pass** — 只有 `pass`/`warning` 时通过；warning 写入 Rem memory，然后提交。
+6. **Rem** — Rem warning 也必须实现、验证、经魔女评审且无 fail 后提交。
 
-使用 task 技能定义用户故事：
+## 技能
 
-> "加载 task 技能，为[功能描述]创建任务"
-
-输出：`task.json`（包含优先级和验收标准的用户故事）
-
-### 2. 运行 Re:ZERO Loop
-
-```bash
-./rezero.sh [max_iterations]                        # Claude（默认）
-./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
-./rezero.sh --max-deaths 5 [max_iterations]         # 设置每个故事的最大死亡回归次数
-```
-
-默认迭代次数：10次，默认最大死亡回归：3次
-
-**执行流程：**
-
-1. 从 `task.json` 创建功能分支
-2. 选择优先级最高的未完成故事
-3. 实现该故事
-4. 魔女的茶会进行质量评估
-5. 通过时：提交并更新 `task.json` 中的状态
-6. 失败时：触发死亡回归，回到检查点
-7. 在 `progress.txt` 中记录经验教训
-8. 重复直到所有故事完成或达到最大迭代次数
+- `rezero-orchestrator` — `/rezero` entrypoint.
+- `rezero-plan` — large request splitting.
+- `rezero-loop` — Subaru single-task loop.
+- `rezero-witches` — fresh-context seven-witch review.
+- `rezero-rem` — warning memory management.
 
 ## 概念
 
-### 菜月昴
+### Natsuki Subaru
 
-Re:从零开始的异世界生活的主角菜月昴。
+Subaru is the implementer. Starts from current `HEAD`, implements, verifies, and keeps only the memory needed to avoid repeating a failure.
 
-- 在本项目中，执行工作的代理被命名为**菜月昴**。
-- 不仅仅是执行任务，而是通过多次死亡回归积累知识。
-- 每次都制定最优计划以达成目标。
+### Return by Death
 
-### 死亡回归
+![Natsuki Subaru](./images/subaru.webp)
 
-![菜月昴](./images/subaru.webp)
+```bash
+git reset --hard HEAD
+git clean -fd
+```
 
-当工作中检测到异常，或即使完成工作也未获得满意结果时，菜月昴会通过死亡回归返回检查点。
+代码会死，教训会留下。
 
-- 工作中检测到异常时，中断工作并通过死亡回归能力返回检查点。
-- 如果魔女的茶会判定未达到成功标准，则强制触发死亡回归。
-- 死亡回归能力的重大意义在于：带着失败原因的记忆返回检查点。
+### Seven Witches
 
-### 魔女的茶会
+![Witches' Tea Party](./images/witches-tea-party.webp)
 
-![魔女的茶会](./images/witches-tea-party.webp)
+| Witch | Focus | Example tools |
+| --- | --- | --- |
+| Echidna | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
+| Typhon | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
+| Minerva | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
+| Daphne | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Carmilla | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
+| Sekhmet | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
+| Satella | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
 
-了解原作设定的粉丝可能会对**魔女的茶会**担任评估者角色感到意外。  
-但考虑到六位魔女各自拥有不同的性格，以及莎缇拉可能决定昴的检查点这一推测，我们认为这个角色设定非常契合，因此将其设定为评估者。
+Verdict: `pass`, `warning`, `fail`.
 
-- 工作完成后，"魔女的茶会"召开。
-- 六位魔女从各自的角度评估工作成果。
-- 莎缇拉综合六位魔女的评估，决定是更新检查点还是触发死亡回归。
+### Rem
 
-| 魔女              | 评估标准                                                                                                                                                                                     |
-| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 艾奇多娜（强欲）   | 这个实现是否探索了所有可能性？所有边界情况都处理了吗？知识是否足够全面？实际检查：测试覆盖率、API完整性、文档、边界条件处理。                                                                 |
-| 密涅瓦（愤怒）     | 这个bug是真的修复了，还是只是重新分配了问题？补丁是否在无关功能中引入了新的故障模式？运行回归测试，验证修复没有破坏无关功能。                                                                 |
-| 赛赫麦特（怠惰）   | 能否用更少的工作量达到相同的结果？是否存在不必要的复杂性？检查算法效率、冗余计算、过度工程。                                                                                                 |
-| 缇丰（傲慢）       | 代码是否知道自己的罪？是否有故意包含的反模式？是否违反了自身的原则？检测代码异味、lint违规、已知但未修复的技术债务。                                                                         |
-| 达芙妮（暴食）     | 这段代码有多饥饿？内存/CPU/token消耗是否合理？检查内存使用量、API调用次数、包大小、token消耗量。                                                                                             |
-| 卡蜜拉（色欲）     | 这段代码是否满足了用户真正想要的？UX是否有吸引力，还是在魅力背后隐藏着危险的缺陷？评估API人机工学、错误信息、实现与用户明确意图的一致性。                                                     |
-| 莎缇拉（嫉妒）     | 最终汇总者。决定什么构成"可接受的结果"，使用加权评分汇总六位魔女的评估，做出生存或死亡的裁决：通过检查点或触发死亡回归。                                                                     |
+![Rem](./images/rem.webp)
 
-### 蕾姆
-
-> **!!! 剧透警告 !!!**
-
-![蕾姆](./images/rem.webp)
-
-白鲸讨伐战后，蕾姆被暴食大罪司教吞噬了名字和记忆，陷入假死状态。  
-死亡回归的检查点固定在蕾姆陷入假死状态之后，无法再回到更早的时间点。  
-在策划 Re:ZERO Loop 时，我们意识到蕾姆的存在对这个项目至关重要——即使通过了魔女的茶会，技术债务仍然可能残留——因此将蕾姆的存在引入了这个项目。
-
-- 即使通过了魔女的茶会，如果存在技术债务或需要后续修复的内容，检查点更新后它们仍会残留。
-- 蕾姆负责识别并单独记录技术债务和需要修复的内容。
-- 如果存在这些内容，昴会在进行下一个任务之前，优先进行拯救蕾姆的工作。
+Rem 是 warning memory。
 
 ## 许可证
 
-本项目基于 [MIT 许可证](../LICENSE) 分发。
+Distributed under the [MIT License](../LICENSE).
