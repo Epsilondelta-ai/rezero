@@ -16,7 +16,7 @@ Goal → prepare the target repository so witches can evaluate with real tools.
 4. Prefer project-local dev dependencies over global installs.
 5. If a tool needs external auth/service, write setup notes instead of faking readiness.
 6. Verify installed tools with version/help commands.
-7. Write `.rezero/tools.md` with installed tools, skipped tools, commands, and required env.
+7. Write `.rezero/tools.md` with the init marker, installed tools, skipped tools, commands, and required env.
 
 ## Baseline Tools
 
@@ -43,6 +43,8 @@ Create or update `.rezero/tools.md`:
 ```markdown
 # Re:ZERO Tools
 
+<!-- rezero-init: v0.1.0 -->
+
 ## Detected Stack
 
 - <stack evidence>
@@ -66,4 +68,5 @@ Create or update `.rezero/tools.md`:
 - Do not add services that need accounts without user approval.
 - Do not mark unavailable tools as ready.
 - Keep generated config minimal and project-specific.
+- `.rezero/tools.md` must include `<!-- rezero-init: v0.1.0 -->`.
 - Commit only if the caller requested normal Re:ZERO commit behavior; init itself may be committed by the caller.

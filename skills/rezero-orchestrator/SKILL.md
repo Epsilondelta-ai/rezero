@@ -11,14 +11,19 @@ Goal → finish request through small Re:ZERO attempts.
 ## Flow
 
 0. If request is `init`, use `rezero-init` and stop.
-1. If request is large, use `rezero-plan`; otherwise one task.
-2. If planned tasks are independent, run safe groups in parallel via subagents; use team agents for long/heavy groups.
-3. Isolate parallel implementation work, merge the group, then verify the combined result.
-4. Use `rezero-witches` once for the whole merged group; witches must use fresh context, not Subaru's context.
-5. Show the witch verdict table in chat.
-6. Any `fail` → record minimal death memory → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
-7. Only `pass|warning` → use `rezero-rem` for warnings → commit accepted route → delete death memory.
-8. If processing Rem warnings, use `rezero-rem` resolution rules.
+1. Before any non-init request, check init state:
+   - `.rezero/tools.md` exists.
+   - `.rezero/tools.md` contains `<!-- rezero-init:`.
+   - `git check-ignore -q .rezero/memory/subaru-deaths.md` succeeds.
+2. If init state is missing, run `rezero-init`, commit init changes, then continue the original request.
+3. If request is large, use `rezero-plan`; otherwise one task.
+4. If planned tasks are independent, run safe groups in parallel via subagents; use team agents for long/heavy groups.
+5. Isolate parallel implementation work, merge the group, then verify the combined result.
+6. Use `rezero-witches` once for the whole merged group; witches must use fresh context, not Subaru's context.
+7. Show the witch verdict table in chat.
+8. Any `fail` → record minimal death memory → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
+9. Only `pass|warning` → use `rezero-rem` for warnings → commit accepted route → delete death memory.
+10. If processing Rem warnings, use `rezero-rem` resolution rules.
 
 ## Language
 

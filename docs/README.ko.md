@@ -62,6 +62,8 @@ Pi, Claude Code, Codex에서:
 /rezero <task>
 ```
 
+`/rezero`는 init 상태(`.rezero/tools.md` marker + `.rezero/memory/` ignore)를 확인하고, 없으면 init을 먼저 자동 실행합니다.
+
 ## 워크플로우
 
 1. **오케스트레이션** — `/rezero`가 `rezero-orchestrator`를 로드합니다. 큰 요청은 `rezero-plan`이 done 기준이 있는 작은 태스크로 나눕니다. 독립 태스크는 subagent/team agent로 병렬 실행할 수 있습니다.

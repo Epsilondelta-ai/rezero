@@ -36,6 +36,8 @@ codex plugin marketplace add epsilondelta-ai/rezero
 /rezero <task>
 ```
 
+`/rezero` checks init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore) and runs init first if missing.
+
 ## Workflow
 
 1. **Orchestrate** — Wenn die Anfrage groß ist, zerlegt `rezero-plan` sie in kleine Aufgaben mit Done-Kriterien. Unabhängige Aufgaben können per subagents/team agents parallel laufen.

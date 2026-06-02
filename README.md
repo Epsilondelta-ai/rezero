@@ -78,7 +78,8 @@ Example:
 
 0. **Init**
    - `/rezero init` detects the repository stack.
-   - It configures fitting witch evaluation tools, keeps `.rezero/memory/` ignored, verifies available tools, and writes `.rezero/tools.md`.
+   - It configures fitting witch evaluation tools, keeps `.rezero/memory/` ignored, verifies available tools, and writes `.rezero/tools.md` with `<!-- rezero-init: v0.1.0 -->`.
+   - Non-init `/rezero` requests auto-run init first when `.rezero/tools.md`, the init marker, or `.rezero/memory/` ignore state is missing.
    - Tools that require accounts or external services are recorded as setup notes instead of being faked.
 
 1. **Orchestrate**
