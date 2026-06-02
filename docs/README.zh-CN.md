@@ -54,6 +54,15 @@ codex plugin marketplace add epsilondelta-ai/rezero
 - `rezero-witches` — fresh-context seven-witch review.
 - `rezero-rem` — warning memory management.
 
+## 语言与名称
+
+支持的语言会使用用户语言回答；魔女 verdict 和并行实现 agent 名称也使用对应语言。未支持语言回退到英文。
+
+| Type | Names |
+| --- | --- |
+| Witches | 艾姬多娜, 堤丰, 弥涅耳瓦, 达芙妮, 卡密拉, 塞赫麦特, 莎缇拉 |
+| Parallel implementers | 碧翠丝, 艾米莉娅, 拉姆, 加菲尔, 尤里乌斯 |
+
 ## 概念
 
 ### 菜月昴

@@ -65,6 +65,15 @@ codex plugin marketplace add epsilondelta-ai/rezero
 - `rezero-witches` — fresh-context の七魔女レビューと verdict table。
 - `rezero-rem` — warning memory の保存、解決、削除。
 
+## 言語と名前
+
+対応言語ではユーザーの言語で回答し、魔女 verdict と並列実装エージェント名もその言語の表記を使います。未対応言語は英語にフォールバックします。
+
+| Type | Names |
+| --- | --- |
+| Witches | エキドナ, テュフォン, ミネルヴァ, ダフネ, カーミラ, セクメト, サテラ |
+| Parallel implementers | ベアトリス, エミリア, ラム, ガーフィール, ユリウス |
+
 ## コンセプト
 
 ### ナツキ・スバル

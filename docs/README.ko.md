@@ -80,6 +80,15 @@ Pi, Claude Code, Codex에서:
 - `rezero-witches` — fresh-context 일곱 마녀 평가와 verdict table.
 - `rezero-rem` — warning memory 저장/해결/삭제.
 
+## 언어와 이름
+
+지원 언어에서는 사용자 언어로 답하고, 마녀 verdict와 병렬 구현 에이전트 이름도 해당 언어 표기를 사용합니다. 미지원 언어는 영어로 fallback합니다.
+
+| Type | Names |
+| --- | --- |
+| Witches | 에키드나, 티폰, 미네르바, 다프네, 카밀라, 세크메트, 사테라 |
+| Parallel implementers | 베아트리스, 에밀리아, 람, 가필, 율리우스 |
+
 ## 컨셉
 
 ### 나츠키 스바루

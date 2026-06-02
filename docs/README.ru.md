@@ -54,6 +54,15 @@ codex plugin marketplace add epsilondelta-ai/rezero
 - `rezero-witches` — fresh-context seven-witch review.
 - `rezero-rem` — warning memory management.
 
+## Язык и имена
+
+Для поддерживаемых языков Re:ZERO отвечает на языке пользователя. Имена ведьм и параллельных агентов также используют локальную форму. Неподдерживаемые языки используют английский.
+
+| Type | Names |
+| --- | --- |
+| Witches | Ехидна, Тифон, Минерва, Дафна, Кармилла, Сехмет, Сателла |
+| Parallel implementers | Беатрис, Эмилия, Рам, Гарфиэль, Юлиус |
+
 ## Концепции
 
 ### Нацуки Субару

@@ -33,6 +33,21 @@ Call these as parallel subagents:
 - `references/witches/sekhmet.md`
 - `references/witches/satella.md`
 
+## Language
+
+Use the user's language for chat output.
+Witch names in the verdict table must use the supported-language name map.
+If the language is unsupported, use English names.
+
+| Language | Echidna | Typhon | Minerva | Daphne | Carmilla | Sekhmet | Satella |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| English / Spanish / Portuguese / German | Echidna | Typhon | Minerva | Daphne | Carmilla | Sekhmet | Satella |
+| Korean | 에키드나 | 티폰 | 미네르바 | 다프네 | 카밀라 | 세크메트 | 사테라 |
+| Japanese | エキドナ | テュフォン | ミネルヴァ | ダフネ | カーミラ | セクメト | サテラ |
+| Simplified Chinese | 艾姬多娜 | 堤丰 | 弥涅耳瓦 | 达芙妮 | 卡密拉 | 塞赫麦特 | 莎缇拉 |
+| French | Echidna | Typhon | Minerva | Daphné | Carmilla | Sekhmet | Satella |
+| Russian | Ехидна | Тифон | Минерва | Дафна | Кармилла | Сехмет | Сателла |
+
 ## Output
 
 Show exactly one table in chat:

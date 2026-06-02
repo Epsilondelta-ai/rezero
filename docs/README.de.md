@@ -54,6 +54,15 @@ codex plugin marketplace add epsilondelta-ai/rezero
 - `rezero-witches` — fresh-context seven-witch review.
 - `rezero-rem` — warning memory management.
 
+## Sprache und Namen
+
+In unterstützten Sprachen antwortet Re:ZERO in der Sprache des Nutzers. Hexen- und Parallel-Agentennamen verwenden die jeweilige Sprachform. Nicht unterstützte Sprachen fallen auf Englisch zurück.
+
+| Type | Names |
+| --- | --- |
+| Witches | Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satella |
+| Parallel implementers | Beatrice, Emilia, Ram, Garfiel, Julius |
+
 ## Konzepte
 
 ### Natsuki Subaru

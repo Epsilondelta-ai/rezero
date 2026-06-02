@@ -17,6 +17,7 @@ It lets Subaru implement work, sends the result to seven independent witches for
 - [Usage](#usage)
 - [Workflow](#workflow)
 - [Skills](#skills)
+- [Language and Names](#language-and-names)
 - [Concepts](#concepts)
   - [Natsuki Subaru](#natsuki-subaru)
   - [Return by Death](#return-by-death)
@@ -140,6 +141,19 @@ git clean -fd
 - `rezero-loop` — Subaru's single-task implementation loop.
 - `rezero-witches` — dispatches seven fresh-context witch reviews and prints the verdict table.
 - `rezero-rem` — stores, resolves, and deletes warning memory.
+
+## Language and Names
+
+Re:ZERO answers in the user's language when supported. Character names in witch verdicts and parallel implementer labels follow the same language. Unsupported languages fall back to English.
+
+| Language | Witches | Parallel implementers |
+| --- | --- | --- |
+| English / Spanish / Portuguese / German | Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satella | Beatrice, Emilia, Ram, Garfiel, Julius |
+| Korean | 에키드나, 티폰, 미네르바, 다프네, 카밀라, 세크메트, 사테라 | 베아트리스, 에밀리아, 람, 가필, 율리우스 |
+| Japanese | エキドナ, テュフォン, ミネルヴァ, ダフネ, カーミラ, セクメト, サテラ | ベアトリス, エミリア, ラム, ガーフィール, ユリウス |
+| Simplified Chinese | 艾姬多娜, 堤丰, 弥涅耳瓦, 达芙妮, 卡密拉, 塞赫麦特, 莎缇拉 | 碧翠丝, 艾米莉娅, 拉姆, 加菲尔, 尤里乌斯 |
+| French | Echidna, Typhon, Minerva, Daphné, Carmilla, Sekhmet, Satella | Béatrice, Émilia, Ram, Garfiel, Julius |
+| Russian | Ехидна, Тифон, Минерва, Дафна, Кармилла, Сехмет, Сателла | Беатрис, Эмилия, Рам, Гарфиэль, Юлиус |
 
 ## Concepts
 
