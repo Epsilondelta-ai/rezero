@@ -78,7 +78,7 @@ After installation, `/skill:rezero-loop` becomes available.
 /plugin install rezero@rezero-marketplace
 ```
 
-After installation, the `/task` and `/rezero` skills become available.
+After installation, `/skill:rezero-loop` becomes available.
 
 ## Workflow
 

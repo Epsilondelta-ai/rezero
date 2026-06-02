@@ -1,0 +1,13 @@
+{
+  "name": "rezero-marketplace",
+  "owner": {
+    "name": "epsilondelta-ai"
+  },
+  "plugins": [
+    {
+      "name": "rezero",
+      "source": ".",
+      "description": "Re:ZERO Loop plugin for Claude Code"
+    }
+  ]
+}
