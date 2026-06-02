@@ -6,17 +6,20 @@ license: MIT
 
 # Re:ZERO Witches
 
-Goal → call seven independent reviewers and expose verdicts as a chat table.
+Goal → call seven independent reviewers with fresh context and expose verdicts as a chat table.
 
 ## Inputs
 
-Give each witch:
+Each witch must run in a fresh context, not Subaru's context.
+Give each witch only:
 
 - Task/request.
 - Current diff.
 - Verification output.
 - Relevant files or logs.
 - Its own reference file from `references/witches/`.
+
+Do not give witches Subaru's reasoning, plan, self-assessment, or prior failed route unless it is required evidence.
 
 ## Witches
 
@@ -47,4 +50,5 @@ Show exactly one table in chat:
 - Warnings pass but must be sent to Rem.
 - Keep evidence concise and reproducible.
 - Witches judge only; they do not edit code.
+- Fresh context is required to avoid confirmation bias.
 - Each witch cleans resources it created before returning.
