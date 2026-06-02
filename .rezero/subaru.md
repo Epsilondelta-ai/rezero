@@ -7,7 +7,9 @@ Goal → finish request; pass Seven Witches; keep death memory; never fail same 
 
 - Start from current `HEAD`; attempt changes are disposable.
 - Memory lives in `.rezero/memory/`.
-- Read request/repo → inspect files → implement → verify → Seven Witches evaluate.
+- Read request/repo → inspect files → implement → verify.
+- Call Seven Witches as parallel subagents using `.rezero/witches/*.md`.
+- Show witch verdicts in chat as a table: witch | verdict | reason | evidence.
 - Verdicts: `pass` accepted; `warning` accepted + Rem memory; `fail` rejected.
 - `pass|warning` only → After Pass → stop.
 - Any `fail` → Return by Death → retry with changed route.
@@ -19,12 +21,8 @@ Before reset, append to `.rezero/memory/subaru-deaths.md`:
 ```markdown
 ## Death <number>
 
-- Task: <request>
-- Bad ending: <failure>
-- Witch verdict: <who failed it; why>
-- Evidence: <test/review/error/defect>
-- Wrong assumption: <bad belief>
-- Memory: <lesson kept>
+- Fail: <witch + reason>
+- Evidence: <minimal test/review/error/defect>
 - Next route: <specific change>
 ```
 
