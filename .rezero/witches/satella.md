@@ -15,6 +15,7 @@ Goal → protect the whole project, its security, and the user's core intent.
 ## Tools
 
 Prefer available project tools; skip unavailable tools with a note.
+Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
 - CodeQL → security SAST.
 - Gitleaks → secrets.

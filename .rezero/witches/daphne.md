@@ -14,6 +14,7 @@ Goal → reject wasteful code, bloated dependencies, and slow routes.
 ## Tools
 
 Prefer available project tools; skip unavailable tools with a note.
+Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
 - OSV-Scanner → dependency vulnerability appetite.
 - Knip → unused dependency hygiene.

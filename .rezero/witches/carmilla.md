@@ -14,6 +14,7 @@ Goal → catch changes that look correct while lying through UI, docs, names, or
 ## Tools
 
 Prefer available project tools; skip unavailable tools with a note.
+Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
 - Playwright screenshots → visual truth.
 - axe → accessibility truth.

@@ -14,6 +14,7 @@ Goal → find what Subaru failed to know, test, or cover.
 ## Tools
 
 Prefer available project tools; skip unavailable tools with a note.
+Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
 - SonarQube/SonarCloud → quality gate, smells, coverage, complexity.
 - Coverage report → uncovered changed logic.

@@ -14,6 +14,7 @@ Goal → catch regressions that hurt users or existing behavior.
 ## Tools
 
 Prefer available project tools; skip unavailable tools with a note.
+Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
 - Full test suite + focused regression tests.
 - Playwright → user-flow regression.

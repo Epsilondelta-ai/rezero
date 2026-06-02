@@ -14,6 +14,7 @@ Goal → punish work that violates user intent, specs, or public interfaces.
 ## Tools
 
 Prefer available project tools; skip unavailable tools with a note.
+Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
 - Project typecheck → type/interface contract.
 - Project linter → style and API misuse contract.

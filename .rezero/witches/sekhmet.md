@@ -15,6 +15,7 @@ Goal → expose laziness: dead code, duplication, shortcuts, and needless comple
 ## Tools
 
 Prefer available project tools; skip unavailable tools with a note.
+Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
 - SonarQube/SonarCloud → maintainability gate.
 - Knip → dead code.
