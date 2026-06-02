@@ -4,7 +4,7 @@ argument-hint: "<task>"
 ---
 
 If the request is `init`, use the `rezero-init` skill.
-Otherwise use the `rezero-orchestrator` skill.
+Otherwise use the `rezero` skill.
 
 Request:
 

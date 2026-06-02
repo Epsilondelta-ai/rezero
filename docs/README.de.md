@@ -50,9 +50,9 @@ codex plugin marketplace add epsilondelta-ai/rezero
 ## Skills
 
 - `rezero-init` — setup witch evaluation tools.
-- `rezero-orchestrator` — `/rezero` entrypoint.
+- `rezero` — `/rezero` entrypoint.
 - `rezero-plan` — large request splitting.
-- `rezero-loop` — Subaru single-task loop.
+- `rezero-subaru` — Subaru single-task loop.
 - `rezero-witches` — fresh-context seven-witch review.
 - `rezero-rem` — warning memory management.
 

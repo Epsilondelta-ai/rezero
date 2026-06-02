@@ -1,5 +1,5 @@
 ---
-name: rezero-loop
+name: rezero-subaru
 description: Subaru's single-task Re:ZERO implementation loop. Use inside rezero after task splitting: implement, verify, survive witches, reset on fail, commit on pass.
 license: MIT
 ---

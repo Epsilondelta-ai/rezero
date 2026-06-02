@@ -66,7 +66,7 @@ Pi, Claude Code, Codex에서:
 
 ## 워크플로우
 
-1. **오케스트레이션** — `/rezero`가 `rezero-orchestrator`를 로드합니다. 큰 요청은 `rezero-plan`이 done 기준이 있는 작은 태스크로 나눕니다. 독립 태스크는 subagent/team agent로 병렬 실행할 수 있습니다.
+1. **오케스트레이션** — `/rezero`가 `rezero`를 로드합니다. 큰 요청은 `rezero-plan`이 done 기준이 있는 작은 태스크로 나눕니다. 독립 태스크는 subagent/team agent로 병렬 실행할 수 있습니다.
 2. **구현** — Subaru가 현재 `HEAD`에서 순차 태스크 하나 또는 병렬 태스크 그룹 하나를 수행합니다. 병렬 그룹은 먼저 병합한 뒤 하나의 결과로 검증합니다.
 3. **평가** — `rezero-witches`가 일곱 마녀를 병렬 호출합니다. 마녀는 확증편향을 피하기 위해 Subaru 컨텍스트를 이어받지 않습니다. 결과는 `witch | verdict | reason | evidence` 테이블로 표시됩니다.
 4. **사망회귀** — `fail` 하나라도 있으면 `.rezero/memory/subaru-deaths.md`에 최소 실패 기억을 기록하고 `git reset --hard HEAD && git clean -fd` 후 재시도합니다.
@@ -76,9 +76,9 @@ Pi, Claude Code, Codex에서:
 ## 스킬
 
 - `rezero-init` — setup witch evaluation tools.
-- `rezero-orchestrator` — `/rezero` 엔트리포인트.
+- `rezero` — `/rezero` 엔트리포인트.
 - `rezero-plan` — 큰 요청을 작은 ordered tasks로 분해.
-- `rezero-loop` — Subaru의 단일 태스크 구현 루프.
+- `rezero-subaru` — Subaru의 단일 태스크 구현 루프.
 - `rezero-witches` — fresh-context 일곱 마녀 평가와 verdict table.
 - `rezero-rem` — warning memory 저장/해결/삭제.
 

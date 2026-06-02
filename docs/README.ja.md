@@ -51,7 +51,7 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## ワークフロー
 
-1. **オーケストレーション** — `/rezero` が `rezero-orchestrator` を読み込みます。大きい依頼は `rezero-plan` が done 条件付きの小タスクに分割します。独立タスクは subagent/team agent で並列化できます。
+1. **オーケストレーション** — `/rezero` が `rezero` を読み込みます。大きい依頼は `rezero-plan` が done 条件付きの小タスクに分割します。独立タスクは subagent/team agent で並列化できます。
 2. **実装** — Subaru は現在の `HEAD` から、単一タスクまたは並列タスクグループを実装します。並列グループはマージ後、結合結果として検証します。
 3. **評価** — `rezero-witches` が七人の魔女を並列呼び出しします。魔女は確証バイアスを避けるため Subaru のコンテキストを継承しません。結果は `witch | verdict | reason | evidence` テーブルで表示します。
 4. **Return by Death** — ひとつでも `fail` があれば `.rezero/memory/subaru-deaths.md` に最小限の失敗記憶を書き、`git reset --hard HEAD && git clean -fd` 後に再試行します。
@@ -61,9 +61,9 @@ codex plugin marketplace add epsilondelta-ai/rezero
 ## スキル
 
 - `rezero-init` — setup witch evaluation tools.
-- `rezero-orchestrator` — `/rezero` のエントリポイント。
+- `rezero` — `/rezero` のエントリポイント。
 - `rezero-plan` — 大きい依頼を小さい ordered tasks に分割。
-- `rezero-loop` — Subaru の単一タスク実装ループ。
+- `rezero-subaru` — Subaru の単一タスク実装ループ。
 - `rezero-witches` — fresh-context の七魔女レビューと verdict table。
 - `rezero-rem` — warning memory の保存、解決、削除。
 

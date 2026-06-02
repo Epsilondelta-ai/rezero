@@ -83,7 +83,7 @@ Example:
    - Tools that require accounts or external services are recorded as setup notes instead of being faked.
 
 1. **Orchestrate**
-   - `/rezero` loads `rezero-orchestrator`.
+   - `/rezero` loads `rezero`.
    - Large requests are split by `rezero-plan` into ordered tasks with done criteria.
    - Independent tasks may run in parallel through subagents or team agents.
 
@@ -137,9 +137,9 @@ git clean -fd
 ## Skills
 
 - `rezero-init` — detects the stack and sets up witch evaluation tools for `/rezero init`.
-- `rezero-orchestrator` — `/rezero` entrypoint; coordinates the full loop.
+- `rezero` — `/rezero` entrypoint; coordinates the full loop.
 - `rezero-plan` — splits large requests into small ordered tasks.
-- `rezero-loop` — Subaru's single-task implementation loop.
+- `rezero-subaru` — Subaru's single-task implementation loop.
 - `rezero-witches` — dispatches seven fresh-context witch reviews and prints the verdict table.
 - `rezero-rem` — stores, resolves, and deletes warning memory.
 
