@@ -13,7 +13,7 @@ Subaru implémente, sept sorcières relisent indépendamment, la mémoire d’é
 ### Pi
 
 ```bash
-pi install git:github.com/epsilondelta-ai/rezero
+pi install npm:rezero
 ```
 
 ### Claude Code

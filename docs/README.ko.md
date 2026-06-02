@@ -29,7 +29,7 @@ Subaru가 작업을 구현하고, 일곱 마녀가 독립적으로 검토하며,
 ### Pi
 
 ```bash
-pi install git:github.com/epsilondelta-ai/rezero
+pi install npm:rezero
 ```
 
 로컬 개발:

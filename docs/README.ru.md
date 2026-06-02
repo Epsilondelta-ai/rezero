@@ -13,7 +13,7 @@ Subaru реализует задачу, семь ведьм независимо
 ### Pi
 
 ```bash
-pi install git:github.com/epsilondelta-ai/rezero
+pi install npm:rezero
 ```
 
 ### Claude Code

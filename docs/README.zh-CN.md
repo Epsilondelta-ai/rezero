@@ -13,7 +13,7 @@ Subaru 负责实现，七位魔女独立评审，失败记忆会被保留，并�
 ### Pi
 
 ```bash
-pi install git:github.com/epsilondelta-ai/rezero
+pi install npm:rezero
 ```
 
 ### Claude Code

@@ -22,7 +22,7 @@ Subaru が実装し、七人の魔女が独立レビューし、失敗の記憶�
 ### Pi
 
 ```bash
-pi install git:github.com/epsilondelta-ai/rezero
+pi install npm:rezero
 ```
 
 ### Claude Code

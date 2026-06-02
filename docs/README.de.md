@@ -13,7 +13,7 @@ Subaru implementiert, sieben Hexen prüfen unabhängig, Fehlererinnerung bleibt 
 ### Pi
 
 ```bash
-pi install git:github.com/epsilondelta-ai/rezero
+pi install npm:rezero
 ```
 
 ### Claude Code

@@ -30,6 +30,12 @@ It lets Subaru implement work, sends the result to seven independent witches for
 ### Pi
 
 ```bash
+pi install npm:rezero
+```
+
+Git install:
+
+```bash
 pi install git:github.com/epsilondelta-ai/rezero
 ```
 
