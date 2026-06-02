@@ -11,12 +11,13 @@ Goal → finish request through small Re:ZERO attempts.
 ## Flow
 
 1. If request is large, use `rezero-plan`; otherwise one task.
-2. For each task, follow `rezero-loop` / Subaru implementation rules.
-3. After implementation and verification, use `rezero-witches`.
-4. Show the witch verdict table in chat.
-5. Any `fail` → record minimal death memory → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
-6. Only `pass|warning` → use `rezero-rem` for warnings → commit accepted route → delete death memory.
-7. If processing Rem warnings, use `rezero-rem` resolution rules.
+2. If planned tasks are independent, run safe groups in parallel via subagents; use team agents for long/heavy groups.
+3. Isolate parallel implementation work, merge one accepted task at a time, then follow `rezero-loop` / Subaru rules.
+4. After implementation and verification, use `rezero-witches`.
+5. Show the witch verdict table in chat.
+6. Any `fail` → record minimal death memory → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
+7. Only `pass|warning` → use `rezero-rem` for warnings → commit accepted route → delete death memory.
+8. If processing Rem warnings, use `rezero-rem` resolution rules.
 
 ## Death Memory
 
@@ -33,6 +34,8 @@ Before reset, append to `.rezero/memory/subaru-deaths.md`:
 ## Rules
 
 - One task = implement → verify → witches → commit or reset.
+- Parallel tasks still need independent witches verdicts and separate accepted commits.
+- Do not parallelize tasks that touch the same files, migrations, shared state, or dependency graph.
 - Never reset before death memory.
 - Never retry without new info.
 - Dangerous ambiguity → ask 1 focused question.

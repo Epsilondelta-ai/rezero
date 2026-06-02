@@ -17,14 +17,19 @@ Return only:
 
 1. <task>
    - Done: <observable criterion>
+   - Depends on: <task numbers or none>
+   - Parallel: <yes/no; safe with task numbers>
 2. <task>
    - Done: <observable criterion>
+   - Depends on: <task numbers or none>
+   - Parallel: <yes/no; safe with task numbers>
 ```
 
 ## Rules
 
 - Keep tasks small enough for one implement → verify → witches → commit loop.
 - Preserve dependency order.
+- Mark independent tasks that can run in parallel without file/state conflicts.
 - Each task must have a clear done criterion.
 - Do not implement.
 - If the request is already small, return one task.
