@@ -55,7 +55,13 @@ Then open `/plugins`, install `rezero`, and start a new session.
 
 ## Usage
 
-In Pi, Claude Code, or Codex:
+Initialize witch evaluation tools in a target repository:
+
+```text
+/rezero init
+```
+
+Run the loop:
 
 ```text
 /rezero <task>
@@ -68,6 +74,11 @@ Example:
 ```
 
 ## Workflow
+
+0. **Init**
+   - `/rezero init` detects the repository stack.
+   - It configures fitting witch evaluation tools, keeps `.rezero/memory/` ignored, verifies available tools, and writes `.rezero/tools.md`.
+   - Tools that require accounts or external services are recorded as setup notes instead of being faked.
 
 1. **Orchestrate**
    - `/rezero` loads `rezero-orchestrator`.
@@ -123,6 +134,7 @@ git clean -fd
 
 ## Skills
 
+- `rezero-init` — detects the stack and sets up witch evaluation tools for `/rezero init`.
 - `rezero-orchestrator` — `/rezero` entrypoint; coordinates the full loop.
 - `rezero-plan` — splits large requests into small ordered tasks.
 - `rezero-loop` — Subaru's single-task implementation loop.

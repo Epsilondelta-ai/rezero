@@ -32,6 +32,7 @@ codex plugin marketplace add epsilondelta-ai/rezero
 ## 用法
 
 ```text
+/rezero init
 /rezero <task>
 ```
 
@@ -46,6 +47,7 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## 技能
 
+- `rezero-init` — setup witch evaluation tools.
 - `rezero-orchestrator` — `/rezero` entrypoint.
 - `rezero-plan` — large request splitting.
 - `rezero-loop` — Subaru single-task loop.

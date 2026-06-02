@@ -58,6 +58,7 @@ codex plugin marketplace add epsilondelta-ai/rezero
 Pi, Claude Code, Codex에서:
 
 ```text
+/rezero init
 /rezero <task>
 ```
 
@@ -72,6 +73,7 @@ Pi, Claude Code, Codex에서:
 
 ## 스킬
 
+- `rezero-init` — setup witch evaluation tools.
 - `rezero-orchestrator` — `/rezero` 엔트리포인트.
 - `rezero-plan` — 큰 요청을 작은 ordered tasks로 분해.
 - `rezero-loop` — Subaru의 단일 태스크 구현 루프.

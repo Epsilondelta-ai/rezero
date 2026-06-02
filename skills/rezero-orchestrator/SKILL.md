@@ -10,6 +10,7 @@ Goal → finish request through small Re:ZERO attempts.
 
 ## Flow
 
+0. If request is `init`, use `rezero-init` and stop.
 1. If request is large, use `rezero-plan`; otherwise one task.
 2. If planned tasks are independent, run safe groups in parallel via subagents; use team agents for long/heavy groups.
 3. Isolate parallel implementation work, merge the group, then verify the combined result.

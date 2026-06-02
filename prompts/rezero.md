@@ -3,7 +3,9 @@ description: Run the Re:ZERO Loop
 argument-hint: "<task>"
 ---
 
-Use the `rezero-orchestrator` skill.
-Run Re:ZERO Loop for this request:
+If the request is `init`, use the `rezero-init` skill.
+Otherwise use the `rezero-orchestrator` skill.
+
+Request:
 
 $ARGUMENTS
