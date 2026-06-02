@@ -14,6 +14,9 @@
     "README.md",
     "LICENSE",
     "docs/images/rezero.webp",
+    ".agents/",
+    ".codex/",
+    ".codex-plugin/",
     "commands/",
     "prompts/",
     "skills/"

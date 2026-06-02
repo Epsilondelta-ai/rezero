@@ -19,6 +19,7 @@ Re:ZERO Loop was born from the idea of introducing Return by Death to AI to over
   - [Option 2: Install skills globally](#option-2-install-skills-globally)
   - [Option 3: Install as a Pi package](#option-3-install-as-a-pi-package)
   - [Option 4: Use as a Claude Code plugin](#option-4-use-as-a-claude-code-plugin)
+  - [Option 5: Use as a Codex plugin](#option-5-use-as-a-codex-plugin)
 - [Workflow](#workflow)
   - [1. Create a task definition](#1-create-a-task-definition)
   - [2. Run the Re:ZERO Loop](#2-run-the-rezero-loop)
@@ -79,6 +80,22 @@ After installation, `/rezero` becomes available.
 ```
 
 After installation, `/rezero` becomes available.
+
+### Option 5: Use as a Codex plugin
+
+```bash
+codex plugin marketplace add epsilondelta-ai/rezero
+```
+
+Then open `/plugins`, install `rezero`, and start a new session.
+
+For local development, this repository also exposes a repo-scoped command:
+
+```text
+/rezero <task>
+```
+
+After installation, use the Re:ZERO plugin or `/rezero` command to run the loop.
 
 ## Workflow
 
