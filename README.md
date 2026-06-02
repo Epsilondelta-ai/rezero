@@ -69,7 +69,7 @@ Local development:
 pi install /path/to/rezero
 ```
 
-After installation, `/skill:rezero-loop` becomes available.
+After installation, `/rezero` becomes available.
 
 ### Option 4: Use as a Claude Code plugin
 
@@ -78,7 +78,7 @@ After installation, `/skill:rezero-loop` becomes available.
 /plugin install rezero@rezero-marketplace
 ```
 
-After installation, `/skill:rezero-loop` becomes available.
+After installation, `/rezero` becomes available.
 
 ## Workflow
 

@@ -14,11 +14,16 @@
     "README.md",
     "LICENSE",
     "docs/images/rezero.webp",
+    "commands/",
+    "prompts/",
     "skills/"
   ],
   "pi": {
     "skills": [
       "./skills"
+    ],
+    "prompts": [
+      "./prompts"
     ],
     "image": "./docs/images/rezero.webp"
   }
