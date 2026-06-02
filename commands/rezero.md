@@ -3,7 +3,7 @@ description: Run the Re:ZERO Loop
 argument-hint: "<task>"
 ---
 
-Load and follow the Re:ZERO Loop skill from `${CLAUDE_PLUGIN_ROOT}/skills/rezero-loop/SKILL.md`.
+Load and follow the Re:ZERO skill from `${CLAUDE_PLUGIN_ROOT}/skills/rezero-orchestrator/SKILL.md`.
 
 User request:
 $ARGUMENTS

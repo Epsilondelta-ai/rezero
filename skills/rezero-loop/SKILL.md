@@ -1,41 +1,28 @@
 ---
 name: rezero-loop
-description: Run a Re:ZERO-style implementation loop. Use when the user wants Subaru to implement, seven witches to review, fail to reset with preserved memory, and pass to commit.
+description: Subaru's single-task Re:ZERO implementation loop. Use inside rezero after task splitting: implement, verify, survive witches, reset on fail, commit on pass.
 license: MIT
 ---
 
 # Re:ZERO Loop
 
-Use this skill for implementation work that should follow Return by Death.
+Use this skill for one task-sized attempt.
 
 ## Start
 
 1. Read `references/subaru.md`.
-2. Follow Subaru's flow exactly.
-3. Keep runtime memory in the target repository under `.rezero/memory/`.
-
-## Seven Witches
-
-After Subaru verifies the work, call seven parallel subagents.
-Give each subagent the changed diff, relevant verification output, and its own reference file:
-
-- `references/witches/echidna.md`
-- `references/witches/typhon.md`
-- `references/witches/minerva.md`
-- `references/witches/daphne.md`
-- `references/witches/carmilla.md`
-- `references/witches/sekhmet.md`
-- `references/witches/satella.md`
-
-Each witch returns only:
-
-```markdown
-| witch | verdict | reason | evidence |
-|---|---|---|---|
-| <name> | pass/warning/fail | <short reason> | <command/output/file> |
-```
+2. Implement and verify one task.
+3. Use `rezero-witches` for evaluation.
+4. Use `rezero-rem` for warnings.
+5. Commit only when no witch returns `fail`.
 
 ## Decision
 
-- Any `fail` → Subaru records minimal death memory, runs Return by Death, and retries.
-- Only `pass|warning` → Subaru records warnings in Rem memory, commits, cleans death memory, and stops.
+- Any `fail` → record minimal death memory, Return by Death, retry with a changed route.
+- Only `pass|warning` → record warnings in Rem memory, commit, clean death memory, stop.
+
+## Scope
+
+Large request splitting belongs to `rezero-plan`.
+Seven Witches dispatch belongs to `rezero-witches`.
+Warning/debt memory belongs to `rezero-rem`.
