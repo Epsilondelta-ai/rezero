@@ -17,7 +17,8 @@ Re:ZERO Loop was born from the idea of introducing Return by Death to AI to over
 - [Installation](#installation)
   - [Option 1: Copy directly to your project](#option-1-copy-directly-to-your-project)
   - [Option 2: Install skills globally](#option-2-install-skills-globally)
-  - [Option 3: Use as a Claude Code plugin](#option-3-use-as-a-claude-code-plugin)
+  - [Option 3: Install as a Pi package](#option-3-install-as-a-pi-package)
+  - [Option 4: Use as a Claude Code plugin](#option-4-use-as-a-claude-code-plugin)
 - [Workflow](#workflow)
   - [1. Create a task definition](#1-create-a-task-definition)
   - [2. Run the Re:ZERO Loop](#2-run-the-rezero-loop)
@@ -56,7 +57,21 @@ cp -r skills/witches-tea-party ~/.claude/skills/
 cp -r skills/rem ~/.claude/skills/
 ```
 
-### Option 3: Use as a Claude Code plugin
+### Option 3: Install as a Pi package
+
+```bash
+pi install git:github.com/epsilondelta-ai/rezero
+```
+
+Local development:
+
+```bash
+pi install /path/to/rezero
+```
+
+After installation, `/skill:rezero-loop` becomes available.
+
+### Option 4: Use as a Claude Code plugin
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
