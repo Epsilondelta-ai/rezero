@@ -1,15 +1,11 @@
 {
   "name": "rezero",
-  "version": "0.0.8",
-  "description": "Re:ZERO Loop - Autonomous AI agent loop with death regression mechanism inspired by Re:Zero",
-  "author": {
-    "name": "Epsilondelta-ai",
-    "url": "https://github.com/epsilondelta-ai"
-  },
-  "homepage": "https://github.com/epsilondelta-ai/rezero",
-  "repository": "https://github.com/epsilondelta-ai/rezero",
-  "license": "MIT",
-  "keywords": ["rezero", "agent-loop", "death-regression", "autonomous", "ai-agent"],
-  "skills": "./skills/",
-  "commands": "./commands/"
+  "version": "0.1.0",
+  "description": "Re:ZERO Loop: Subaru implements, seven witches review, Return by Death retries.",
+  "commands": [
+    "./commands"
+  ],
+  "skills": [
+    "./skills"
+  ]
 }

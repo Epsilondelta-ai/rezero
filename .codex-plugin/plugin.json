@@ -1,0 +1,29 @@
+{
+  "name": "rezero",
+  "version": "0.1.0",
+  "description": "Re:ZERO Loop: Subaru implements, seven witches review, Return by Death retries.",
+  "author": {
+    "name": "epsilondelta-ai"
+  },
+  "repository": "https://github.com/epsilondelta-ai/rezero",
+  "license": "MIT",
+  "keywords": [
+    "rezero",
+    "code-review",
+    "agent-skill"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Re:ZERO Loop",
+    "shortDescription": "Subaru implements, seven witches review, failures retry with memory.",
+    "developerName": "epsilondelta-ai",
+    "category": "Productivity",
+    "capabilities": [
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use Re:ZERO Loop to implement this task with witch review."
+    ]
+  }
+}

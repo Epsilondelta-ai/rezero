@@ -4,152 +4,213 @@
 
 ![](./docs/images/rezero.webp)
 
-> Re:ZERO Loop is a project inspired by **Return by Death** from **Re:Zero − Starting Life in Another World**.
+> Re:ZERO Loop is an agent workflow inspired by **Return by Death** from **Re:Zero − Starting Life in Another World**.
 
-Techniques like Ralph Loop have emerged to prevent AI performance degradation caused by context pollution from accumulated context.  
-However, even if the context is kept clean, if the accumulated code becomes polluted, performance degradation due to the codebase is unavoidable.
-
-Re:ZERO Loop was born from the idea of introducing Return by Death to AI to overcome this problem.
+It lets Subaru implement work, sends the result to seven independent witches for review, preserves failure memory, and retries from `HEAD` when the route fails.
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
 - [Installation](#installation)
-  - [Option 1: Copy directly to your project](#option-1-copy-directly-to-your-project)
-  - [Option 2: Install skills globally](#option-2-install-skills-globally)
-  - [Option 3: Use as a Claude Code plugin](#option-3-use-as-a-claude-code-plugin)
+  - [Pi](#pi)
+  - [Claude Code](#claude-code)
+  - [Codex](#codex)
+- [Usage](#usage)
 - [Workflow](#workflow)
-  - [1. Create a task definition](#1-create-a-task-definition)
-  - [2. Run the Re:ZERO Loop](#2-run-the-rezero-loop)
+- [Skills](#skills)
+- [Language and Names](#language-and-names)
 - [Concepts](#concepts)
   - [Natsuki Subaru](#natsuki-subaru)
   - [Return by Death](#return-by-death)
-  - [Witches' Tea Party](#witches-tea-party)
+  - [Seven Witches](#seven-witches)
   - [Rem](#rem)
 - [License](#license)
 
-## Prerequisites
-
-- **AI coding tool** (one of the following):
-  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [OpenAI Codex](https://openai.com/index/codex/)
-- **jq** installed (`brew install jq` on macOS)
-- A **git repository** for your project
-
 ## Installation
 
-### Option 1: Copy directly to your project
+### Pi
 
 ```bash
-mkdir -p scripts/rezero
-cp /path/to/rezero/rezero.sh scripts/rezero/
-cp -r /path/to/rezero/prompts scripts/rezero/prompts
-chmod +x scripts/rezero/rezero.sh
+pi install git:github.com/epsilondelta-ai/rezero
 ```
 
-### Option 2: Install skills globally
+Local development:
 
 ```bash
-cp -r skills/task ~/.claude/skills/
-cp -r skills/rezero ~/.claude/skills/
-cp -r skills/witches-tea-party ~/.claude/skills/
-cp -r skills/rem ~/.claude/skills/
+pi install /path/to/rezero
 ```
 
-### Option 3: Use as a Claude Code plugin
+### Claude Code
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
 /plugin install rezero@rezero-marketplace
 ```
 
-After installation, the `/task` and `/rezero` skills become available.
+### Codex
+
+```bash
+codex plugin marketplace add epsilondelta-ai/rezero
+```
+
+Then open `/plugins`, install `rezero`, and start a new session.
+
+## Usage
+
+Initialize witch evaluation tools in a target repository:
+
+```text
+/rezero init
+```
+
+Run the loop:
+
+```text
+/rezero <task>
+```
+
+Example:
+
+```text
+/rezero Add user profile editing with validation and tests
+```
 
 ## Workflow
 
-### 1. Create a task definition
+0. **Init**
+   - `/rezero init` detects the repository stack.
+   - It configures fitting witch evaluation tools, keeps `.rezero/memory/` ignored, verifies available tools, and writes `.rezero/tools.md` with `<!-- rezero-init: v0.1.0 -->`.
+   - Non-init `/rezero` requests auto-run init first when `.rezero/tools.md`, the init marker, or `.rezero/memory/` ignore state is missing.
+   - Tools that require accounts or external services are recorded as setup notes instead of being faked.
 
-Use the task skill to define a user story:
+1. **Orchestrate**
+   - `/rezero` loads `rezero-orchestrator`.
+   - Large requests are split by `rezero-plan` into ordered tasks with done criteria.
+   - Independent tasks may run in parallel through subagents or team agents.
 
-> "Load the task skill and create a task for [feature description]"
+2. **Implement**
+   - Subaru runs one sequential task or one parallel task group from current `HEAD`.
+   - Parallel groups are merged first, then verified as one combined result.
 
-Output: `task.json` (a user story with priorities and acceptance criteria)
+3. **Evaluate**
+   - `rezero-witches` calls all seven witches in parallel.
+   - Witches use fresh context, not Subaru's context, to avoid confirmation bias.
+   - Chat shows one verdict table:
 
-### 2. Run the Re:ZERO Loop
-
-```bash
-./rezero.sh [max_iterations]                        # Claude (default)
-./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
-./rezero.sh --max-deaths 5 [max_iterations]         # Set max Return by Death per story
+```markdown
+| witch | verdict | reason | evidence |
+|---|---|---|---|
+| Echidna | pass/warning/fail | <short reason> | <command/output/file> |
 ```
 
-Default iterations: 10, default max deaths: 3
+4. **Return by Death**
+   - Any `fail` kills the route.
+   - Subaru writes minimal failure memory to `.rezero/memory/subaru-deaths.md`:
 
-**Execution flow (4 phases per iteration):**
+```markdown
+## Death <number>
 
-1. Creates a feature branch from `task.json`
-2. **Phase 1 — Implementation (Subaru)**: Selects the highest priority incomplete story and implements it
-3. **Phase 2 — Witches' Tea Party (6 parallel sessions)**: Six witches evaluate the code simultaneously, each in their own independent session
-4. **Phase 3 — Final Judgment (Satella)**: Aggregates the six verdicts, commits on pass or triggers Return by Death on fail
-5. **Phase 4 — Technical Debt (Rem)**: Records evaluation warnings in `rem.md`, reviews existing debt, checks for loop completion
-6. Repeats until all stories are complete or max iterations reached
+- Fail: <witch + reason>
+- Evidence: <minimal test/review/error/defect>
+- Next route: <specific change>
+```
 
-Each iteration runs up to **9 sessions**: 1 implementation + 6 parallel evaluators + 1 judgment + 1 debt management. The six witches run in parallel for fast, unbiased evaluation — each evaluator is completely independent from the implementer and from each other.
+   - Then resets:
+
+```bash
+git reset --hard HEAD
+git clean -fd
+```
+
+   - `.rezero/memory/` is ignored, so failure memory survives.
+
+5. **Pass**
+   - Only `pass` and `warning` verdicts pass.
+   - Warnings are stored by `rezero-rem` in `.rezero/memory/rem.md`.
+   - Accepted route is committed.
+   - `.rezero/memory/subaru-deaths.md` is deleted after commit.
+
+6. **Rem**
+   - Rem warnings are normal Re:ZERO attempts.
+   - They must be implemented, verified, evaluated by witches, and committed with no `fail`.
+   - When all warnings are resolved and accepted, `.rezero/memory/rem.md` is deleted.
+
+## Skills
+
+- `rezero-init` — detects the stack and sets up witch evaluation tools for `/rezero init`.
+- `rezero-orchestrator` — `/rezero` entrypoint; coordinates the full loop.
+- `rezero-plan` — splits large requests into small ordered tasks.
+- `rezero-loop` — Subaru's single-task implementation loop.
+- `rezero-witches` — dispatches seven fresh-context witch reviews and prints the verdict table.
+- `rezero-rem` — stores, resolves, and deletes warning memory.
+
+## Language and Names
+
+Re:ZERO answers in the user's language when supported. Character names in witch verdicts and parallel implementer labels follow the same language. Unsupported languages fall back to English.
+
+| Language | Witches | Parallel implementers |
+| --- | --- | --- |
+| English / Spanish / Portuguese / German | Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satella | Beatrice, Emilia, Ram, Garfiel, Julius |
+| Korean | 에키드나, 티폰, 미네르바, 다프네, 카밀라, 세크메트, 사테라 | 베아트리스, 에밀리아, 람, 가필, 율리우스 |
+| Japanese | エキドナ, テュフォン, ミネルヴァ, ダフネ, カーミラ, セクメト, サテラ | ベアトリス, エミリア, ラム, ガーフィール, ユリウス |
+| Simplified Chinese | 艾姬多娜, 堤丰, 弥涅耳瓦, 达芙妮, 卡密拉, 塞赫麦特, 莎缇拉 | 碧翠丝, 艾米莉娅, 拉姆, 加菲尔, 尤里乌斯 |
+| French | Echidna, Typhon, Minerva, Daphné, Carmilla, Sekhmet, Satella | Béatrice, Émilia, Ram, Garfiel, Julius |
+| Russian | Ехидна, Тифон, Минерва, Дафна, Кармилла, Сехмет, Сателла | Беатрис, Эмилия, Рам, Гарфиэль, Юлиус |
 
 ## Concepts
 
 ### Natsuki Subaru
 
-Natsuki Subaru is the protagonist of Re:Zero.
+Subaru is the implementer.
 
-- In this project, the agent performing the work is named **Natsuki Subaru**.
-- Rather than simply executing tasks, it accumulates knowledge through multiple Returns by Death.
-- It devises an optimal plan each time to achieve its goal.
+- Starts from current `HEAD`.
+- Implements and verifies the task.
+- Calls the witches after work is complete.
+- If the route fails, keeps only the memory needed to avoid the same failure.
 
 ### Return by Death
 
 ![Natsuki Subaru](./docs/images/subaru.webp)
 
-When an anomaly is detected during work, or when the results are unsatisfactory even after completion, Natsuki Subaru uses Return by Death to revert to a checkpoint.
+Return by Death resets the working tree but preserves failure memory.
 
-- If an anomaly is detected during work, it stops and uses Return by Death to revert to the checkpoint.
-- If the Witches' Tea Party determines that the success criteria have not been met, it forces a Return by Death.
-- The key significance of Return by Death is that it returns to the checkpoint while retaining memories of why it failed.
+```bash
+git reset --hard HEAD
+git clean -fd
+```
 
-### Witches' Tea Party
+The code dies. The lesson survives.
+
+### Seven Witches
 
 ![Witches' Tea Party](./docs/images/witches-tea-party.webp)
 
-Fans familiar with the original setting might find it surprising that the **Witches' Tea Party** serves as the evaluator.  
-However, the fact that the six witches each have different personalities, combined with the speculation that Satella may determine Subaru's checkpoints, made this a fitting role for the evaluation system.
+The witches are independent reviewers. They do not inherit Subaru's reasoning, plan, self-assessment, or prior failed route unless required as evidence.
 
-- After work is completed, the "Witches' Tea Party" convenes.
-- The six witches evaluate the work from their respective perspectives.
-- Satella aggregates the six witches' evaluations to determine whether to update the checkpoint or trigger Return by Death.
+| Witch | Focus | Example tools |
+| --- | --- | --- |
+| Echidna (Greed) | Completeness, edge cases, coverage, quality gates | SonarQube/SonarCloud, coverage, Stryker |
+| Typhon (Pride) | Contracts, specs, public interfaces, user intent | typecheck, linter, Spectral, Pact |
+| Minerva (Wrath) | User harm, regressions, runtime failures | full tests, Playwright, Lighthouse CI, k6 |
+| Daphne (Gluttony) | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Carmilla (Lust) | Deceptive UI/docs/names/proof | Playwright screenshots, axe, lychee |
+| Sekhmet (Sloth) | Maintainability, dead code, duplication, complexity | SonarQube/SonarCloud, Knip, jscpd |
+| Satella (Envy) | Integration, security, policy, project consistency | CodeQL, Gitleaks, Trivy, full CI |
 
-| Witch              | Evaluation Criteria                                                                                                                                                                                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Echidna (Greed)    | Has this implementation explored all possibilities? Are all edge cases handled? Is the knowledge thorough? Practically: checks test coverage, API completeness, documentation, and boundary condition handling.     |
-| Minerva (Wrath)    | Is this bug truly fixed, or was the problem just redistributed? Does the patch create new failure modes in unrelated features? Runs regression tests and verifies the fix doesn't break unrelated functionality.   |
-| Sekhmet (Sloth)    | Could the same result be achieved with less effort? Is there unnecessary complexity? Checks algorithmic efficiency, redundant computations, and over-engineering.                                                   |
-| Typhon (Pride)     | Does the code know its own sins? Are there intentionally included anti-patterns? Does it violate its own principles? Detects code smells, linting violations, and acknowledged but unfixed technical debt.          |
-| Daphne (Gluttony)  | How hungry is this code? Is the memory/CPU/token consumption justified? Checks memory usage, API call counts, bundle size, and token consumption.                                                                  |
-| Carmilla (Lust)    | Does this code fulfill what the user truly wants? Is the UX appealing, or are dangerous flaws hidden behind charm? Evaluates API ergonomics, error messages, and alignment with the user's stated intent.          |
-| Satella (Envy)     | The final aggregator. Determines what constitutes an "acceptable result," aggregates the six witches' evaluations using weighted scores, and renders the verdict of survival or death: checkpoint pass or Return by Death trigger. |
+Verdicts:
+
+- `pass` — accepted.
+- `warning` — accepted, recorded by Rem.
+- `fail` — rejected; triggers Return by Death.
 
 ### Rem
 
-> **!!! SPOILER ALERT !!!**
-
 ![Rem](./docs/images/rem.webp)
 
-After the White Whale subjugation, Rem had her name and memories consumed by the Archbishop of Gluttony, falling into suspended animation.  
-The Return by Death checkpoint became fixed after Rem fell into this state, making it impossible to go back further.  
-While planning the Re:ZERO Loop, the realization that Rem's existence would be crucial to this project — that technical debt could remain even after passing the Witches' Tea Party — led to incorporating Rem into the project.
+Rem is warning memory.
 
-- Even after passing the Witches' Tea Party, if technical debt or items requiring future fixes remain, they persist as the checkpoint updates.
-- Rem identifies and separately records technical debt and items needing fixes.
-- If such items exist, Subaru prioritizes saving Rem before proceeding to the next task.
+- Warnings that pass review are stored in `.rezero/memory/rem.md`.
+- They remain until fixed, re-evaluated by witches, accepted, and committed.
+- When no warnings remain, `rem.md` is deleted.
 
 ## License
 

@@ -4,153 +4,117 @@
 
 ![](./images/rezero.webp)
 
-> Re:ZERO Loopは、**Re:ゼロから始める異世界生活**の**死に戻り**にインスピレーションを受けて作られたプロジェクトです。
+> Re:ZERO Loop は **Re:Zero − Starting Life in Another World** の **Return by Death** に着想を得たエージェントワークフローです。
 
-コンテキストの蓄積による汚染でAIのパフォーマンスが低下するのを防ぐため、Ralph Loopのような技法が登場しました。  
-しかし、コンテキストをクリーンに保っていても、蓄積されるコードが汚染されていけば、コードベースによるパフォーマンス低下は避けられません。
-
-Re:ZERO Loopは、この問題を克服するために、死に戻りをAIに導入したらどうかというアイデアから生まれました。
+Subaru が実装し、七人の魔女が独立レビューし、失敗の記憶を保持したまま `HEAD` から再試行します。
 
 ## 目次
 
-- [前提条件](#前提条件)
 - [インストール](#インストール)
-  - [オプション1：プロジェクトに直接コピー](#オプション1プロジェクトに直接コピー)
-  - [オプション2：スキルをグローバルにインストール](#オプション2スキルをグローバルにインストール)
-  - [オプション3：Claude Codeプラグインとして使用](#オプション3claude-codeプラグインとして使用)
+- [使い方](#使い方)
 - [ワークフロー](#ワークフロー)
-  - [1. タスク定義の作成](#1-タスク定義の作成)
-  - [2. Re:ZERO Loopの実行](#2-rezero-loopの実行)
+- [スキル](#スキル)
 - [コンセプト](#コンセプト)
-  - [ナツキ・スバル](#ナツキスバル)
-  - [死に戻り](#死に戻り)
-  - [魔女の茶会](#魔女の茶会)
-  - [レム](#レム)
 - [ライセンス](#ライセンス)
-
-## 前提条件
-
-- **AIコーディングツール**（以下のいずれか）：
-  - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) (`npm install -g @anthropic-ai/claude-code`)
-  - [OpenAI Codex](https://openai.com/index/codex/)
-- **jq** のインストール（macOSの場合：`brew install jq`）
-- プロジェクト用の **gitリポジトリ**
 
 ## インストール
 
-### オプション1：プロジェクトに直接コピー
+### Pi
 
 ```bash
-mkdir -p scripts/rezero
-cp /path/to/rezero/rezero.sh scripts/rezero/
-cp -r /path/to/rezero/prompts scripts/rezero/prompts
-chmod +x scripts/rezero/rezero.sh
+pi install git:github.com/epsilondelta-ai/rezero
 ```
 
-### オプション2：スキルをグローバルにインストール
-
-```bash
-cp -r skills/task ~/.claude/skills/
-cp -r skills/rezero ~/.claude/skills/
-cp -r skills/witches-tea-party ~/.claude/skills/
-cp -r skills/rem ~/.claude/skills/
-```
-
-### オプション3：Claude Codeプラグインとして使用
+### Claude Code
 
 ```bash
 /plugin marketplace add epsilondelta-ai/rezero
 /plugin install rezero@rezero-marketplace
 ```
 
-インストール後、`/task`スキルと`/rezero`スキルが利用可能になります。
+### Codex
+
+```bash
+codex plugin marketplace add epsilondelta-ai/rezero
+```
+
+その後 `/plugins` で `rezero` をインストールし、新しいセッションを開始します。
+
+## 使い方
+
+```text
+/rezero init
+/rezero <task>
+```
+
+`/rezero` checks init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore) and runs init first if missing.
 
 ## ワークフロー
 
-### 1. タスク定義の作成
+1. **オーケストレーション** — `/rezero` が `rezero-orchestrator` を読み込みます。大きい依頼は `rezero-plan` が done 条件付きの小タスクに分割します。独立タスクは subagent/team agent で並列化できます。
+2. **実装** — Subaru は現在の `HEAD` から、単一タスクまたは並列タスクグループを実装します。並列グループはマージ後、結合結果として検証します。
+3. **評価** — `rezero-witches` が七人の魔女を並列呼び出しします。魔女は確証バイアスを避けるため Subaru のコンテキストを継承しません。結果は `witch | verdict | reason | evidence` テーブルで表示します。
+4. **Return by Death** — ひとつでも `fail` があれば `.rezero/memory/subaru-deaths.md` に最小限の失敗記憶を書き、`git reset --hard HEAD && git clean -fd` 後に再試行します。
+5. **通過** — `pass`/`warning` のみなら warning を `.rezero/memory/rem.md` に保存し、accepted route をコミットします。コミット後 death memory を削除します。
+6. **Rem** — Rem warning も通常の Re:ZERO attempt として実装、検証、魔女評価、fail なしでコミットします。すべて解決したら `rem.md` を削除します。
 
-taskスキルを使用してユーザーストーリーを定義します：
+## スキル
 
-> 「taskスキルをロードして、[機能の説明]のタスクを作成してください」
+- `rezero-init` — setup witch evaluation tools.
+- `rezero-orchestrator` — `/rezero` のエントリポイント。
+- `rezero-plan` — 大きい依頼を小さい ordered tasks に分割。
+- `rezero-loop` — Subaru の単一タスク実装ループ。
+- `rezero-witches` — fresh-context の七魔女レビューと verdict table。
+- `rezero-rem` — warning memory の保存、解決、削除。
 
-出力：`task.json`（優先順位と受け入れ基準を含むユーザーストーリー）
+## 言語と名前
 
-### 2. Re:ZERO Loopの実行
+対応言語ではユーザーの言語で回答し、魔女 verdict と並列実装エージェント名もその言語の表記を使います。未対応言語は英語にフォールバックします。
 
-```bash
-./rezero.sh [max_iterations]                        # Claude（デフォルト）
-./rezero.sh --tool codex [max_iterations]           # OpenAI Codex
-./rezero.sh --max-deaths 5 [max_iterations]         # ストーリーごとの最大死に戻り回数を設定
-```
-
-デフォルト反復回数：10回、デフォルト最大死に戻り：3回
-
-**実行フロー：**
-
-1. `task.json`からフィーチャーブランチを作成します
-2. 最も優先度の高い未完了ストーリーを選択します
-3. そのストーリーを実装します
-4. 魔女の茶会で品質評価を行います
-5. 合格時：コミットして`task.json`のステータスを更新します
-6. 不合格時：死に戻りでチェックポイントに戻ります
-7. `progress.txt`に教訓を記録します
-8. すべてのストーリーが完了するか、最大反復回数に達するまで繰り返します
+| Type | Names |
+| --- | --- |
+| Witches | エキドナ, テュフォン, ミネルヴァ, ダフネ, カーミラ, セクメト, サテラ |
+| Parallel implementers | ベアトリス, エミリア, ラム, ガーフィール, ユリウス |
 
 ## コンセプト
 
 ### ナツキ・スバル
 
-Re:ゼロの主人公、ナツキ・スバルです。
+ナツキ・スバルは実装者です。現在の `HEAD` から開始し、実装と検証を行い、失敗時は同じ失敗を避けるための記憶だけを残します。
 
-- このプロジェクトでは、作業を行うエージェントを**ナツキ・スバル**と命名します。
-- 単にタスクを実行するだけでなく、複数回の死に戻りを通じて知識を蓄積します。
-- 目標を達成するために、毎回最適な計画を立てて作業を進めます。
+### Return by Death
 
-### 死に戻り
+![Natsuki Subaru](./images/subaru.webp)
 
-![ナツキ・スバル](./images/subaru.webp)
+```bash
+git reset --hard HEAD
+git clean -fd
+```
 
-作業中に異常を検知した場合、または作業が完了しても満足のいく結果が得られなかった場合、ナツキ・スバルは死に戻りでチェックポイントに戻ります。
+コードは死に、教訓は残ります。
 
-- 作業中に異常を検知すると、作業を中断して死に戻りの能力でチェックポイントに戻ります。
-- 次に述べる魔女の茶会で成功基準を満たしていないと判断されると、強制的に死に戻りさせられます。
-- 死に戻りの能力の大きな意義は、失敗した理由を記憶したままチェックポイントに戻れることです。
+### Seven Witches
 
-### 魔女の茶会
+![Witches' Tea Party](./images/witches-tea-party.webp)
 
-![魔女の茶会](./images/witches-tea-party.webp)
+| Witch | Focus | Example tools |
+| --- | --- | --- |
+| エキドナ | 完全性、エッジケース、カバレッジ | SonarQube, coverage, Stryker |
+| テュフォン | 契約、仕様、公開インターフェース | typecheck, linter, Spectral, Pact |
+| ミネルヴァ | ユーザー被害、回帰、実行時失敗 | tests, Playwright, Lighthouse CI, k6 |
+| ダフネ | 依存関係とリソース消費 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| カーミラ | UI/文書/名前/証明の欺瞞 | screenshots, axe, lychee |
+| セクメト | 保守性、dead code、重複 | SonarQube, Knip, jscpd |
+| サテラ | 統合、セキュリティ、ポリシー、一貫性 | CodeQL, Gitleaks, Trivy, CI |
 
-原作の設定を知っているファンにとっては、**魔女の茶会**が評価者の役割を担うことに違和感を覚えるかもしれません。  
-しかし、六人の魔女がそれぞれ異なる性格を持つことと、スバルのチェックポイントをサテラが決定しているかもしれないという推測から、評価システムとしてかなりよくフィットすると考え、評価者の役割に据えました。
-
-- 作業が完了すると「魔女の茶会」が開かれます。
-- 六人の魔女がそれぞれの視点から作業結果を評価します。
-- サテラが六人の魔女の評価を総合して、チェックポイントを更新するか、死に戻りさせるかを決定します。
-
-| 魔女                    | 評価基準                                                                                                                                                                                                           |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| エキドナ（強欲）         | この実装はすべての可能性を探求したか？すべてのエッジケースが処理されているか？知識は徹底しているか？実務的には、テストカバレッジ、API完全性、ドキュメント、境界条件の処理を確認する。                                 |
-| ミネルヴァ（憤怒）       | このバグは本当に修正されたのか、それとも問題を再分配しただけか？パッチが無関係な機能に新たな障害モードを作り出していないか？回帰テストを実行し、修正が無関係な機能を壊していないことを確認する。                     |
-| セクメト（怠惰）         | 同じ結果をより少ない作業で達成できるか？不必要な複雑さがないか？アルゴリズムの効率性、冗長な計算、オーバーエンジニアリングを確認する。                                                                               |
-| テュフォン（傲慢）       | コードは自身の罪を知っているか？意図的に含まれたアンチパターンはないか？自身の原則に違反していないか？コードスメル、リンティング違反、認識しながら修正していない技術的負債を検出する。                                 |
-| ダフネ（暴食）           | このコードはどれほど飢えているか？メモリ/CPU/トークン消費は正当化されるか？メモリ使用量、API呼び出し回数、バンドルサイズ、トークン消費量を確認する。                                                                 |
-| カーミラ（色欲）         | このコードはユーザーが本当に望んでいることを満たしているか？UXは魅力的か、それとも魅力の裏に危険な欠陥が隠れているか？APIエルゴノミクス、エラーメッセージ、ユーザーの明示された意図との一致を評価する。               |
-| サテラ（嫉妬）           | 最終集計者。「許容可能な結果」が何かを決定し、加重スコアを使用して六人の魔女の評価を集計し、生存か死かの判定を下す：チェックポイント通過または死に戻りトリガー。                                                     |
+Verdict: `pass`, `warning`, `fail`.
 
 ### レム
 
-> **!!! ネタバレ注意 !!!**
+![Rem](./images/rem.webp)
 
-![レム](./images/rem.webp)
-
-白鯨討伐戦の後、暴食の大罪司教によって名前と記憶を食われ、仮死状態に陥ります。  
-死に戻りのチェックポイントがレムが仮死状態に陥った後に固定され、それ以前に戻ることができなくなります。  
-Re:ZERO Loopを企画する中で、レムの存在がこのプロジェクトに確実に重要であるという考え — 魔女の茶会を通過しても技術的負債が残りうるという認識に至り、レムの存在をこのプロジェクトに導入しました。
-
-- 魔女の茶会を通過しても、技術的負債や今後修正が必要なものが存在する場合、チェックポイントが更新されてもそれらは残存します。
-- レムは技術的負債や修正が必要なものを確認し、別途記録します。
-- それらが存在する場合、スバルは次のタスクに進む前に、レムを救うための作業を優先します。
+レムは warning memory です。通過した warning は `.rezero/memory/rem.md` に残り、修正、再評価、コミットされるまで維持されます。
 
 ## ライセンス
 
-このプロジェクトは[MITライセンス](../LICENSE)の下で配布されています。
+このプロジェクトは [MIT License](../LICENSE) で配布されます。
