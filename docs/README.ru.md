@@ -56,9 +56,9 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## Концепции
 
-### Natsuki Subaru
+### Нацуки Субару
 
-Subaru is the implementer. Starts from current `HEAD`, implements, verifies, and keeps only the memory needed to avoid repeating a failure.
+Нацуки Субару — исполнитель. Он начинает с текущего `HEAD`, реализует, проверяет и сохраняет только память, нужную, чтобы не повторить провал.
 
 ### Return by Death
 
@@ -77,17 +77,17 @@ git clean -fd
 
 | Witch | Focus | Example tools |
 | --- | --- | --- |
-| Echidna | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
-| Typhon | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
-| Minerva | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
-| Daphne | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
-| Carmilla | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
-| Sekhmet | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
-| Satella | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
+| Ехидна | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
+| Тифон | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
+| Минерва | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
+| Дафна | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Кармилла | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
+| Сехмет | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
+| Сателла | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.
 
-### Rem
+### Рем
 
 ![Rem](./images/rem.webp)
 

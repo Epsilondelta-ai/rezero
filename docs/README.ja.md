@@ -67,9 +67,9 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## コンセプト
 
-### Natsuki Subaru
+### ナツキ・スバル
 
-Subaru は実装者です。現在の `HEAD` から開始し、実装と検証を行い、失敗時は同じ失敗を避けるための記憶だけを残します。
+ナツキ・スバルは実装者です。現在の `HEAD` から開始し、実装と検証を行い、失敗時は同じ失敗を避けるための記憶だけを残します。
 
 ### Return by Death
 
@@ -88,21 +88,21 @@ git clean -fd
 
 | Witch | Focus | Example tools |
 | --- | --- | --- |
-| Echidna | 完全性、エッジケース、カバレッジ | SonarQube, coverage, Stryker |
-| Typhon | 契約、仕様、公開インターフェース | typecheck, linter, Spectral, Pact |
-| Minerva | ユーザー被害、回帰、実行時失敗 | tests, Playwright, Lighthouse CI, k6 |
-| Daphne | 依存関係とリソース消費 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
-| Carmilla | UI/文書/名前/証明の欺瞞 | screenshots, axe, lychee |
-| Sekhmet | 保守性、dead code、重複 | SonarQube, Knip, jscpd |
-| Satella | 統合、セキュリティ、ポリシー、一貫性 | CodeQL, Gitleaks, Trivy, CI |
+| エキドナ | 完全性、エッジケース、カバレッジ | SonarQube, coverage, Stryker |
+| テュフォン | 契約、仕様、公開インターフェース | typecheck, linter, Spectral, Pact |
+| ミネルヴァ | ユーザー被害、回帰、実行時失敗 | tests, Playwright, Lighthouse CI, k6 |
+| ダフネ | 依存関係とリソース消費 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| カーミラ | UI/文書/名前/証明の欺瞞 | screenshots, axe, lychee |
+| セクメト | 保守性、dead code、重複 | SonarQube, Knip, jscpd |
+| サテラ | 統合、セキュリティ、ポリシー、一貫性 | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.
 
-### Rem
+### レム
 
 ![Rem](./images/rem.webp)
 
-Rem は warning memory です。通過した warning は `.rezero/memory/rem.md` に残り、修正、再評価、コミットされるまで維持されます。
+レムは warning memory です。通過した warning は `.rezero/memory/rem.md` に残り、修正、再評価、コミットされるまで維持されます。
 
 ## ライセンス
 

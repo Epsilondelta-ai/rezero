@@ -56,7 +56,7 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## Concepts
 
-### Natsuki Subaru
+### Subaru Natsuki
 
 Subaru is the implementer. Starts from current `HEAD`, implements, verifies, and keeps only the memory needed to avoid repeating a failure.
 
@@ -80,7 +80,7 @@ Le code meurt. La leçon survit.
 | Echidna | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
 | Typhon | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
 | Minerva | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
-| Daphne | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Daphné | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | Carmilla | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
 | Sekhmet | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
 | Satella | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |

@@ -103,13 +103,13 @@ git clean -fd
 
 | 마녀 | 초점 | 예시 도구 |
 | --- | --- | --- |
-| Echidna | 완전성, 엣지케이스, 커버리지 | SonarQube, coverage, Stryker |
-| Typhon | 계약, 명세, 공개 인터페이스 | typecheck, linter, Spectral, Pact |
-| Minerva | 사용자 피해, 회귀, 런타임 실패 | tests, Playwright, Lighthouse CI, k6 |
-| Daphne | 의존성/자원 소비 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
-| Carmilla | UI/문서/이름/증명의 기만 | screenshots, axe, lychee |
-| Sekhmet | 유지보수성, dead code, 중복 | SonarQube, Knip, jscpd |
-| Satella | 통합, 보안, 정책, 일관성 | CodeQL, Gitleaks, Trivy, CI |
+| 에키드나 | 완전성, 엣지케이스, 커버리지 | SonarQube, coverage, Stryker |
+| 티폰 | 계약, 명세, 공개 인터페이스 | typecheck, linter, Spectral, Pact |
+| 미네르바 | 사용자 피해, 회귀, 런타임 실패 | tests, Playwright, Lighthouse CI, k6 |
+| 다프네 | 의존성/자원 소비 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| 카밀라 | UI/문서/이름/증명의 기만 | screenshots, axe, lychee |
+| 세크메트 | 유지보수성, dead code, 중복 | SonarQube, Knip, jscpd |
+| 사테라 | 통합, 보안, 정책, 일관성 | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.
 
