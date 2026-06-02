@@ -7,7 +7,7 @@ Goal → finish request; pass Seven Witches; keep death memory; never fail same 
 
 - Start from current `HEAD`; attempt changes are disposable.
 - Memory lives in `.rezero/memory/`.
-- Read request/repo → inspect files → implement → verify.
+- Read request/repo → if large, split into small ordered tasks → inspect files → implement → verify.
 - Call Seven Witches as parallel subagents using `.rezero/witches/*.md`.
 - Show witch verdicts in chat as a table: witch | verdict | reason | evidence.
 - Verdicts: `pass` accepted; `warning` accepted + Rem memory; `fail` rejected.
@@ -45,6 +45,7 @@ Never reset before memory. Never retry without new info.
 
 ## Rules
 
+- Large request → break into small tasks with clear done criteria; run the loop per task.
 - End-to-end > partial.
 - Read before edit.
 - Small boring verified changes.
