@@ -45,9 +45,10 @@ English witch names: Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satell
 
 ## Output
 
-After all witch subagents return, aggregate their verdicts and show exactly one table in chat before any reset, retry, Rem warning handling, commit, or final summary.
-The verdict table is user-visible required output, not internal subagent chatter.
+After all witch subagents return, the lead agent must aggregate their verdicts and show exactly one table in the assistant chat before any reset, retry, Rem warning handling, commit, next loop, or final summary.
+The verdict table is user-visible required output, not internal subagent chatter, task state, team log, or hidden artifact.
 Do not omit it, defer it, replace it with prose, or keep it only in task/subagent logs.
+If any witch returns `fail` or `warning`, the table is still mandatory before starting the next loop or warning-resolution work.
 
 ```markdown
 | witch | verdict | reason | evidence |
@@ -64,6 +65,7 @@ Do not omit it, defer it, replace it with prose, or keep it only in task/subagen
 - One `fail` kills the route.
 - Warnings pass but must be sent to Rem.
 - The chat verdict table is mandatory before acting on pass/warning/fail outcomes.
+- Fail/warning outcomes do not justify skipping the table; show it first, then reset/retry or call Rem.
 - Keep evidence concise and reproducible.
 - Witches judge only; they do not edit code.
 - Fresh context is required to avoid confirmation bias.
