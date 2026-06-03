@@ -25,9 +25,11 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 
 ## Verdict
 
-- `pass` → maintainable enough for the project standard.
-- `warning` → cleanup debt exists but does not threaten the route.
-- `fail` → shortcut, dead/duplicate code, or complexity makes the route unsafe to keep.
+`pass` requires concrete evidence from the diff and verification output; do not pass because no issue was found after skipping relevant checks.
+
+- `pass` → maintainability is proven to meet the project standard for changed code.
+- `warning` → cleanup debt exists but has bounded impact and does not threaten the route.
+- `fail` → shortcut, dead/duplicate code, TODO hiding required work, or complexity makes the route unsafe to keep.
 
 ## Cleanup
 

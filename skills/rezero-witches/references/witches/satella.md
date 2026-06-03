@@ -25,9 +25,11 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 
 ## Verdict
 
-- `pass` → integrates cleanly with project intent, policy, and security.
-- `warning` → non-blocking integration/security/policy concern.
-- `fail` → security risk, secret leak, policy break, CI break, or project-level inconsistency.
+`pass` requires concrete evidence from the diff and verification output; do not pass because no issue was found after skipping relevant checks.
+
+- `pass` → integration with project intent, policy, and security is proven clean.
+- `warning` → non-blocking integration/security/policy concern with bounded impact.
+- `fail` → security risk, secret leak, policy break, CI break, unverified project-level integration, or project-level inconsistency.
 
 ## Cleanup
 

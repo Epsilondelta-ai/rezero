@@ -24,9 +24,11 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 
 ## Verdict
 
-- `pass` → requirements and changed paths are sufficiently verified.
-- `warning` → non-blocking missing coverage, weak tests, or minor smell.
-- `fail` → requirement missing, important edge case unhandled, or quality gate fails.
+`pass` requires concrete evidence from the diff and verification output; do not pass because no issue was found after skipping relevant checks.
+
+- `pass` → requirements and changed paths are fully verified for all material behavior.
+- `warning` → non-blocking missing coverage, weak tests, or minor smell with bounded impact.
+- `fail` → requirement missing, important edge case unhandled, material changed path unverified, or quality gate fails.
 
 ## Cleanup
 
