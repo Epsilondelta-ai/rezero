@@ -33,20 +33,12 @@ Goal → finish request through small Re:ZERO attempts.
 
 ## Language
 
-Use the user's language for chat output and agent display names.
-Supported languages: English, Korean, Japanese, Simplified Chinese, Spanish, Portuguese, French, Russian, German.
-If the language is unsupported, use English.
+Use the user's language for chat output.
+Always use English names for spawned subagents, team agents, display names, session names, and verdict tables, regardless of the user's language.
 
 Parallel implementer names are names only; no character behavior.
-
-| Language | Parallel implementer names |
-| --- | --- |
-| English / Spanish / Portuguese / German | Beatrice, Emilia, Ram, Garfiel, Julius |
-| Korean | 베아트리스, 에밀리아, 람, 가필, 율리우스 |
-| Japanese | ベアトリス, エミリア, ラム, ガーフィール, ユリウス |
-| Simplified Chinese | 碧翠丝, 艾米莉娅, 拉姆, 加菲尔, 尤里乌斯 |
-| French | Béatrice, Émilia, Ram, Garfiel, Julius |
-| Russian | Беатрис, Эмилия, Рам, Гарфиэль, Юлиус |
+Use these English names for parallel implementers: Beatrice, Emilia, Ram, Garfiel, Julius.
+Use these English names for witch reviewers: Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satella.
 
 ## Death Memory
 
@@ -64,7 +56,7 @@ Before reset, append to `.rezero/memory/subaru-deaths.md`:
 
 - Sequential task = implement → verify → witches → commit or reset.
 - Parallel group = parallel implement → merge → verify combined result → one witches evaluation → one commit or reset.
-- Parallel implementer names must follow the supported-language name map; names only, no character behavior.
+- Parallel implementer names must be English names only; names only, no character behavior.
 - Do not parallelize tasks that touch the same files, migrations, shared state, or dependency graph.
 - Never reset before death memory.
 - Never retry without new info.
