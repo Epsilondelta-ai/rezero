@@ -29,11 +29,17 @@ Use when applicable:
 - Carmilla → Playwright screenshots, axe for accessibility, lychee for docs links.
 - Satella → CodeQL, Gitleaks, Trivy, full CI/local equivalent.
 
-## Local Service Defaults
+## Local Tool and Service Defaults
 
 - SonarQube → when configured, prefer a repository-local compose file such as `.rezero/sonarqube.compose.yaml` with `sonarqube:lts-community` and Postgres, started via `docker compose -f .rezero/sonarqube.compose.yaml up -d`.
 - SonarQube URL → record `http://localhost:9000`, first-login credentials (`admin` / `admin`), and the scanner command in `.rezero/tools.md`.
 - SonarQube tokens → only mention a token generated from the local self-hosted instance (for scanner auth); never describe SonarCloud or an external token as the default path.
+- Lighthouse CI → local CLI by default (`lhci collect`/`lhci assert`); a dashboard server is optional and should be local/self-hosted if needed.
+- k6 → local CLI or Docker image by default; do not require k6 Cloud.
+- Pact → local contract tests by default; Pact Broker is optional and should be local/self-hosted if needed.
+- Spectral, Knip, source-map-explorer, axe, lychee → project-local CLI/dev dependency by default.
+- CodeQL, Gitleaks, Trivy → local CLI/container scan by default; GitHub/code-scanning uploads or SaaS dashboards are optional and require explicit approval.
+- OSV-Scanner → local CLI, but it may query the public OSV API unless an offline vulnerability database is configured; record that network dependency explicitly instead of calling it a token-required service.
 
 ## Stack Selection
 
@@ -65,7 +71,7 @@ Create or update `.rezero/tools.md`:
 
 ## Local Services
 
-- <service> — <docker compose command, URL, default credentials, scanner command>
+- <service> — <docker compose up command, docker compose down command, URL, default credentials, scanner command>
 
 ## Required Environment
 
@@ -77,6 +83,8 @@ Create or update `.rezero/tools.md`:
 - Do not install every possible tool.
 - For SonarQube, configure a local self-hosted instance (for example `compose.yaml` service + `sonar-scanner`) when feasible; `.rezero/tools.md` must not describe it as an external token-only tool.
 - For any tool with both self-hosted/local and SaaS modes, prefer the self-hosted/local mode by default.
+- Do not label tools as `external service/token required` when a local CLI, local Docker image, or self-hosted service is the supported default.
+- If an evaluation requires starting a Docker Compose service, record the matching shutdown command in `.rezero/tools.md` and ensure the service is stopped after the evaluation finishes.
 - Do not add SaaS services or account-backed integrations without user approval.
 - Do not mark unavailable tools as ready.
 - Keep generated config minimal and project-specific.

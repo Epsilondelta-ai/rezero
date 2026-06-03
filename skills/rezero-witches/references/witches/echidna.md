@@ -31,5 +31,6 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 ## Cleanup
 
 - Delete temp reports, scanner scratch, mutation output, and local caches created by this review.
+- Stop any Docker Compose services started for this review before returning.
 - Keep only final verdict/evidence handed to Subaru.
 - Do not delete shared project artifacts that existed before review.

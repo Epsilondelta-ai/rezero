@@ -69,3 +69,4 @@ Do not omit it, defer it, replace it with prose, or keep it only in task/subagen
 - Fresh context is required to avoid confirmation bias.
 - Each witch reviewer subagent/team-agent/session display name must exactly match that witch's English name.
 - Each witch cleans resources it created before returning.
+- If a witch starts a Docker Compose service for evaluation, it must stop that service before returning (for example with the matching `docker compose ... down` command).

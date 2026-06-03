@@ -32,5 +32,6 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 ## Cleanup
 
 - Delete analysis reports, temp indexes, linter caches, and generated duplication/complexity output created by this review.
+- Stop any Docker Compose services started for this review before returning.
 - Keep only final verdict/evidence handed to Subaru.
 - Do not auto-refactor; judge only.
