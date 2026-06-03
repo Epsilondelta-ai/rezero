@@ -13,8 +13,13 @@
   "files": [
     "README.md",
     "LICENSE",
-    "docs/images/rezero.webp",
+    "assets/",
+    "bin/",
+    "hooks/",
+    "extensions/",
+    "docs/images/",
     ".agents/",
+    ".claude-plugin/",
     ".codex/",
     ".codex-plugin/",
     "commands/",
@@ -22,6 +27,9 @@
     "skills/"
   ],
   "pi": {
+    "extensions": [
+      "./extensions"
+    ],
     "skills": [
       "./skills"
     ],

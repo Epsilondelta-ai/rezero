@@ -58,11 +58,6 @@ Pi、Claude Code、Codex で：
 ### 死に戻り
 
 ![スバル](./images/subaru.webp)
-<audio controls>
-  <source src="./bgm.mp3" type="audio/mp3">
-  お使いのブラウザは audio タグをサポートしていません。
-</audio>
-
 ```bash
 git reset --hard HEAD
 git clean -fd

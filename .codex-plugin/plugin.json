@@ -13,6 +13,7 @@
     "agent-skill"
   ],
   "skills": "./skills/",
+  "hooks": "./hooks/hooks.json",
   "interface": {
     "displayName": "Re:ZERO Loop",
     "shortDescription": "Subaru implements, seven witches review, failures retry with memory.",

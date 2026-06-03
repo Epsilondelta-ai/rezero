@@ -58,11 +58,6 @@ In Pi, Claude Code und Codex:
 ### Return by Death
 
 ![Subaru](./images/subaru.webp)
-<audio controls>
-  <source src="./bgm.mp3" type="audio/mp3">
-  Dein Browser unterstützt das Audio-Tag nicht.
-</audio>
-
 ```bash
 git reset --hard HEAD
 git clean -fd

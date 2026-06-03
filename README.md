@@ -58,10 +58,6 @@ In Pi, Claude Code, and Codex:
 ### Return by Death
 
 ![Subaru](./docs/images/subaru.webp)
-<audio controls>
-  <source src="./bgm.mp3" type="audio/mp3">
-  Your browser does not support the audio tag.
-</audio>
 
 ```bash
 git reset --hard HEAD

@@ -58,11 +58,6 @@ Pi, Claude Code, Codex에서:
 ### 사망회귀
 
 ![스바루](./images/subaru.webp)
-<audio controls>
-  <source src="./bgm.mp3" type="audio/mp3">
-  브라우저가 오디오 태그를 지원하지 않습니다.
-</audio>
-
 ```bash
 git reset --hard HEAD
 git clean -fd

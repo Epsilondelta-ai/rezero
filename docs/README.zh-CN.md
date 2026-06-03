@@ -58,11 +58,6 @@ codex plugin marketplace add epsilondelta-ai/rezero
 ### 死亡回归
 
 ![昴](./images/subaru.webp)
-<audio controls>
-  <source src="./bgm.mp3" type="audio/mp3">
-  您的浏览器不支持 audio 标签。
-</audio>
-
 ```bash
 git reset --hard HEAD
 git clean -fd
