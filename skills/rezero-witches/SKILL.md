@@ -23,7 +23,9 @@ Do not give witches Subaru's reasoning, plan, self-assessment, or prior failed r
 
 ## Witches
 
-Call these as parallel subagents:
+Call these as parallel subagents.
+When spawning witch subagents, each subagent display name must be exactly the witch name from the supported-language name map below.
+Do not use generic, numbered, role-only, or tool-generated names for witch subagents.
 
 - `references/witches/echidna.md`
 - `references/witches/typhon.md`
@@ -36,7 +38,7 @@ Call these as parallel subagents:
 ## Language
 
 Use the user's language for chat output.
-Witch names in the verdict table must use the supported-language name map.
+Witch subagent display names and witch names in the verdict table must use the supported-language name map.
 If the language is unsupported, use English names.
 
 | Language | Echidna | Typhon | Minerva | Daphne | Carmilla | Sekhmet | Satella |
@@ -50,7 +52,9 @@ If the language is unsupported, use English names.
 
 ## Output
 
-Show exactly one table in chat:
+After all witch subagents return, aggregate their verdicts and show exactly one table in chat before any reset, retry, Rem warning handling, commit, or final summary.
+The verdict table is user-visible required output, not internal subagent chatter.
+Do not omit it, defer it, replace it with prose, or keep it only in task/subagent logs.
 
 ```markdown
 | witch | verdict | reason | evidence |
@@ -66,7 +70,9 @@ Show exactly one table in chat:
 - Use `fail` only for route-invalidating issues, not preferences.
 - One `fail` kills the route.
 - Warnings pass but must be sent to Rem.
+- The chat verdict table is mandatory before acting on pass/warning/fail outcomes.
 - Keep evidence concise and reproducible.
 - Witches judge only; they do not edit code.
 - Fresh context is required to avoid confirmation bias.
+- Each witch subagent display name must exactly match that witch's supported-language name.
 - Each witch cleans resources it created before returning.
