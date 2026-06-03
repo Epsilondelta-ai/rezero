@@ -107,12 +107,12 @@ git clean -fd
 
 | Ведьма | Фокус | Примеры инструментов |
 | --- | --- | --- |
-| Эхидна | Полнота, граничные случаи, покрытие | SonarQube, coverage, Stryker |
+| Эхидна | Полнота, граничные случаи, покрытие | самостоятельно размещённый SonarQube, coverage, Stryker |
 | Тифон | Контракты, спецификации, публичные интерфейсы | typecheck, linter, Spectral, Pact |
 | Минерва | Вред пользователю, регрессии, сбои во время выполнения | tests, Playwright, Lighthouse CI, k6 |
 | Дафна | Потребление зависимостей/ресурсов | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | Кармилла | Обман в UI/документации/именах/доказательствах | screenshots, axe, lychee |
-| Сехмет | Поддерживаемость, dead code, дублирование | SonarQube, Knip, jscpd |
+| Сехмет | Поддерживаемость, dead code, дублирование | самостоятельно размещённый SonarQube, Knip, jscpd |
 | Сателла | Интеграция, безопасность, политики, согласованность | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.

@@ -107,12 +107,12 @@ mas avaliar a partir de várias perspectivas é uma ideia bastante boa, então e
 
 | Bruxa | Foco | Ferramentas de exemplo |
 | --- | --- | --- |
-| Echidna | Completude, casos de borda, cobertura | SonarQube, coverage, Stryker |
+| Echidna | Completude, casos de borda, cobertura | SonarQube auto-hospedado, coverage, Stryker |
 | Typhon | Contratos, especificações, interfaces públicas | typecheck, linter, Spectral, Pact |
 | Minerva | Danos ao usuário, regressões, falhas em runtime | tests, Playwright, Lighthouse CI, k6 |
 | Daphne | Consumo de dependências/recursos | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | Carmilla | Engano em UI/documentação/nomes/provas | screenshots, axe, lychee |
-| Sekhmet | Manutenibilidade, dead code, duplicação | SonarQube, Knip, jscpd |
+| Sekhmet | Manutenibilidade, dead code, duplicação | SonarQube auto-hospedado, Knip, jscpd |
 | Satella | Integração, segurança, política, consistência | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.

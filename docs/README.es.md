@@ -107,12 +107,12 @@ pero evaluar desde múltiples puntos de vista es una idea bastante buena, así q
 
 | Bruja | Enfoque | Herramientas de ejemplo |
 | --- | --- | --- |
-| Echidna | Completitud, casos límite, cobertura | SonarQube, coverage, Stryker |
+| Echidna | Completitud, casos límite, cobertura | SonarQube autohospedado, coverage, Stryker |
 | Typhon | Contratos, especificaciones, interfaces públicas | typecheck, linter, Spectral, Pact |
 | Minerva | Daño al usuario, regresiones, fallos en tiempo de ejecución | tests, Playwright, Lighthouse CI, k6 |
 | Daphne | Consumo de dependencias/recursos | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | Carmilla | Engaño en UI/documentación/nombres/pruebas | screenshots, axe, lychee |
-| Sekhmet | Mantenibilidad, dead code, duplicación | SonarQube, Knip, jscpd |
+| Sekhmet | Mantenibilidad, dead code, duplicación | SonarQube autohospedado, Knip, jscpd |
 | Satella | Integración, seguridad, políticas, consistencia | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.

@@ -107,12 +107,12 @@ git clean -fd
 
 | 魔女 | 注目点 | 例のツール |
 | --- | --- | --- |
-| エキドナ | 完全性、エッジケース、カバレッジ | SonarQube, coverage, Stryker |
+| エキドナ | 完全性、エッジケース、カバレッジ | セルフホスト SonarQube, coverage, Stryker |
 | テュフォン | 契約、仕様、公開インターフェース | typecheck, linter, Spectral, Pact |
 | ミネルヴァ | ユーザー被害、回帰、ランタイム失敗 | tests, Playwright, Lighthouse CI, k6 |
 | ダフネ | 依存関係/リソース消費 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | カーミラ | UI/ドキュメント/名前/証明の欺瞞 | screenshots, axe, lychee |
-| セクメト | 保守性、dead code、重複 | SonarQube, Knip, jscpd |
+| セクメト | 保守性、dead code、重複 | セルフホスト SonarQube, Knip, jscpd |
 | サテラ | 統合、セキュリティ、ポリシー、一貫性 | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.

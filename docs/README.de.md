@@ -107,12 +107,12 @@ aber eine Bewertung aus mehreren Blickwinkeln ist eine ziemlich gute Idee, daher
 
 | Hexe | Fokus | Beispiel-Tools |
 | --- | --- | --- |
-| Echidna | Vollständigkeit, Randfälle, Coverage | SonarQube, coverage, Stryker |
+| Echidna | Vollständigkeit, Randfälle, Coverage | selbst gehostetes SonarQube, coverage, Stryker |
 | Typhon | Verträge, Spezifikationen, öffentliche Schnittstellen | typecheck, linter, Spectral, Pact |
 | Minerva | Schaden für Nutzer, Regressionen, Laufzeitfehler | tests, Playwright, Lighthouse CI, k6 |
 | Daphne | Abhängigkeits-/Ressourcenverbrauch | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | Carmilla | Täuschung in UI/Dokumentation/Namen/Nachweisen | screenshots, axe, lychee |
-| Sekhmet | Wartbarkeit, dead code, Duplikate | SonarQube, Knip, jscpd |
+| Sekhmet | Wartbarkeit, dead code, Duplikate | selbst gehostetes SonarQube, Knip, jscpd |
 | Satella | Integration, Sicherheit, Richtlinien, Konsistenz | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.

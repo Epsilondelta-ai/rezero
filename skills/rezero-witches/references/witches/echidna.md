@@ -16,7 +16,7 @@ Goal → find what Subaru failed to know, test, or cover.
 Prefer available project tools; skip unavailable tools with a note.
 Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
-- SonarQube/SonarCloud → quality gate, smells, coverage, complexity.
+- Local self-hosted SonarQube (preferred; e.g. Docker Compose + scanner) → quality gate, smells, coverage, complexity. Do not require SonarCloud/SaaS tokens unless explicitly approved.
 - Coverage report → uncovered changed logic.
 - Stryker → weak assertions via mutation testing.
 - `rg`/`git diff` → changed surface and related paths.

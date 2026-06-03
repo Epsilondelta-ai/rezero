@@ -107,12 +107,12 @@ git clean -fd
 
 | 魔女 | 关注点 | 示例工具 |
 | --- | --- | --- |
-| 艾姬多娜 | 完整性、边界情况、覆盖率 | SonarQube, coverage, Stryker |
+| 艾姬多娜 | 完整性、边界情况、覆盖率 | 自托管 SonarQube, coverage, Stryker |
 | 提丰 | 契约、规范、公开接口 | typecheck, linter, Spectral, Pact |
 | 弥涅耳瓦 | 用户伤害、回归、运行时失败 | tests, Playwright, Lighthouse CI, k6 |
 | 达芙妮 | 依赖/资源消耗 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | 卡蜜拉 | UI/文档/命名/证明中的欺骗性 | screenshots, axe, lychee |
-| 塞赫麦特 | 可维护性、死代码、重复 | SonarQube, Knip, jscpd |
+| 塞赫麦特 | 可维护性、死代码、重复 | 自托管 SonarQube, Knip, jscpd |
 | 嫉妒魔女莎缇拉 | 集成、安全、策略、一致性 | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.

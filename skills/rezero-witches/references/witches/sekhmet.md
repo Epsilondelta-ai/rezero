@@ -17,7 +17,7 @@ Goal → expose laziness: dead code, duplication, shortcuts, and needless comple
 Prefer available project tools; skip unavailable tools with a note.
 Judge by focus, not project type: frontend/backend/script tools are interchangeable evidence sources.
 
-- SonarQube/SonarCloud → maintainability gate.
+- Local self-hosted SonarQube (preferred; e.g. Docker Compose + scanner) → maintainability gate. Do not require SonarCloud/SaaS tokens unless explicitly approved.
 - Knip → dead code.
 - jscpd → duplication.
 - Project complexity lint → complex control flow.

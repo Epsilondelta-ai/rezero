@@ -108,12 +108,12 @@ but evaluating from multiple perspectives is a pretty good idea, so the concept 
 
 | Witch | Focus | Example tools |
 | --- | --- | --- |
-| Echidna | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
+| Echidna | Completeness, edge cases, coverage | self-hosted SonarQube, coverage, Stryker |
 | Typhon | Contracts, specifications, public interfaces | typecheck, linter, Spectral, Pact |
 | Minerva | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
 | Daphne | Dependency/resource consumption | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | Carmilla | Deception in UI/docs/names/proofs | screenshots, axe, lychee |
-| Sekhmet | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
+| Sekhmet | Maintainability, dead code, duplication | self-hosted SonarQube, Knip, jscpd |
 | Satella | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.

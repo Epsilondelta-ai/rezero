@@ -107,12 +107,12 @@ mais évaluer sous plusieurs points de vue est une idée plutôt bonne ; le conc
 
 | Sorcière | Axe d'évaluation | Outils d'exemple |
 | --- | --- | --- |
-| Echidna | Exhaustivité, cas limites, couverture | SonarQube, coverage, Stryker |
+| Echidna | Exhaustivité, cas limites, couverture | SonarQube auto-hébergé, coverage, Stryker |
 | Typhon | Contrats, spécifications, interfaces publiques | typecheck, linter, Spectral, Pact |
 | Minerva | Préjudice utilisateur, régressions, échecs à l'exécution | tests, Playwright, Lighthouse CI, k6 |
 | Daphne | Consommation de dépendances/ressources | OSV-Scanner, Knip, source-map-explorer, hyperfine |
 | Carmilla | Tromperie dans l'UI/la documentation/les noms/les preuves | screenshots, axe, lychee |
-| Sekhmet | Maintenabilité, dead code, duplication | SonarQube, Knip, jscpd |
+| Sekhmet | Maintenabilité, dead code, duplication | SonarQube auto-hébergé, Knip, jscpd |
 | Satella | Intégration, sécurité, politique, cohérence | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.
