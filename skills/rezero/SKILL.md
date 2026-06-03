@@ -26,11 +26,13 @@ Goal → finish request through small Re:ZERO attempts.
 4. If planned tasks are independent, run safe groups in parallel via subagents; use team agents for long/heavy groups.
 5. Isolate parallel implementation work, merge the group, then verify the combined result.
 6. Use `rezero-witches` once for the whole merged group; witches must use fresh context, not Subaru's context.
-7. Aggregate every witch result and show the witch verdict table in the assistant chat as a hard barrier.
-8. Do not reset, retry, call Rem, commit, continue another loop, or give a final summary until the verdict table has been shown in chat.
-9. Any `fail` → after the chat verdict table, record minimal death memory → announce in chat which Death/Return by Death number is happening → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
-10. Only `pass|warning` → after the chat verdict table, use `rezero-rem` for warnings; if `.rezero/memory/rem.md` is written, show the newly written Rem entries in chat → commit accepted route → delete death memory.
-11. If processing Rem warnings, use `rezero-rem` resolution rules.
+7. Treat witch verdicts as valid only when backed by tool-call evidence that all seven exact named witch agents were spawned and returned; never simulate or roleplay missing witch results.
+8. Aggregate every verified witch result and show the witch verdict table in the assistant chat as a hard barrier.
+9. Do not reset, retry, call Rem, commit, continue another loop, or give a final summary until the verified verdict table has been shown in chat.
+10. If any witch is missing spawn/return evidence, stop and report the witches step as blocked; do not reset, retry, call Rem, commit, continue another loop, or produce a final success/failure summary.
+11. Any `fail` → after the chat verdict table, record minimal death memory → announce in chat which Death/Return by Death number is happening → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
+12. Only `pass|warning` → after the chat verdict table, use `rezero-rem` for warnings; if `.rezero/memory/rem.md` is written, show the newly written Rem entries in chat → commit accepted route → delete death memory.
+13. If processing Rem warnings, use `rezero-rem` resolution rules.
 
 ## Language
 
@@ -59,7 +61,8 @@ Before reset, append to `.rezero/memory/subaru-deaths.md`:
 - Parallel group = parallel implement → merge → verify combined result → one witches evaluation → chat verdict table → one commit or reset.
 - Parallel implementer names must be English names only; names only, no character behavior.
 - Do not parallelize tasks that touch the same files, migrations, shared state, or dependency graph.
-- Never reset, retry, call Rem, or commit before showing the aggregated witch verdict table in chat.
+- Never fabricate witch results; each verdict row must be derived from an actual returned message from that exact named witch agent.
+- Never reset, retry, call Rem, or commit before showing the aggregated, evidence-backed witch verdict table in chat.
 - Never reset before death memory.
 - Before every Return by Death reset, announce the exact death number in chat in English (for example: `Executing Return by Death #<number>.`).
 - Never retry without new info.

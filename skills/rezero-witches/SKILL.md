@@ -43,9 +43,17 @@ Always use English names for witch reviewer spawning, session/display names, and
 
 English witch names: Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satella.
 
+## Anti-Simulation Gate
+
+The lead agent must not invent, simulate, roleplay, summarize-from-memory, or "act as" any witch reviewer.
+A witch verdict is valid only if it came from an actual spawned subagent/team-agent/session whose name exactly matches that witch's English name.
+Before showing the verdict table, the lead agent must have tool-call evidence that all seven witch agents were spawned and returned.
+Acceptable evidence includes a subagent/team tool result, member status/result, mailbox response, or equivalent harness transcript entry that names the witch agent.
+If the harness cannot spawn agents, or if any witch did not return, stop and report that the Seven Witches evaluation could not be completed; do not produce a verdict table and do not proceed to reset, retry, Rem, commit, next loop, or final summary.
+
 ## Output
 
-After all witch subagents return, the lead agent must aggregate their verdicts and show exactly one table in the assistant chat before any reset, retry, Rem warning handling, commit, next loop, or final summary.
+After all witch subagents return with spawn/return evidence, the lead agent must aggregate their verdicts and show exactly one table in the assistant chat before any reset, retry, Rem warning handling, commit, next loop, or final summary.
 The verdict table is user-visible required output, not internal subagent chatter, task state, team log, or hidden artifact.
 Do not omit it, defer it, replace it with prose, or keep it only in task/subagent logs.
 If any witch returns `fail` or `warning`, the table is still mandatory before starting the next loop or warning-resolution work.
@@ -64,7 +72,9 @@ If any witch returns `fail` or `warning`, the table is still mandatory before st
 - Use `fail` only for route-invalidating issues, not preferences.
 - One `fail` kills the route.
 - Warnings pass but must be sent to Rem.
-- The chat verdict table is mandatory before acting on pass/warning/fail outcomes.
+- The chat verdict table is mandatory before acting on pass/warning/fail outcomes, but only after all seven actual witch agents have returned.
+- Never create a verdict row without a returned message from that exact named witch agent.
+- If a witch agent is missing, unavailable, failed to spawn, or failed to return, abort the witches step and report the blocker instead of fabricating a verdict.
 - Fail/warning outcomes do not justify skipping the table; show it first, then reset/retry or call Rem.
 - Keep evidence concise and reproducible.
 - Witches judge only; they do not edit code.
