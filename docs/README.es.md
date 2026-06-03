@@ -43,18 +43,32 @@ En Pi, Claude Code y Codex:
 
 Cuando Re:ZERO Loop realiza Return by Death, el plugin reproduce `assets/bgm.mp3` por defecto.
 
-Para desactivarlo en una ejecución o en tu perfil de shell:
+Usa `/rezero bgm false` o `/rezero bgm off` para desactivarlo en el proyecto actual:
 
-```bash
-export REZERO_BGM_DISABLE=1
+```text
+/rezero bgm false
+/rezero bgm off
 ```
 
-Para desactivarlo por proyecto, crea `.rezero/config.json`:
+Usa `/rezero bgm true` o `/rezero bgm on` para volver a activarlo:
+
+```text
+/rezero bgm true
+/rezero bgm on
+```
+
+Estos comandos escriben `.rezero/memory/config.json`:
 
 ```json
 {
   "bgm": false
 }
+```
+
+También puedes desactivarlo en una ejecución o en tu perfil de shell:
+
+```bash
+export REZERO_BGM_DISABLE=1
 ```
 
 ## Flujo de trabajo

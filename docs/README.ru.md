@@ -43,18 +43,32 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 Когда Re:ZERO Loop выполняет Возвращение смертью, плагин по умолчанию воспроизводит `assets/bgm.mp3`.
 
-Чтобы отключить это для одного запуска или в профиле shell:
+Используйте `/rezero bgm false` или `/rezero bgm off`, чтобы отключить BGM для текущего проекта:
 
-```bash
-export REZERO_BGM_DISABLE=1
+```text
+/rezero bgm false
+/rezero bgm off
 ```
 
-Чтобы отключить это для проекта, создайте `.rezero/config.json`:
+Используйте `/rezero bgm true` или `/rezero bgm on`, чтобы снова включить BGM:
+
+```text
+/rezero bgm true
+/rezero bgm on
+```
+
+Эти команды записывают `.rezero/memory/config.json`:
 
 ```json
 {
   "bgm": false
 }
+```
+
+Также можно отключить BGM для одного запуска или в профиле shell:
+
+```bash
+export REZERO_BGM_DISABLE=1
 ```
 
 ## Workflow

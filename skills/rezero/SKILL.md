@@ -11,6 +11,12 @@ Goal → finish request through small Re:ZERO attempts.
 ## Flow
 
 0. If request is `init`, use `rezero-init` and stop.
+0. If request is `bgm <value>`, configure Return by Death BGM and stop:
+   - Off values: `false`, `off`, `0`, `no`, `disable`, `disabled`.
+   - On values: `true`, `on`, `1`, `yes`, `enable`, `enabled`.
+   - Create or update `.rezero/memory/config.json` in the current project with `{ "bgm": false }` or `{ "bgm": true }` so the setting survives Return by Death resets.
+   - Preserve other existing JSON keys when possible.
+   - Do not run init, witches, reset, or commit for this configuration-only command.
 1. Before any non-init request, check init state:
    - `.rezero/tools.md` exists.
    - `.rezero/tools.md` contains `<!-- rezero-init:`.

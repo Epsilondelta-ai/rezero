@@ -43,18 +43,32 @@ Pi、Claude Code、Codex で：
 
 Re:ZERO Loop が死に戻りを実行すると、プラグインはデフォルトで `assets/bgm.mp3` を再生します。
 
-1 回の実行、またはシェルプロファイルで無効にするには：
+現在のプロジェクトで無効にするには、`/rezero bgm false` または `/rezero bgm off` を使います：
 
-```bash
-export REZERO_BGM_DISABLE=1
+```text
+/rezero bgm false
+/rezero bgm off
 ```
 
-プロジェクトごとに無効にするには、`.rezero/config.json` を作成します：
+再び有効にするには、`/rezero bgm true` または `/rezero bgm on` を使います：
+
+```text
+/rezero bgm true
+/rezero bgm on
+```
+
+これらのコマンドは `.rezero/memory/config.json` を書き込みます：
 
 ```json
 {
   "bgm": false
 }
+```
+
+1 回の実行、またはシェルプロファイルで無効にすることもできます：
+
+```bash
+export REZERO_BGM_DISABLE=1
 ```
 
 ## ワークフロー

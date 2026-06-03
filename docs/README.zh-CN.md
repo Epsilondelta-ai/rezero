@@ -43,18 +43,32 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 当 Re:ZERO Loop 执行死亡回归时，插件默认播放 `assets/bgm.mp3`。
 
-若要在一次运行或 shell 配置中关闭：
+若要在当前项目中关闭，请使用 `/rezero bgm false` 或 `/rezero bgm off`：
 
-```bash
-export REZERO_BGM_DISABLE=1
+```text
+/rezero bgm false
+/rezero bgm off
 ```
 
-若要按项目关闭，请创建 `.rezero/config.json`：
+若要重新开启，请使用 `/rezero bgm true` 或 `/rezero bgm on`：
+
+```text
+/rezero bgm true
+/rezero bgm on
+```
+
+这些命令会写入 `.rezero/memory/config.json`：
 
 ```json
 {
   "bgm": false
 }
+```
+
+也可以在一次运行或 shell 配置中关闭：
+
+```bash
+export REZERO_BGM_DISABLE=1
 ```
 
 ## 工作流

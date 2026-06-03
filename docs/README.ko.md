@@ -43,18 +43,32 @@ Pi, Claude Code, Codex에서:
 
 Re:ZERO Loop가 사망회귀를 실행하면 기본적으로 `assets/bgm.mp3`를 재생합니다.
 
-한 번의 실행 또는 셸 프로필에서 끄려면:
+현재 프로젝트에서 끄려면 `/rezero bgm false` 또는 `/rezero bgm off`를 사용합니다:
 
-```bash
-export REZERO_BGM_DISABLE=1
+```text
+/rezero bgm false
+/rezero bgm off
 ```
 
-프로젝트별로 끄려면 `.rezero/config.json`을 만듭니다:
+다시 켜려면 `/rezero bgm true` 또는 `/rezero bgm on`을 사용합니다:
+
+```text
+/rezero bgm true
+/rezero bgm on
+```
+
+이 명령들은 `.rezero/memory/config.json`을 씁니다:
 
 ```json
 {
   "bgm": false
 }
+```
+
+한 번의 실행 또는 셸 프로필에서 끄려면:
+
+```bash
+export REZERO_BGM_DISABLE=1
 ```
 
 ## 워크플로우

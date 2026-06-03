@@ -81,19 +81,34 @@ function isFalseyOption(value) {
   return ["0", "false", "no", "off", "disabled"].includes(normalized);
 }
 
+function readBgmOption(config) {
+  for (const key of ["bgm", "playBgm", "returnByDeathBgm"]) {
+    if (Object.prototype.hasOwnProperty.call(config, key)) return config[key];
+  }
+  return undefined;
+}
+
 function isBgmDisabled(projectRoot) {
   if (isTruthy(process.env.REZERO_BGM_DISABLE)) return true;
   if (isFalseyOption(process.env.REZERO_BGM)) return true;
 
-  const configPath = path.join(projectRoot, ".rezero", "config.json");
-  try {
-    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
-    return isFalseyOption(config.bgm) ||
-      isFalseyOption(config.playBgm) ||
-      isFalseyOption(config.returnByDeathBgm);
-  } catch {
-    return false;
+  const configPaths = [
+    path.join(projectRoot, ".rezero", "memory", "config.json"),
+    path.join(projectRoot, ".rezero", "config.json"),
+  ];
+
+  for (const configPath of configPaths) {
+    try {
+      const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+      const value = readBgmOption(config);
+      if (isFalseyOption(value)) return true;
+      if (isTruthy(value)) return false;
+    } catch {
+      // Missing or invalid config does not disable BGM.
+    }
   }
+
+  return false;
 }
 
 function getPluginRoot() {
