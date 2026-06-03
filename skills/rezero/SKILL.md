@@ -29,7 +29,7 @@ Goal → finish request through small Re:ZERO attempts.
 7. Aggregate every witch result and show the witch verdict table in the assistant chat as a hard barrier.
 8. Do not reset, retry, call Rem, commit, continue another loop, or give a final summary until the verdict table has been shown in chat.
 9. Any `fail` → after the chat verdict table, record minimal death memory → announce in chat which Death/Return by Death number is happening → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
-10. Only `pass|warning` → after the chat verdict table, use `rezero-rem` for warnings → commit accepted route → delete death memory.
+10. Only `pass|warning` → after the chat verdict table, use `rezero-rem` for warnings; if `.rezero/memory/rem.md` is written, show the newly written Rem entries in chat → commit accepted route → delete death memory.
 11. If processing Rem warnings, use `rezero-rem` resolution rules.
 
 ## Language

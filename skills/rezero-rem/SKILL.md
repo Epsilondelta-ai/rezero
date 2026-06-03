@@ -13,6 +13,7 @@ Goal → preserve non-blocking witch warnings until they are resolved and accept
 When a route passes with warnings:
 
 - Append warnings to `.rezero/memory/rem.md`.
+- Immediately show the exact Rem warning entries written to `.rezero/memory/rem.md` in the assistant chat.
 - Keep entries minimal and actionable.
 
 ```markdown
@@ -39,5 +40,6 @@ Treat Rem fixes as normal Re:ZERO attempts:
 ## Rules
 
 - Rem memory is not a bypass.
+- Whenever `.rezero/memory/rem.md` is created or appended, the newly written content must be printed in the assistant chat before continuing.
 - Warnings stay until fixed, accepted, and committed.
 - Do not delete unresolved warnings.
