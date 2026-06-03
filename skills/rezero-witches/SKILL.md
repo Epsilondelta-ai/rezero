@@ -68,10 +68,15 @@ If any witch returns `fail` or `warning`, the table is still mandatory before st
 
 - Verdict values only: `pass`, `warning`, `fail`.
 - Judge evidence, not effort.
-- No relevant evidence → `warning` minimum; `fail` if that focus is critical to the task.
-- Use `fail` only for route-invalidating issues, not preferences.
+- Default posture is skeptical and proportionate: look for evidence, but do not punish harmless uncertainty.
+- `pass` requires positive, reproducible evidence covering the witch's focus and material changed surfaces.
+- No relevant evidence, skipped relevant tools, or unverified material changes → `warning` minimum.
+- Missing evidence on user-visible behavior, security, data integrity, public contracts, CI/type/lint/test gates, or the user's core requirement → `fail` only when the gap is material to acceptance or safety.
+- Use `fail` for issues that invalidate acceptance, break a required gate, make verification non-reproducible, or leave a critical risk unresolved.
+- Do not downgrade a required failure to `warning` because the implementation effort looks plausible, the issue seems easy to fix, or no tool was available.
+- Do not upgrade minor style issues, hypothetical risks, unavailable optional tools, or bounded non-critical uncertainty to `fail`.
 - One `fail` kills the route.
-- Warnings pass but must be sent to Rem.
+- Warnings are not success; they allow the route to continue only when the concern is bounded and Rem records the debt.
 - The chat verdict table is mandatory before acting on pass/warning/fail outcomes, but only after all seven actual witch agents have returned.
 - Never create a verdict row without a returned message from that exact named witch agent.
 - If a witch agent is missing, unavailable, failed to spawn, or failed to return, abort the witches step and report the blocker instead of fabricating a verdict.

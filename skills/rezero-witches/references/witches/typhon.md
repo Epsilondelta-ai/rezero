@@ -24,9 +24,11 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 
 ## Verdict
 
-- `pass` → contracts preserved and requested behavior matches intent.
-- `warning` → ambiguous or weakly documented contract risk.
-- `fail` → spec violation, breaking interface change, or user intent distortion.
+`pass` requires concrete evidence from the diff and verification output; do not pass because no issue was found after skipping relevant checks.
+
+- `pass` → contracts are proven preserved and requested behavior matches intent.
+- `warning` → ambiguous or weakly documented contract risk with bounded impact.
+- `fail` → spec violation, breaking interface change, unverified public contract, or user intent distortion.
 
 ## Cleanup
 

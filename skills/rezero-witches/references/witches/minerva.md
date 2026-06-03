@@ -24,9 +24,11 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 
 ## Verdict
 
-- `pass` → no meaningful user harm or regression found.
-- `warning` → plausible low-risk harm; should be tracked.
-- `fail` → existing behavior broken, data/user harm likely, or critical performance regression.
+`pass` requires concrete evidence from the diff and verification output; do not pass because no issue was found after skipping relevant checks.
+
+- `pass` → regression checks prove no meaningful user harm on material flows.
+- `warning` → plausible low-risk harm with bounded impact; should be tracked.
+- `fail` → existing behavior broken, material user flow unverified, data/user harm likely, or critical performance regression.
 
 ## Cleanup
 

@@ -24,9 +24,11 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 
 ## Verdict
 
-- `pass` → presentation, docs, and behavior tell the same truth.
-- `warning` → minor wording, accessibility, or visual mismatch.
-- `fail` → misleading UI/docs, fake proof, or accessibility issue that blocks real use.
+`pass` requires concrete evidence from the diff and verification output; do not pass because no issue was found after skipping relevant checks.
+
+- `pass` → presentation, docs, and behavior are proven to tell the same truth.
+- `warning` → minor wording, accessibility, or visual mismatch with bounded impact.
+- `fail` → misleading UI/docs, fake proof, unverified user-facing claim, or accessibility issue that blocks real use.
 
 ## Cleanup
 

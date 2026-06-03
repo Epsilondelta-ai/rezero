@@ -24,9 +24,11 @@ Judge by focus, not project type: frontend/backend/script tools are interchangea
 
 ## Verdict
 
-- `pass` → resource cost is justified and bounded.
-- `warning` → measurable but acceptable bloat or inefficiency.
-- `fail` → unjustified dependency, severe vuln exposure, or unacceptable resource regression.
+`pass` requires concrete evidence from the diff and verification output; do not pass because no issue was found after skipping relevant checks.
+
+- `pass` → resource cost is measured or clearly justified and bounded.
+- `warning` → measurable but acceptable bloat or inefficiency with bounded impact.
+- `fail` → unjustified dependency, unmeasured material cost increase, severe vuln exposure, or unacceptable resource regression.
 
 ## Cleanup
 
