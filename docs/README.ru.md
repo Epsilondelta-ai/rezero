@@ -39,6 +39,24 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 `/rezero` проверяет состояние init (маркер `.rezero/tools.md` + ignore для `.rezero/memory/`). Если его нет, init сначала выполняется автоматически.
 
+## BGM Возвращения смертью
+
+Когда Re:ZERO Loop выполняет Возвращение смертью, плагин по умолчанию воспроизводит `assets/bgm.mp3`.
+
+Чтобы отключить это для одного запуска или в профиле shell:
+
+```bash
+export REZERO_BGM_DISABLE=1
+```
+
+Чтобы отключить это для проекта, создайте `.rezero/config.json`:
+
+```json
+{
+  "bgm": false
+}
+```
+
 ## Workflow
 
 1. Мы даём Субару испытание.

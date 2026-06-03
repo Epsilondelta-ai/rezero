@@ -39,6 +39,24 @@ En Pi, Claude Code y Codex:
 
 `/rezero` comprueba el estado de init (marcador `.rezero/tools.md` + ignore de `.rezero/memory/`). Si no existe, ejecuta init automáticamente primero.
 
+## BGM de Return by Death
+
+Cuando Re:ZERO Loop realiza Return by Death, el plugin reproduce `assets/bgm.mp3` por defecto.
+
+Para desactivarlo en una ejecución o en tu perfil de shell:
+
+```bash
+export REZERO_BGM_DISABLE=1
+```
+
+Para desactivarlo por proyecto, crea `.rezero/config.json`:
+
+```json
+{
+  "bgm": false
+}
+```
+
 ## Flujo de trabajo
 
 1. Le damos una prueba a Subaru.

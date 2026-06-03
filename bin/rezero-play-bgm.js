@@ -68,6 +68,34 @@ function hasDeathEvidence(projectRoot, command) {
   return fs.existsSync(memoryPath);
 }
 
+function isTruthy(value) {
+  if (value === undefined || value === null) return false;
+  const normalized = String(value).trim().toLowerCase();
+  return !["", "0", "false", "no", "off"].includes(normalized);
+}
+
+function isFalseyOption(value) {
+  if (value === false) return true;
+  if (value === undefined || value === null) return false;
+  const normalized = String(value).trim().toLowerCase();
+  return ["0", "false", "no", "off", "disabled"].includes(normalized);
+}
+
+function isBgmDisabled(projectRoot) {
+  if (isTruthy(process.env.REZERO_BGM_DISABLE)) return true;
+  if (isFalseyOption(process.env.REZERO_BGM)) return true;
+
+  const configPath = path.join(projectRoot, ".rezero", "config.json");
+  try {
+    const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    return isFalseyOption(config.bgm) ||
+      isFalseyOption(config.playBgm) ||
+      isFalseyOption(config.returnByDeathBgm);
+  } catch {
+    return false;
+  }
+}
+
 function getPluginRoot() {
   const candidates = [
     process.env.PLUGIN_ROOT,
@@ -148,8 +176,6 @@ function debug(message) {
 }
 
 function main() {
-  if (process.env.REZERO_BGM_DISABLE) return;
-
   const input = readHookInput();
   const command = getCommand(input);
 
@@ -159,6 +185,11 @@ function main() {
   }
 
   const projectRoot = findProjectRoot(input);
+  if (isBgmDisabled(projectRoot)) {
+    debug("BGM disabled");
+    return;
+  }
+
   if (!hasDeathEvidence(projectRoot, command)) {
     debug("death memory missing; skipping to avoid playing on ordinary git reset");
     return;

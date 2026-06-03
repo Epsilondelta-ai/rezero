@@ -39,6 +39,24 @@ Pi, Claude Code, Codex에서:
 
 `/rezero`는 init 상태(`.rezero/tools.md` marker + `.rezero/memory/` ignore)를 확인하고, 없으면 init을 먼저 자동 실행합니다.
 
+## 사망회귀 BGM
+
+Re:ZERO Loop가 사망회귀를 실행하면 기본적으로 `assets/bgm.mp3`를 재생합니다.
+
+한 번의 실행 또는 셸 프로필에서 끄려면:
+
+```bash
+export REZERO_BGM_DISABLE=1
+```
+
+프로젝트별로 끄려면 `.rezero/config.json`을 만듭니다:
+
+```json
+{
+  "bgm": false
+}
+```
+
 ## 워크플로우
 
 1. 우리는 스바루에게 시련을 내립니다.

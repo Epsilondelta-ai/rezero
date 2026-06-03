@@ -39,6 +39,24 @@ Pi、Claude Code、Codex で：
 
 `/rezero` は init 状態（`.rezero/tools.md` のマーカー + `.rezero/memory/` の ignore）を確認し、存在しなければ先に init を自動実行します。
 
+## 死に戻り BGM
+
+Re:ZERO Loop が死に戻りを実行すると、プラグインはデフォルトで `assets/bgm.mp3` を再生します。
+
+1 回の実行、またはシェルプロファイルで無効にするには：
+
+```bash
+export REZERO_BGM_DISABLE=1
+```
+
+プロジェクトごとに無効にするには、`.rezero/config.json` を作成します：
+
+```json
+{
+  "bgm": false
+}
+```
+
 ## ワークフロー
 
 1. 私たちはスバルに試練を与えます。

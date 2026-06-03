@@ -39,6 +39,24 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 `/rezero` 会检查 init 状态（`.rezero/tools.md` 标记 + `.rezero/memory/` ignore）。如果不存在，会先自动执行 init。
 
+## 死亡回归 BGM
+
+当 Re:ZERO Loop 执行死亡回归时，插件默认播放 `assets/bgm.mp3`。
+
+若要在一次运行或 shell 配置中关闭：
+
+```bash
+export REZERO_BGM_DISABLE=1
+```
+
+若要按项目关闭，请创建 `.rezero/config.json`：
+
+```json
+{
+  "bgm": false
+}
+```
+
 ## 工作流
 
 1. 我们给昴降下一场试炼。
