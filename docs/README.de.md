@@ -2,11 +2,9 @@
 
 # Re:ZERO Loop
 
+> Re:ZERO Loop ist ein Agenten-Workflow, inspiriert von **Return by Death** aus **Re:ZERO -Starting Life in Another World-**.
+
 ![](./images/rezero.webp)
-
-> Re:ZERO Loop ist ein Agenten-Workflow, inspiriert von **Return by Death** aus **Re:Zero − Starting Life in Another World**.
-
-Subaru implementiert, sieben Hexen prüfen unabhängig, Fehlererinnerung bleibt erhalten und der Versuch startet erneut von `HEAD`.
 
 ## Installation
 
@@ -29,81 +27,82 @@ pi install npm:rezero
 codex plugin marketplace add epsilondelta-ai/rezero
 ```
 
+*Installiere danach `rezero` über `/plugins` und starte eine neue Sitzung.*
+
 ## Verwendung
 
+In Pi, Claude Code und Codex:
+
 ```text
-/rezero init
 /rezero <task>
 ```
 
-`/rezero` checks init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore) and runs init first if missing.
+`/rezero` prüft den init-Zustand (`.rezero/tools.md`-Marker + ignore für `.rezero/memory/`). Falls er nicht vorhanden ist, wird init zuerst automatisch ausgeführt.
 
 ## Workflow
 
-1. **Orchestrate** — Wenn die Anfrage groß ist, zerlegt `rezero-plan` sie in kleine Aufgaben mit Done-Kriterien. Unabhängige Aufgaben können per subagents/team agents parallel laufen.
-2. **Implement** — Subaru implementiert eine sequentielle Aufgabe oder eine parallele Gruppe ab aktuellem `HEAD`; parallele Gruppen werden zuerst gemergt und dann als ein Ergebnis geprüft.
-3. **Evaluate** — `rezero-witches` ruft sieben Hexen parallel auf. Sie nutzen fresh context und übernehmen nicht Subarus Kontext.
-4. **Return by Death** — Jedes `fail` schreibt minimale Fehlererinnerung, führt reset/clean aus und versucht es erneut.
-5. **Pass** — Nur `pass`/`warning` besteht; warnings gehen in Rem memory und die akzeptierte Route wird committet.
-6. **Rem** — Rem warnings werden ebenfalls implementiert, verifiziert, von Hexen bewertet und nur ohne fail committet.
+1. Wir stellen Subaru vor eine Prüfung.
+2. Subaru bemüht sich, die Prüfung zu überwinden.
+3. Doch wie immer kann er scheitern und Return by Death auslösen.  
+   Das ist hier zwar etwas ungewohnt, aber die Sieben Hexen beurteilen Subarus Schicksal.  
+   Jede der Sieben Hexen beurteilt Subarus Schicksal anhand eigener Kennzahlen. Welche Kennzahlen sie verwenden, kannst du [hier](#sieben-hexen) nachsehen.
+4. Wenn Subarus Bemühungen scheitern und er Return by Death auslöst, wird die Bewertung der Sieben Hexen in `.rezero/memory/subaru-deaths.md` gespeichert. (Diese Datei ist in gitignore enthalten und wird daher nicht zurückgesetzt.)  
+   Anschließend werden `git reset --hard HEAD` und `git clean -fd` ausgeführt, um Return by Death durchzuführen.
+5. Subaru wiederholt den obigen Prozess, bis er diese Prüfung überwindet. Die Dateien `.rezero/memory/subaru-deaths.md` und `.rezero/memory/rem.md` werden gelöscht.
+6. Wenn der Checkpoint von Return by Death nach dem Überwinden der Prüfung aktualisiert wurde, aber es Punkte gibt, die die Hexen als warning bewertet haben, werden sie in `.rezero/memory/rem.md` aufgezeichnet.
+7. Subaru bricht erneut zu der oben beschriebenen Reise auf, um Rem zu retten.
+8. Wenn Subaru die gestellte Prüfung überwindet und es schafft, Rem zu retten, kann er nach langer Zeit endlich ruhen.
 
-## Skills
-
-- `rezero-init` — setup witch evaluation tools.
-- `rezero` — `/rezero` entrypoint.
-- `rezero-plan` — large request splitting.
-- `rezero-subaru` — Subaru single-task loop.
-- `rezero-witches` — fresh-context seven-witch review.
-- `rezero-rem` — warning memory management.
-
-## Sprache und Namen
-
-In unterstützten Sprachen antwortet Re:ZERO in der Sprache des Nutzers. Hexen- und Parallel-Agentennamen verwenden die jeweilige Sprachform. Nicht unterstützte Sprachen fallen auf Englisch zurück.
-
-| Type | Names |
-| --- | --- |
-| Witches | Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satella |
-| Parallel implementers | Beatrice, Emilia, Ram, Garfiel, Julius |
-
-## Konzepte
-
-### Natsuki Subaru
-
-Subaru is the implementer. Starts from current `HEAD`, implements, verifies, and keeps only the memory needed to avoid repeating a failure.
+## Konzept
 
 ### Return by Death
 
-![Natsuki Subaru](./images/subaru.webp)
+![Subaru](./images/subaru.webp)
+<audio controls>
+  <source src="./bgm.mp3" type="audio/mp3">
+  Dein Browser unterstützt das Audio-Tag nicht.
+</audio>
 
 ```bash
 git reset --hard HEAD
 git clean -fd
 ```
 
-Der Code stirbt. Die Lektion bleibt.
+Inspiriert wurde dies von Subarus Return by Death.  
+Das Konzept entstand aus der Frage, ob man wirklich ordentlich arbeiten kann, wenn man auf bereits unordentlichem Code zusätzlich unordentlichen Kontext mit sich trägt.
 
-### Seven Witches
+### Sieben Hexen
 
 ![Witches' Tea Party](./images/witches-tea-party.webp)
 
-| Witch | Focus | Example tools |
+Als Fan des Originals wirkt es etwas ungewohnt, dass die Sieben Hexen Subarus Schicksal beurteilen,  
+aber eine Bewertung aus mehreren Blickwinkeln ist eine ziemlich gute Idee, daher wurde dieses Konzept übernommen.
+
+| Hexe | Fokus | Beispiel-Tools |
 | --- | --- | --- |
-| Echidna | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
-| Typhon | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
-| Minerva | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
-| Daphne | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
-| Carmilla | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
-| Sekhmet | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
-| Satella | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
+| Echidna | Vollständigkeit, Randfälle, Coverage | SonarQube, coverage, Stryker |
+| Typhon | Verträge, Spezifikationen, öffentliche Schnittstellen | typecheck, linter, Spectral, Pact |
+| Minerva | Schaden für Nutzer, Regressionen, Laufzeitfehler | tests, Playwright, Lighthouse CI, k6 |
+| Daphne | Abhängigkeits-/Ressourcenverbrauch | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Carmilla | Täuschung in UI/Dokumentation/Namen/Nachweisen | screenshots, axe, lychee |
+| Sekhmet | Wartbarkeit, dead code, Duplikate | SonarQube, Knip, jscpd |
+| Satella | Integration, Sicherheit, Richtlinien, Konsistenz | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.
 
-### Rem
+### Rem (Spoiler-Warnung)
 
 ![Rem](./images/rem.webp)
 
-Rem ist warning memory.
+Sie ist im Original der wichtigste Grund, warum Subaru seine Reise antritt.  
+Er tut es, um Rem zu retten.
+
+Im Original wurde der Checkpoint zwar nach dem erfolgreichen Kampf gegen den Weißen Wal aktualisiert,  
+aber Rems Existenz wurde vom Erzbischof der Sünde der Völlerei verschlungen, sodass sie nicht mehr aufwachen konnte.
+
+Davon inspiriert kam mir der Gedanke: Wenn der Checkpoint aktualisiert wurde,  
+es aber warnings gibt, warum betrachten wir sie nicht als Rem?
 
 ## Lizenz
 
-Distributed under the [MIT License](../LICENSE).
+Dieses Projekt wird unter der [MIT License](../LICENSE) vertrieben.

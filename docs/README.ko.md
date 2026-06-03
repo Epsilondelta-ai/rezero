@@ -2,27 +2,9 @@
 
 # Re:ZERO Loop
 
+> Re:ZERO Loop는 **Re: 제로부터 시작하는 이세계 생활**의 **사망회귀**에서 영감을 받은 에이전트 워크플로우입니다.
+
 ![](./images/rezero.webp)
-
-> Re:ZERO Loop는 **Re:Zero − Starting Life in Another World**의 **사망회귀**에서 영감을 받은 에이전트 워크플로우입니다.
-
-Subaru가 작업을 구현하고, 일곱 마녀가 독립적으로 검토하며, 실패 기억을 보존한 채 `HEAD`에서 재시도합니다.
-
-## 목차
-
-- [설치](#설치)
-  - [Pi](#pi)
-  - [Claude Code](#claude-code)
-  - [Codex](#codex)
-- [사용법](#사용법)
-- [워크플로우](#워크플로우)
-- [스킬](#스킬)
-- [컨셉](#컨셉)
-  - [나츠키 스바루](#나츠키-스바루)
-  - [사망회귀](#사망회귀)
-  - [일곱 마녀](#일곱-마녀)
-  - [렘](#렘)
-- [라이선스](#라이선스)
 
 ## 설치
 
@@ -30,12 +12,6 @@ Subaru가 작업을 구현하고, 일곱 마녀가 독립적으로 검토하며,
 
 ```bash
 pi install npm:rezero
-```
-
-로컬 개발:
-
-```bash
-pi install /path/to/rezero
 ```
 
 ### Claude Code
@@ -51,14 +27,13 @@ pi install /path/to/rezero
 codex plugin marketplace add epsilondelta-ai/rezero
 ```
 
-이후 `/plugins`에서 `rezero`를 설치하고 새 세션을 시작합니다.
+*이후 `/plugins`에서 `rezero`를 설치하고 새 세션을 시작합니다.*
 
 ## 사용법
 
 Pi, Claude Code, Codex에서:
 
 ```text
-/rezero init
 /rezero <task>
 ```
 
@@ -66,51 +41,42 @@ Pi, Claude Code, Codex에서:
 
 ## 워크플로우
 
-1. **오케스트레이션** — `/rezero`가 `rezero`를 로드합니다. 큰 요청은 `rezero-plan`이 done 기준이 있는 작은 태스크로 나눕니다. 독립 태스크는 subagent/team agent로 병렬 실행할 수 있습니다.
-2. **구현** — Subaru가 현재 `HEAD`에서 순차 태스크 하나 또는 병렬 태스크 그룹 하나를 수행합니다. 병렬 그룹은 먼저 병합한 뒤 하나의 결과로 검증합니다.
-3. **평가** — `rezero-witches`가 일곱 마녀를 병렬 호출합니다. 마녀는 확증편향을 피하기 위해 Subaru 컨텍스트를 이어받지 않습니다. 결과는 `witch | verdict | reason | evidence` 테이블로 표시됩니다.
-4. **사망회귀** — `fail` 하나라도 있으면 `.rezero/memory/subaru-deaths.md`에 최소 실패 기억을 기록하고 `git reset --hard HEAD && git clean -fd` 후 재시도합니다.
-5. **통과** — `pass`/`warning`만 있으면 warning은 `.rezero/memory/rem.md`에 저장하고 accepted route를 커밋합니다. 커밋 후 death memory는 삭제합니다.
-6. **렘** — Rem warning도 일반 Re:ZERO attempt처럼 구현 → 검증 → 마녀 평가 → fail 없을 때 커밋합니다. 모두 해결되면 `rem.md`를 삭제합니다.
-
-## 스킬
-
-- `rezero-init` — setup witch evaluation tools.
-- `rezero` — `/rezero` 엔트리포인트.
-- `rezero-plan` — 큰 요청을 작은 ordered tasks로 분해.
-- `rezero-subaru` — Subaru의 단일 태스크 구현 루프.
-- `rezero-witches` — fresh-context 일곱 마녀 평가와 verdict table.
-- `rezero-rem` — warning memory 저장/해결/삭제.
-
-## 언어와 이름
-
-지원 언어에서는 사용자 언어로 답하고, 마녀 verdict와 병렬 구현 에이전트 이름도 해당 언어 표기를 사용합니다. 미지원 언어는 영어로 fallback합니다.
-
-| Type | Names |
-| --- | --- |
-| Witches | 에키드나, 티폰, 미네르바, 다프네, 카밀라, 세크메트, 사테라 |
-| Parallel implementers | 베아트리스, 에밀리아, 람, 가필, 율리우스 |
+1. 우리는 스바루에게 시련을 내립니다.
+2. 스바루는 시련을 이겨내기 위해 노력을 합니다.
+3. 허나, 언제나 그랬듯 실패하여 사망회귀를 할 수 있습니다.  
+   여기서 조금은 어색하긴 하지만, 일곱 마녀가 스바루의 운명을 판단합니다.  
+   일곱 마녀는 각자의 지표를 가지고 스바루의 운명을 판단합니다. [여기서](#일곱-마녀) 어떤 지표로 판단하는지 확인할 수 있습니다.
+4. 스바루의 노력이 실패로 돌아가 사망회귀를 하게 되면 일곱 마녀의 평가를 `.rezero/memory/subaru-deaths.md`에 기억합니다.(저 파일은 gitignore 에 포함되어 리셋되지 않습니다.)  
+   그 후 `git reset --hard HEAD`, `git clean -fd` 를 하여 사망회귀를 하게 됩니다.
+5. 스바루는 이 시련을 이겨낼 때 까지 위의 과정을 반복하게 됩니다. `.rezero/memory/subaru-deaths.md` `.rezero/memory/rem.md` 파일을 삭제합니다.
+6. 시련을 이겨내 사망회귀의 체크포인트가 갱신되었지만, 마녀들이 warning 으로 평가한 항목이 있다면 `.rezero/memory/rem.md` 에 기록합니다.
+7. 스바루는 렘을 구하기 위해 다시 위의 여정을 떠나게 됩니다.
+8. 내려진 시련을 이겨내고, 렘을 구하는데 성공했다면 스바루는 오랜만에 휴식을 하게 됩니다.
 
 ## 컨셉
 
-### 나츠키 스바루
-
-Subaru는 구현자입니다. 현재 `HEAD`에서 시작해 구현/검증하고, 실패하면 같은 실패를 반복하지 않을 기억만 남깁니다.
-
 ### 사망회귀
 
-![Natsuki Subaru](./images/subaru.webp)
+![스바루](./images/subaru.webp)
+<audio controls>
+  <source src="./bgm.mp3" type="audio/mp3">
+  브라우저가 오디오 태그를 지원하지 않습니다.
+</audio>
 
 ```bash
 git reset --hard HEAD
 git clean -fd
 ```
 
-코드는 죽고, 교훈은 살아남습니다.
+스바루의 사망회귀에서 영감을 받았습니다.  
+이미 지저분한 코드의 위에서 지저분한 컨텍스트를 가지고 제대로 할 수 있을 것인가에 대한 의문에서 이 개념을 차용하게 되었습니다.
 
 ### 일곱 마녀
 
 ![Witches' Tea Party](./images/witches-tea-party.webp)
+
+일곱 마녀가 스바루의 운명을 판단하는건 원작의 팬으로서 조금 어색하게 느껴지기도 하지만,  
+여러 관점에서 평가를 내린다는 것은 꽤나 괜찮은 아이디어이기에 차용하게 되었습니다.
 
 | 마녀 | 초점 | 예시 도구 |
 | --- | --- | --- |
@@ -124,11 +90,18 @@ git clean -fd
 
 Verdict: `pass`, `warning`, `fail`.
 
-### 렘
+### 렘 (스포일러 주의)
 
 ![Rem](./images/rem.webp)
 
-Rem은 warning memory입니다. 통과한 warning은 `.rezero/memory/rem.md`에 남고, 해결/재평가/커밋될 때까지 유지됩니다.
+원작에서 스바루가 여정을 떠나는 가장 주된 이유입니다.  
+렘을 구하기 위해서죠.
+
+원작에서도 백경 토벌전을 성공해서 체크포인트가 갱신되었지만  
+렘은 폭식의 대죄주교에게 존재를 먹혀 깨어나지 못하게 됩니다.
+
+이 점에 영감을 받아 체크포인트가 갱신되었지만  
+warning 이 있다면 그것을 렘으로 보면 어떨까 하는 생각을 하게 되었습니다.
 
 ## 라이선스
 

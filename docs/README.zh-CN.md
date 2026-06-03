@@ -2,11 +2,9 @@
 
 # Re:ZERO Loop
 
+> Re:ZERO Loop 是一个受 **Re:从零开始的异世界生活** 中 **死亡回归** 启发的代理工作流。
+
 ![](./images/rezero.webp)
-
-> Re:ZERO Loop 是受 **Re:Zero − Starting Life in Another World** 的 **死亡回归** 启发的智能体工作流。
-
-Subaru 负责实现，七位魔女独立评审，失败记忆会被保留，并从 `HEAD` 重试。
 
 ## 安装
 
@@ -29,81 +27,82 @@ pi install npm:rezero
 codex plugin marketplace add epsilondelta-ai/rezero
 ```
 
+*之后，在 `/plugins` 中安装 `rezero`，并开始一个新会话。*
+
 ## 用法
 
+在 Pi、Claude Code、Codex 中：
+
 ```text
-/rezero init
 /rezero <task>
 ```
 
-`/rezero` checks init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore) and runs init first if missing.
+`/rezero` 会检查 init 状态（`.rezero/tools.md` 标记 + `.rezero/memory/` ignore）。如果不存在，会先自动执行 init。
 
-## 工作流程
+## 工作流
 
-1. **Orchestrate** — 如果任务很大，`rezero-plan` 会拆成带完成标准的小任务。独立任务可以用 subagent/team agent 并行。
-2. **Implement** — Subaru 从当前 `HEAD` 实现单个任务或并行任务组；并行组先合并，再作为一个结果验证。
-3. **Evaluate** — `rezero-witches` 并行调用七位魔女。魔女使用 fresh context，不继承 Subaru 的上下文。
-4. **Return by Death** — 任何 `fail` 都会记录最小失败记忆，然后执行 reset/clean 并重试。
-5. **Pass** — 只有 `pass`/`warning` 时通过；warning 写入 Rem memory，然后提交。
-6. **Rem** — Rem warning 也必须实现、验证、经魔女评审且无 fail 后提交。
-
-## 技能
-
-- `rezero-init` — setup witch evaluation tools.
-- `rezero` — `/rezero` entrypoint.
-- `rezero-plan` — large request splitting.
-- `rezero-subaru` — Subaru single-task loop.
-- `rezero-witches` — fresh-context seven-witch review.
-- `rezero-rem` — warning memory management.
-
-## 语言与名称
-
-支持的语言会使用用户语言回答；魔女 verdict 和并行实现 agent 名称也使用对应语言。未支持语言回退到英文。
-
-| Type | Names |
-| --- | --- |
-| Witches | 艾姬多娜, 堤丰, 弥涅耳瓦, 达芙妮, 卡密拉, 塞赫麦特, 莎缇拉 |
-| Parallel implementers | 碧翠丝, 艾米莉娅, 拉姆, 加菲尔, 尤里乌斯 |
+1. 我们给昴降下一场试炼。
+2. 昴为了克服试炼而努力。
+3. 然而，一如既往，他可能会失败并进行死亡回归。  
+   这里虽然稍微有些别扭，但七位魔女会判断昴的命运。  
+   七位魔女会用各自的指标来判断昴的命运。可以在[这里](#七位魔女)查看她们用什么指标进行判断。
+4. 如果昴的努力以失败告终并死亡回归，七位魔女的评价会被记忆到 `.rezero/memory/subaru-deaths.md`。（该文件包含在 gitignore 中，因此不会被重置。）  
+   之后执行 `git reset --hard HEAD` 和 `git clean -fd`，完成死亡回归。
+5. 昴会重复上述过程，直到克服这场试炼为止。删除 `.rezero/memory/subaru-deaths.md` 和 `.rezero/memory/rem.md` 文件。
+6. 虽然克服试炼后死亡回归的检查点已被更新，但如果有被魔女们评为 warning 的项目，就会记录到 `.rezero/memory/rem.md` 中。
+7. 昴为了拯救蕾姆，再次踏上上述旅程。
+8. 如果他成功克服被降下的试炼，并成功拯救蕾姆，昴就能久违地休息了。
 
 ## 概念
 
-### 菜月昴
+### 死亡回归
 
-菜月昴是实现者。他从当前 `HEAD` 开始，实现并验证任务，只保留避免重复失败所需的记忆。
-
-### Return by Death
-
-![Natsuki Subaru](./images/subaru.webp)
+![昴](./images/subaru.webp)
+<audio controls>
+  <source src="./bgm.mp3" type="audio/mp3">
+  您的浏览器不支持 audio 标签。
+</audio>
 
 ```bash
 git reset --hard HEAD
 git clean -fd
 ```
 
-代码会死，教训会留下。
+灵感来自昴的死亡回归。  
+这个概念源于一个疑问：在已经混乱的代码之上，再带着混乱的上下文，真的还能好好完成任务吗？
 
-### Seven Witches
+### 七位魔女
 
 ![Witches' Tea Party](./images/witches-tea-party.webp)
 
-| Witch | Focus | Example tools |
+作为原作粉丝，七位魔女判断昴的命运这件事确实会让人觉得稍微有些别扭，  
+但从多个视角进行评价是个相当不错的想法，因此借用了这个概念。
+
+| 魔女 | 关注点 | 示例工具 |
 | --- | --- | --- |
-| 艾姬多娜 | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
-| 堤丰 | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
-| 弥涅耳瓦 | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
-| 达芙妮 | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
-| 卡密拉 | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
-| 塞赫麦特 | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
-| 莎缇拉 | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
+| 艾姬多娜 | 完整性、边界情况、覆盖率 | SonarQube, coverage, Stryker |
+| 提丰 | 契约、规范、公开接口 | typecheck, linter, Spectral, Pact |
+| 弥涅耳瓦 | 用户伤害、回归、运行时失败 | tests, Playwright, Lighthouse CI, k6 |
+| 达芙妮 | 依赖/资源消耗 | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| 卡蜜拉 | UI/文档/命名/证明中的欺骗性 | screenshots, axe, lychee |
+| 塞赫麦特 | 可维护性、死代码、重复 | SonarQube, Knip, jscpd |
+| 嫉妒魔女莎缇拉 | 集成、安全、策略、一致性 | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.
 
-### 雷姆
+### 蕾姆（剧透注意）
 
 ![Rem](./images/rem.webp)
 
-Rem 是 warning memory。
+她是原作中昴踏上旅程的最主要理由。  
+是为了拯救蕾姆。
+
+在原作中，即使白鲸讨伐战成功、检查点得到更新，  
+蕾姆仍被暴食大罪司教吞噬了存在，无法醒来。
+
+受到这一点启发，我想到：虽然检查点更新了，  
+但如果还有 warning，把它看作蕾姆会怎么样呢？
 
 ## 许可证
 
-Distributed under the [MIT License](../LICENSE).
+本项目根据 [MIT License](../LICENSE) 发布。

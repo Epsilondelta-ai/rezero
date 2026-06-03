@@ -2,11 +2,9 @@
 
 # Re:ZERO Loop
 
+> Re:ZERO Loop — это агентный workflow, вдохновлённый **Возвращением смертью** из **Re:ZERO -Starting Life in Another World-**.
+
 ![](./images/rezero.webp)
-
-> Re:ZERO Loop — агентный workflow, вдохновлённый **Return by Death** из **Re:Zero − Starting Life in Another World**.
-
-Subaru реализует задачу, семь ведьм независимо проверяют результат, память о провале сохраняется, а попытка повторяется от `HEAD`.
 
 ## Установка
 
@@ -29,81 +27,82 @@ pi install npm:rezero
 codex plugin marketplace add epsilondelta-ai/rezero
 ```
 
+*После этого установите `rezero` через `/plugins` и начните новую сессию.*
+
 ## Использование
 
+В Pi, Claude Code и Codex:
+
 ```text
-/rezero init
 /rezero <task>
 ```
 
-`/rezero` checks init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore) and runs init first if missing.
+`/rezero` проверяет состояние init (маркер `.rezero/tools.md` + ignore для `.rezero/memory/`). Если его нет, init сначала выполняется автоматически.
 
-## Рабочий процесс
+## Workflow
 
-1. **Orchestrate** — Если запрос большой, `rezero-plan` разбивает его на малые задачи с критериями готовности. Независимые задачи можно выполнять параллельно через subagents/team agents.
-2. **Implement** — Subaru выполняет последовательную задачу или параллельную группу от текущего `HEAD`; параллельная группа сначала сливается, затем проверяется как единый результат.
-3. **Evaluate** — `rezero-witches` параллельно вызывает семь ведьм. Они используют fresh context и не наследуют контекст Subaru.
-4. **Return by Death** — Любой `fail` записывает минимальную память о провале, выполняет reset/clean и повторяет попытку.
-5. **Pass** — Только `pass`/`warning` проходят; warnings записываются в Rem memory, затем accepted route коммитится.
-6. **Rem** — Warnings Rem также реализуются, проверяются, оцениваются ведьмами и коммитятся только без fail.
+1. Мы даём Субару испытание.
+2. Субару старается преодолеть это испытание.
+3. Но, как всегда, он может потерпеть неудачу и вернуться смертью.  
+   Здесь это немного неловко, но Семь Ведьм судят судьбу Субару.  
+   Каждая из Семи Ведьм судит судьбу Субару по своим показателям. Узнать, по каким показателям они судят, можно [здесь](#семь-ведьм).
+4. Если усилия Субару заканчиваются провалом и он возвращается смертью, оценка Семи Ведьм запоминается в `.rezero/memory/subaru-deaths.md`. (Этот файл включён в gitignore, поэтому он не сбрасывается.)  
+   После этого выполняются `git reset --hard HEAD` и `git clean -fd`, чтобы выполнить Возвращение смертью.
+5. Субару повторяет описанный выше процесс, пока не преодолеет это испытание. Файлы `.rezero/memory/subaru-deaths.md` и `.rezero/memory/rem.md` удаляются.
+6. Если после преодоления испытания checkpoint Возвращения смертью был обновлён, но есть пункты, которые ведьмы оценили как warning, они записываются в `.rezero/memory/rem.md`.
+7. Субару снова отправляется в описанное выше путешествие, чтобы спасти Рем.
+8. Если Субару преодолеет данное испытание и успешно спасёт Рем, он наконец сможет отдохнуть после долгого времени.
 
-## Навыки
+## Концепция
 
-- `rezero-init` — setup witch evaluation tools.
-- `rezero` — `/rezero` entrypoint.
-- `rezero-plan` — large request splitting.
-- `rezero-subaru` — Subaru single-task loop.
-- `rezero-witches` — fresh-context seven-witch review.
-- `rezero-rem` — warning memory management.
+### Возвращение смертью
 
-## Язык и имена
-
-Для поддерживаемых языков Re:ZERO отвечает на языке пользователя. Имена ведьм и параллельных агентов также используют локальную форму. Неподдерживаемые языки используют английский.
-
-| Type | Names |
-| --- | --- |
-| Witches | Ехидна, Тифон, Минерва, Дафна, Кармилла, Сехмет, Сателла |
-| Parallel implementers | Беатрис, Эмилия, Рам, Гарфиэль, Юлиус |
-
-## Концепции
-
-### Нацуки Субару
-
-Нацуки Субару — исполнитель. Он начинает с текущего `HEAD`, реализует, проверяет и сохраняет только память, нужную, чтобы не повторить провал.
-
-### Return by Death
-
-![Natsuki Subaru](./images/subaru.webp)
+![Субару](./images/subaru.webp)
+<audio controls>
+  <source src="./bgm.mp3" type="audio/mp3">
+  Ваш браузер не поддерживает аудио-тег.
+</audio>
 
 ```bash
 git reset --hard HEAD
 git clean -fd
 ```
 
-Код умирает. Урок выживает.
+Идея вдохновлена Возвращением смертью Субару.  
+Эта концепция была заимствована из сомнения: можно ли действительно сделать всё как следует, имея грязный контекст поверх уже грязного кода?
 
-### Seven Witches
+### Семь Ведьм
 
 ![Witches' Tea Party](./images/witches-tea-party.webp)
 
-| Witch | Focus | Example tools |
+Как фанату оригинала, мне немного неловко от того, что Семь Ведьм судят судьбу Субару,  
+но оценка с нескольких точек зрения — довольно хорошая идея, поэтому эта концепция была заимствована.
+
+| Ведьма | Фокус | Примеры инструментов |
 | --- | --- | --- |
-| Ехидна | Completeness, edge cases, coverage | SonarQube, coverage, Stryker |
-| Тифон | Contracts, specs, public interfaces | typecheck, linter, Spectral, Pact |
-| Минерва | User harm, regressions, runtime failures | tests, Playwright, Lighthouse CI, k6 |
-| Дафна | Dependency/resource appetite | OSV-Scanner, Knip, source-map-explorer, hyperfine |
-| Кармилла | Deceptive UI/docs/names/proof | screenshots, axe, lychee |
-| Сехмет | Maintainability, dead code, duplication | SonarQube, Knip, jscpd |
-| Сателла | Integration, security, policy, consistency | CodeQL, Gitleaks, Trivy, CI |
+| Эхидна | Полнота, граничные случаи, покрытие | SonarQube, coverage, Stryker |
+| Тифон | Контракты, спецификации, публичные интерфейсы | typecheck, linter, Spectral, Pact |
+| Минерва | Вред пользователю, регрессии, сбои во время выполнения | tests, Playwright, Lighthouse CI, k6 |
+| Дафна | Потребление зависимостей/ресурсов | OSV-Scanner, Knip, source-map-explorer, hyperfine |
+| Кармилла | Обман в UI/документации/именах/доказательствах | screenshots, axe, lychee |
+| Сехмет | Поддерживаемость, dead code, дублирование | SonarQube, Knip, jscpd |
+| Сателла | Интеграция, безопасность, политики, согласованность | CodeQL, Gitleaks, Trivy, CI |
 
 Verdict: `pass`, `warning`, `fail`.
 
-### Рем
+### Рем (осторожно, спойлеры)
 
 ![Rem](./images/rem.webp)
 
-Rem — это память warnings.
+В оригинале она является главной причиной, по которой Субару отправляется в путь.  
+Он делает это, чтобы спасти Рем.
+
+В оригинале, даже после успешной битвы с Белым Китом и обновления checkpoint,  
+существование Рем было поглощено Архиепископом греха Чревоугодия, и она больше не смогла проснуться.
+
+Вдохновившись этим моментом, я подумал: даже если checkpoint обновлён,  
+если есть warnings, почему бы не считать их Рем?
 
 ## Лицензия
 
-Distributed under the [MIT License](../LICENSE).
+Этот проект распространяется по [MIT License](../LICENSE).
