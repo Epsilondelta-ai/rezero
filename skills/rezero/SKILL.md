@@ -61,6 +61,6 @@ Before reset, append to `.rezero/memory/subaru-deaths.md`:
 - Do not parallelize tasks that touch the same files, migrations, shared state, or dependency graph.
 - Never reset, retry, call Rem, or commit before showing the aggregated witch verdict table in chat.
 - Never reset before death memory.
-- Before every Return by Death reset, announce the exact death number in chat (for example: `사망회귀 <number>번째를 실행합니다.`).
+- Before every Return by Death reset, announce the exact death number in chat in English (for example: `Executing Return by Death #<number>.`).
 - Never retry without new info.
 - Dangerous ambiguity → ask 1 focused question.
