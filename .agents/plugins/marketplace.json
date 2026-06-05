@@ -7,8 +7,9 @@
     {
       "name": "rezero",
       "source": {
-        "source": "local",
-        "path": "./"
+        "source": "url",
+        "url": "https://github.com/Epsilondelta-ai/rezero.git",
+        "ref": "main"
       },
       "policy": {
         "installation": "AVAILABLE",
