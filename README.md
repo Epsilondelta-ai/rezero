@@ -31,30 +31,40 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## Usage
 
-In Pi, Claude Code, and Codex:
+In Pi and Claude Code:
 
 ```text
 /rezero <task>
 ```
 
-`/rezero` checks the init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore). If it is missing, it automatically runs init first.
+In Codex:
+
+```text
+$rezero <task>
+```
+
+`/rezero` and `$rezero` check the init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore). If it is missing, init runs first automatically.
 
 ## Return by Death BGM
 
 When Re:ZERO Loop performs Return by Death, the plugin plays `assets/bgm.mp3` by default.
 
-Use `/rezero bgm false` or `/rezero bgm off` to disable it for the current project:
+Use `/rezero bgm false` or `/rezero bgm off` (`$rezero bgm false` or `$rezero bgm off` in Codex) to disable it for the current project:
 
 ```text
 /rezero bgm false
 /rezero bgm off
+$rezero bgm false
+$rezero bgm off
 ```
 
-Use `/rezero bgm true` or `/rezero bgm on` to enable it again:
+Use `/rezero bgm true` or `/rezero bgm on` (`$rezero bgm true` or `$rezero bgm on` in Codex) to enable it again:
 
 ```text
 /rezero bgm true
 /rezero bgm on
+$rezero bgm true
+$rezero bgm on
 ```
 
 These commands write `.rezero/memory/config.json`:
