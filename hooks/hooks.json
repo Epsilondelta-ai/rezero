@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/rezero-play-bgm.js\"",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT:-${PLUGIN_ROOT}}/bin/rezero-play-bgm.js\"",
             "timeout": 5
           }
         ]
