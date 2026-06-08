@@ -1,6 +1,6 @@
 {
   "name": "rezero",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "Re:ZERO-style implementation loop for pi coding agent: Subaru implements, seven witches review, Return by Death retries.",
   "license": "MIT",
   "keywords": [
@@ -31,10 +31,15 @@
       "./extensions"
     ],
     "skills": [
-      "./skills"
+      "./skills/rezero",
+      "./skills/rezero-init",
+      "./skills/rezero-plan",
+      "./skills/rezero-rem",
+      "./skills/rezero-subaru",
+      "./skills/rezero-witches"
     ],
     "prompts": [
-      "./prompts"
+      "./prompts/rezero.md"
     ],
     "image": "./docs/images/rezero.webp"
   }

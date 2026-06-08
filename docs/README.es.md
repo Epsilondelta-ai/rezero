@@ -31,43 +31,53 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## Uso
 
-En Pi, Claude Code y Codex:
+In Pi:
+
+```text
+/rezero <task>
+```
+
+In Claude Code:
 
 ```text
 /rezero:run <task>
 ```
 
-Codex:
+In Codex:
 
 ```text
 $rezero:run <task>
 ```
 
-`/rezero:run` comprueba el estado de init (marcador `.rezero/tools.md` + ignore de `.rezero/memory/`). Si no existe, ejecuta init automáticamente primero.
+`/rezero`, `/rezero:run`, and `$rezero:run` check the init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore). If it is missing, init runs first automatically.
 
 ## BGM de Return by Death
 
-Cuando Re:ZERO Loop realiza Return by Death, el plugin reproduce `assets/bgm.mp3` por defecto.
+When Re:ZERO Loop performs Return by Death, the plugin plays `assets/bgm.mp3` by default.
 
-Usa `/rezero:run bgm false` o `/rezero:run bgm off` para desactivarlo en el proyecto actual:
+Use these commands to disable BGM for the current project:
 
 ```text
+/rezero bgm false
+/rezero bgm off
 /rezero:run bgm false
 /rezero:run bgm off
 $rezero:run bgm false
 $rezero:run bgm off
 ```
 
-Usa `/rezero:run bgm true` o `/rezero:run bgm on` para volver a activarlo:
+Use these commands to enable it again:
 
 ```text
+/rezero bgm true
+/rezero bgm on
 /rezero:run bgm true
 /rezero:run bgm on
 $rezero:run bgm true
 $rezero:run bgm on
 ```
 
-Estos comandos escriben `.rezero/memory/config.json`:
+These commands write `.rezero/memory/config.json`:
 
 ```json
 {
@@ -75,7 +85,7 @@ Estos comandos escriben `.rezero/memory/config.json`:
 }
 ```
 
-También puedes desactivarlo en una ejecución o en tu perfil de shell:
+You can also disable BGM for one run or for your shell profile:
 
 ```bash
 export REZERO_BGM_DISABLE=1

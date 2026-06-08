@@ -1,6 +1,6 @@
 ---
 name: rezero
-description: "Orchestrate the Re:ZERO Loop. Use for /rezero:run requests: split large work, let Subaru implement, call Seven Witches, send warnings to Rem, reset on fail, and commit on pass."
+description: "Orchestrate the Re:ZERO Loop. Use for /rezero requests in Pi: split large work, let Subaru implement, call Seven Witches, send warnings to Rem, reset on fail, and commit on pass."
 license: MIT
 ---
 
