@@ -1,12 +1,11 @@
 {
   "name": "rezero",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Re:ZERO Loop: Subaru implements, seven witches review, Return by Death retries.",
   "commands": [
     "./commands"
   ],
   "skills": [
     "./skills"
-  ],
-  "hooks": "./hooks/hooks.json"
+  ]
 }
