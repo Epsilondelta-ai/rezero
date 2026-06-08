@@ -23,18 +23,18 @@ Do not give witches Subaru's reasoning, plan, self-assessment, or prior failed r
 
 ## Witches
 
-Call these as parallel subagents.
-When spawning witch reviewers, always use the English witch names below as the subagent/team-agent name, display name, and session name.
-Do not use localized names, generic reviewer names, numbered names, role-only names, or tool-generated names for witch reviewers.
-If the spawn mechanism has no separate display-name field, use the English witch name as the actual spawned agent/member name. For team agents, pass explicit English teammate names. For subagents, choose or create the invocation so the session title/display name is the English witch name, not `subagent-reviewer-*`.
+Call these as parallel subagents using the witch alias as the actual pi `agent` value, not generic `reviewer` with a witch role in the task text. This makes targets like `subagent-echidna-...`.
 
-- `references/witches/echidna.md`
-- `references/witches/typhon.md`
-- `references/witches/minerva.md`
-- `references/witches/daphne.md`
-- `references/witches/carmilla.md`
-- `references/witches/sekhmet.md`
-- `references/witches/satella.md`
+- `echidna` → `references/witches/echidna.md`
+- `typhon` → `references/witches/typhon.md`
+- `minerva` → `references/witches/minerva.md`
+- `daphne` → `references/witches/daphne.md`
+- `carmilla` → `references/witches/carmilla.md`
+- `sekhmet` → `references/witches/sekhmet.md`
+- `satella` → `references/witches/satella.md`
+
+If an alias is missing, create a project prompt-agent alias. Do not modify pi-subagents plugin code.
+Do not use localized names, generic reviewer names, numbered names, role-only names, or tool-generated names for witch reviewers.
 
 ## Language
 
@@ -46,15 +46,15 @@ English witch names: Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satell
 ## Anti-Simulation Gate
 
 The lead agent must not invent, simulate, roleplay, summarize-from-memory, or "act as" any witch reviewer.
-A witch verdict is valid only if it came from an actual spawned subagent/team-agent/session whose name exactly matches that witch's English name.
+A witch verdict is valid only if it came from an actual spawned subagent/session whose name matches that witch's English name or pi alias.
 Before showing the verdict table, the lead agent must have tool-call evidence that all seven witch agents were spawned and returned.
-Acceptable evidence includes a subagent/team tool result, member status/result, mailbox response, or equivalent harness transcript entry that names the witch agent.
+Acceptable evidence includes a subagent tool result, mailbox response, or equivalent harness transcript entry that names the witch agent/alias.
 If the harness cannot spawn agents, or if any witch did not return, stop and report that the Seven Witches evaluation could not be completed; do not produce a verdict table and do not proceed to reset, retry, Rem, commit, next loop, or final summary.
 
 ## Output
 
 After all witch subagents return with spawn/return evidence, the lead agent must aggregate their verdicts and show exactly one table in the assistant chat before any reset, retry, Rem warning handling, commit, next loop, or final summary.
-The verdict table is user-visible required output, not internal subagent chatter, task state, team log, or hidden artifact.
+The verdict table is user-visible required output, not internal subagent chatter, task state, or hidden artifact.
 Do not omit it, defer it, replace it with prose, or keep it only in task/subagent logs.
 If any witch returns `fail` or `warning`, the table is still mandatory before starting the next loop or warning-resolution work.
 
@@ -84,6 +84,6 @@ If any witch returns `fail` or `warning`, the table is still mandatory before st
 - Keep evidence concise and reproducible.
 - Witches judge only; they do not edit code.
 - Fresh context is required to avoid confirmation bias.
-- Each witch reviewer subagent/team-agent/session display name must exactly match that witch's English name.
+- In pi `subagent(...)`, each witch reviewer must use its lowercase alias as the runtime `agent` value.
 - Each witch cleans resources it created before returning.
 - If a witch starts a Docker Compose service for evaluation, it must stop that service before returning (for example with the matching `docker compose ... down` command).

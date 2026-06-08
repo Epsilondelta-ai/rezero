@@ -23,25 +23,27 @@ Goal → finish request through small Re:ZERO attempts.
    - `git check-ignore -q .rezero/memory/subaru-deaths.md` succeeds.
 2. If init state is missing, run `rezero-init`, commit init changes, then continue the original request.
 3. For every non-init, non-BGM request, use `rezero-plan` before implementation. Do not decide request size yourself before invoking it; `rezero-plan` returns one task when the request is already small.
-4. Treat the `rezero-plan` output as the authoritative task list. If planned tasks are independent, run safe groups in parallel via subagents; use team agents for long/heavy groups.
+4. Treat the `rezero-plan` output as the authoritative task list. If planned tasks are independent, run safe groups in parallel via subagents.
 5. Isolate parallel implementation work, merge the group, then verify the combined result.
 6. Use `rezero-witches` once for the whole merged group; witches must use fresh context, not Subaru's context.
-7. Treat witch verdicts as valid only when backed by tool-call evidence that all seven exact named witch agents were spawned and returned; never simulate or roleplay missing witch results.
-8. Aggregate every verified witch result and show the witch verdict table in the assistant chat as a hard barrier.
-9. Do not reset, retry, call Rem, commit, continue another loop, or give a final summary until the verified verdict table has been shown in chat.
-10. If any witch is missing spawn/return evidence, stop and report the witches step as blocked; do not reset, retry, call Rem, commit, continue another loop, or produce a final success/failure summary.
-11. Any `fail` → after the chat verdict table, record minimal death memory → announce in chat which Death/Return by Death number is happening → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
-12. Only `pass|warning` → after the chat verdict table, use `rezero-rem` for warnings; if `.rezero/memory/rem.md` is written, show the newly written Rem entries in chat → commit accepted route → delete death memory.
-13. If processing Rem warnings, use `rezero-rem` resolution rules.
+7. In pi subagent mode, spawn witches with actual agent aliases `echidna`, `typhon`, `minerva`, `daphne`, `carmilla`, `sekhmet`, `satella`, never generic `reviewer`.
+8. Treat witch verdicts as valid only when backed by tool-call evidence that all seven exact witch agents/aliases were spawned and returned; never simulate or roleplay missing witch results.
+9. Aggregate every verified witch result and show the witch verdict table in the assistant chat as a hard barrier.
+10. Do not reset, retry, call Rem, commit, continue another loop, or give a final summary until the verified verdict table has been shown in chat.
+11. If any witch is missing spawn/return evidence, stop and report the witches step as blocked; do not reset, retry, call Rem, commit, continue another loop, or produce a final success/failure summary.
+12. Any `fail` → after the chat verdict table, record minimal death memory → announce in chat which Death/Return by Death number is happening → `git reset --hard HEAD` → `git clean -fd` → retry with changed route.
+13. Only `pass|warning` → after the chat verdict table, use `rezero-rem` for warnings; if `.rezero/memory/rem.md` is written, show the newly written Rem entries in chat → commit accepted route → delete death memory.
+14. If processing Rem warnings, use `rezero-rem` resolution rules.
 
 ## Language
 
 Use the user's language for chat output.
-Always use English names for spawned subagents, team agents, display names, session names, and verdict tables, regardless of the user's language.
+Always use English names for spawned subagents, display names, session names, and verdict tables, regardless of the user's language.
 
 Parallel implementer names are names only; no character behavior.
 Use these English names for parallel implementers: Beatrice, Emilia, Ram, Garfiel, Julius.
 Use these English names for witch reviewers: Echidna, Typhon, Minerva, Daphne, Carmilla, Sekhmet, Satella.
+In pi subagent mode, use lowercase runtime aliases: `echidna`, `typhon`, `minerva`, `daphne`, `carmilla`, `sekhmet`, `satella`.
 
 ## Death Memory
 
