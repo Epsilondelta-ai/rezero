@@ -1,6 +1,6 @@
 ---
 name: rezero-init
-description: "Initialize a repository for Re:ZERO Loop. Use for `/rezero init`: detect project type, set up witch evaluation tools, create memory ignore rules, and record unavailable tools."
+description: "Initialize a repository for Re:ZERO Loop. Use for `/rezero:run init`: detect project type, set up witch evaluation tools, create memory ignore rules, and record unavailable tools."
 license: MIT
 ---
 

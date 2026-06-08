@@ -34,27 +34,37 @@ codex plugin marketplace add epsilondelta-ai/rezero
 在 Pi、Claude Code、Codex 中：
 
 ```text
-/rezero <task>
+/rezero:run <task>
 ```
 
-`/rezero` 会检查 init 状态（`.rezero/tools.md` 标记 + `.rezero/memory/` ignore）。如果不存在，会先自动执行 init。
+Codex:
+
+```text
+$rezero:run <task>
+```
+
+`/rezero:run` 会检查 init 状态（`.rezero/tools.md` 标记 + `.rezero/memory/` ignore）。如果不存在，会先自动执行 init。
 
 ## 死亡回归 BGM
 
 当 Re:ZERO Loop 执行死亡回归时，插件默认播放 `assets/bgm.mp3`。
 
-若要在当前项目中关闭，请使用 `/rezero bgm false` 或 `/rezero bgm off`：
+若要在当前项目中关闭，请使用 `/rezero:run bgm false` 或 `/rezero:run bgm off`：
 
 ```text
-/rezero bgm false
-/rezero bgm off
+/rezero:run bgm false
+/rezero:run bgm off
+$rezero:run bgm false
+$rezero:run bgm off
 ```
 
-若要重新开启，请使用 `/rezero bgm true` 或 `/rezero bgm on`：
+若要重新开启，请使用 `/rezero:run bgm true` 或 `/rezero:run bgm on`：
 
 ```text
-/rezero bgm true
-/rezero bgm on
+/rezero:run bgm true
+/rezero:run bgm on
+$rezero:run bgm true
+$rezero:run bgm on
 ```
 
 这些命令会写入 `.rezero/memory/config.json`：

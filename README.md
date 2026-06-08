@@ -34,37 +34,37 @@ codex plugin marketplace add epsilondelta-ai/rezero
 In Pi and Claude Code:
 
 ```text
-/rezero <task>
+/rezero:run <task>
 ```
 
 In Codex:
 
 ```text
-$rezero <task>
+$rezero:run <task>
 ```
 
-`/rezero` and `$rezero` check the init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore). If it is missing, init runs first automatically.
+`/rezero:run` and `$rezero:run` check the init state (`.rezero/tools.md` marker + `.rezero/memory/` ignore). If it is missing, init runs first automatically.
 
 ## Return by Death BGM
 
 When Re:ZERO Loop performs Return by Death, the plugin plays `assets/bgm.mp3` by default.
 
-Use `/rezero bgm false` or `/rezero bgm off` (`$rezero bgm false` or `$rezero bgm off` in Codex) to disable it for the current project:
+Use `/rezero:run bgm false` or `/rezero:run bgm off` (`$rezero:run bgm false` or `$rezero:run bgm off` in Codex) to disable it for the current project:
 
 ```text
-/rezero bgm false
-/rezero bgm off
-$rezero bgm false
-$rezero bgm off
+/rezero:run bgm false
+/rezero:run bgm off
+$rezero:run bgm false
+$rezero:run bgm off
 ```
 
-Use `/rezero bgm true` or `/rezero bgm on` (`$rezero bgm true` or `$rezero bgm on` in Codex) to enable it again:
+Use `/rezero:run bgm true` or `/rezero:run bgm on` (`$rezero:run bgm true` or `$rezero:run bgm on` in Codex) to enable it again:
 
 ```text
-/rezero bgm true
-/rezero bgm on
-$rezero bgm true
-$rezero bgm on
+/rezero:run bgm true
+/rezero:run bgm on
+$rezero:run bgm true
+$rezero:run bgm on
 ```
 
 These commands write `.rezero/memory/config.json`:

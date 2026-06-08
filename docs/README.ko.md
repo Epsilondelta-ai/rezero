@@ -31,30 +31,40 @@ codex plugin marketplace add epsilondelta-ai/rezero
 
 ## 사용법
 
-Pi, Claude Code, Codex에서:
+Pi 및 Claude Code:
 
 ```text
-/rezero <task>
+/rezero:run <task>
 ```
 
-`/rezero`는 init 상태(`.rezero/tools.md` marker + `.rezero/memory/` ignore)를 확인하고, 없으면 init을 먼저 자동 실행합니다.
+Codex:
+
+```text
+$rezero:run <task>
+```
+
+`/rezero:run`는 init 상태(`.rezero/tools.md` marker + `.rezero/memory/` ignore)를 확인하고, 없으면 init을 먼저 자동 실행합니다.
 
 ## 사망회귀 BGM
 
 Re:ZERO Loop가 사망회귀를 실행하면 기본적으로 `assets/bgm.mp3`를 재생합니다.
 
-현재 프로젝트에서 끄려면 `/rezero bgm false` 또는 `/rezero bgm off`를 사용합니다:
+현재 프로젝트에서 끄려면 `/rezero:run bgm false` 또는 `/rezero:run bgm off`를 사용합니다:
 
 ```text
-/rezero bgm false
-/rezero bgm off
+/rezero:run bgm false
+/rezero:run bgm off
+$rezero:run bgm false
+$rezero:run bgm off
 ```
 
-다시 켜려면 `/rezero bgm true` 또는 `/rezero bgm on`을 사용합니다:
+다시 켜려면 `/rezero:run bgm true` 또는 `/rezero:run bgm on`을 사용합니다:
 
 ```text
-/rezero bgm true
-/rezero bgm on
+/rezero:run bgm true
+/rezero:run bgm on
+$rezero:run bgm true
+$rezero:run bgm on
 ```
 
 이 명령들은 `.rezero/memory/config.json`을 씁니다:
